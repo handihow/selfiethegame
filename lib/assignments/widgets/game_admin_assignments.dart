@@ -30,7 +30,6 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
     List<Assignment> newAssignments = [];
     int order = 0;
     List<int> usedIndeces = [];
-
     if (_levelOfAssignments > 0) {
       assignments =
           ASSIGNMENTS.where((a) => a['level'] == _levelOfAssignments).toList();
@@ -47,7 +46,7 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
             updated: DateTime.now(),
             gameId: widget.gameId,
             order: order,
-            maxPoints: assignment['maxPoints'],
+            maxPoints: Rating.values[assignment['maxPoints']],
             assignment: assignment['assignment'],
             level: assignment['level']));
         order += 1;
@@ -201,7 +200,7 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
                   ),
                   title: Text(returnedAssignments[index].assignment),
                   subtitle: Text('max. score: ' +
-                      returnedAssignments[index].maxPoints.toString()),
+                      returnedAssignments[index].maxPoints.index.toString()),
                   trailing: IconButton(
                     icon: Icon(Icons.clear),
                     onPressed: () {

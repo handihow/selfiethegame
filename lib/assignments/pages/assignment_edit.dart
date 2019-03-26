@@ -71,7 +71,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
           Row(
             children: <Widget>[
               Radio(
-                value: 1,
+                value: Rating.easy,
                 groupValue: _formData['maxPoints'],
                 onChanged: (value) => _assignMaximumPoints(value),
               ),
@@ -86,7 +86,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
           Row(
             children: <Widget>[
               Radio(
-                value: 3,
+                value: Rating.medium,
                 groupValue: _formData['maxPoints'],
                 onChanged: (value) => _assignMaximumPoints(value),
               ),
@@ -101,7 +101,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
           Row(
             children: <Widget>[
               Radio(
-                value: 5,
+                value: Rating.hard,
                 groupValue: _formData['maxPoints'],
                 onChanged: (value) => _assignMaximumPoints(value),
               ),
@@ -118,7 +118,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
     );
   }
 
-  _assignMaximumPoints(int value) {
+  _assignMaximumPoints(Rating value) {
     setState(() {
       _formData['maxPoints'] = value;
     });

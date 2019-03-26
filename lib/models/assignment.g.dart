@@ -15,7 +15,7 @@ Assignment _$AssignmentFromJson(Map json) {
       isOutside: json['isOutside'] as bool,
       level: json['level'] as int,
       gameId: json['gameId'] as String,
-      maxPoints: json['maxPoints'] as int,
+      maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']),
       created: json['created'] == null
           ? null
           : Assignment._dateTimeDoNothingSerializer(
@@ -35,7 +35,7 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
       'isOutside': instance.isOutside,
       'level': instance.level,
       'gameId': instance.gameId,
-      'maxPoints': instance.maxPoints,
+      'maxPoints': _$RatingEnumMap[instance.maxPoints],
       'created': instance.created == null
           ? null
           : Assignment._dateTimeDoNothingSerializer(instance.created),
@@ -43,3 +43,30 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
           ? null
           : Assignment._dateTimeDoNothingSerializer(instance.updated)
     };
+
+T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return enumValues.entries
+      .singleWhere((e) => e.value == source,
+          orElse: () => throw ArgumentError(
+              '`$source` is not one of the supported values: '
+              '${enumValues.values.join(', ')}'))
+      .key;
+}
+
+T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source);
+}
+
+const _$RatingEnumMap = <Rating, dynamic>{
+  Rating.invalid: 0,
+  Rating.easy: 1,
+  Rating.medium: 3,
+  Rating.hard: 5
+};
