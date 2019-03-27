@@ -67,6 +67,8 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 const _$RatingEnumMap = <Rating, dynamic>{
   Rating.invalid: 0,
   Rating.easy: 1,
+  Rating.donotusebut: 2,
   Rating.medium: 3,
+  Rating.iunderstandthisishacky: 4,
   Rating.hard: 5
 };

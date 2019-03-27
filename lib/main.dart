@@ -15,7 +15,7 @@ import './games/pages/game_admin.dart';
 import './games/pages/game_register.dart';
 import './scoped-models/main.dart';
 
-import './assignments/pages/assignment_edit.dart';
+import './assignments/pages/assignments.dart';
 
 void main() => runApp(SelfieGameApp());
 
@@ -85,6 +85,11 @@ class _SelfieGameState extends State<SelfieGameApp> {
                   builder: (BuildContext context) => GameViewPage(gameId),
                 );
               }
+            } else if(pathElements[1] == 'assignments') {
+              final String gameId = pathElements[2];
+              return MaterialPageRoute<bool>(
+                builder: (BuildContext context) => AssignmentsPage(gameId),
+              );
             }
           },
           onUnknownRoute: (RouteSettings settings) {

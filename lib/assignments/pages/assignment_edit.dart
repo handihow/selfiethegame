@@ -141,7 +141,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
   }
 
   void _submitForm(BuildContext context, AppModel model) async {
-    if (!_formKey.currentState.validate() || _formData['maxPoints'] == null) {
+    if (!_formKey.currentState.validate() || _formData['maxPoints'] == 0) {
       setState(() {
         _isButtonDisabled = false;
       });
@@ -161,6 +161,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
       assignment: _formData['assignment'],
       order: widget.assignment == null ? widget.order : widget.assignment.order,
     );
+    await model.updateGameStatus(widget.gameId, 'assigned', true);
     model.updateAssignment(updatedAssignment).then((_) {
       Navigator.pop(context);
     });

@@ -3,5 +3,6 @@ import './user.dart';
 import './game.dart';
 import './chat.dart';
 import './assignment.dart';
+import './team.dart';
 
-class AppModel extends Model with UserModel, GameModel, ChatModel, AssignmentModel {}
+class AppModel extends Model with UserModel, GameModel, ChatModel, AssignmentModel, TeamModel {}

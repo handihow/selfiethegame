@@ -7,6 +7,7 @@ import '../../models/game.dart';
 import '../widgets/game_admin_signup.dart';
 import '../../assignments/widgets/game_admin_assignments.dart';
 import '../widgets/game_admin_jurymembers.dart';
+import '../../teams/widgets/game_admin_teams.dart';
 
 class GameAdminPage extends StatefulWidget {
   final String gameId;
@@ -38,7 +39,7 @@ class _GameAdminPageState extends State<GameAdminPage> {
           state: game.status.judgesAssigned ? StepState.complete : StepState.indexed),
       Step(
           title: Text('Teams'),
-          content: Text('step 3'),
+          content: GameAdminTeams(game.id),
           state: StepState.indexed),
       Step(
           title: Text('Klaar'),
