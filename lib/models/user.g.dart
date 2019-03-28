@@ -12,8 +12,11 @@ User _$UserFromJson(Map json) {
       email: json['email'] as String,
       displayName: json['displayName'] as String,
       photoURL: json['photoURL'] as String,
-      authMethod:
-          _$enumDecodeNullable(_$AuthMethodEnumMap, json['authMethod']));
+      authMethod: _$enumDecodeNullable(_$AuthMethodEnumMap, json['authMethod']),
+      participating:
+          (json['participating'] as List)?.map((e) => e as String)?.toList(),
+      playing: (json['playing'] as List)?.map((e) => e as String)?.toList(),
+      judging: (json['judging'] as List)?.map((e) => e as String)?.toList());
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -21,7 +24,10 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'email': instance.email,
       'displayName': instance.displayName,
       'photoURL': instance.photoURL,
-      'authMethod': _$AuthMethodEnumMap[instance.authMethod]
+      'authMethod': _$AuthMethodEnumMap[instance.authMethod],
+      'participating': instance.participating,
+      'playing': instance.playing,
+      'judging': instance.judging
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

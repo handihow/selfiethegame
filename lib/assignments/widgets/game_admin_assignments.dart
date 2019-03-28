@@ -7,7 +7,6 @@ import 'package:random_string/random_string.dart';
 import '../../scoped-models/main.dart';
 import '../../models/assignment.dart';
 import '../../settings/settings.dart';
-import '../pages/assignment_edit.dart';
 
 class GameAdminAssignments extends StatefulWidget {
   final String gameId;
@@ -115,6 +114,7 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
         ),
         Divider(),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.edit),
@@ -140,10 +140,10 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
           _levelOfAssignments = 1;
           break;
         case 'Gemiddeld':
-          _levelOfAssignments = 3;
+          _levelOfAssignments = 2;
           break;
         case 'Moeilijk':
-          _levelOfAssignments = 5;
+          _levelOfAssignments = 3;
           break;
         default:
           _levelOfAssignments = 0;
@@ -154,15 +154,16 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
   Widget _displayExistingAssignments(
       BuildContext context, int numberOfAssignments) {
     return ListTile(
-        // leading: Icon(Icons.done),
-        title: Text('Opdrachten zijn klaar!'),
-        subtitle: Text('Spel heeft $numberOfAssignments opdrachten'),
-        trailing: IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () {
-            Navigator.pushNamed(context, '/assignments/' + widget.gameId);
-          },
-        ));
+      // leading: Icon(Icons.done),
+      title: Text('Opdrachten zijn klaar!'),
+      subtitle: Text('Spel heeft $numberOfAssignments opdrachten'),
+      trailing: IconButton(
+        icon: Icon(Icons.edit),
+        onPressed: () {
+          Navigator.pushNamed(context, '/assignments/' + widget.gameId);
+        },
+      ),
+    );
   }
 
   @override

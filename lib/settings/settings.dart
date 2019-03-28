@@ -122,3 +122,48 @@ const List<Map<String, dynamic>> ASSIGNMENTS = [
 {'assignment': 'een kerstbal', 'isOutside': false, 'level': 2, 'theme': 'christmas', 'maxPoints': 3},
 
 ];
+
+const TEAM_NAMES = [
+'TeamSelfie',
+'Selfie4Life',
+'I<3Selfie',
+'Selfie4Ever',
+'SuperSelfie',
+'De Selfies',
+'SuperDuperSelfies',
+'SunnySelfie',
+'SelfieIt',
+'SeeMySelfie',
+'TheBestSelfieMakers',
+'HappySelfieMakers',
+'TrueSelfies',
+'KardashianSelfies',
+'BeMySelfie',
+'HelloSelfies',
+'TheOnlySelfies',
+'WeLoveSelfies',
+'TakeMySelfie',
+];
+
+const List<Map<String, dynamic>> TEAM_COLORS =
+[
+{'color': "#F44336", 'colorLabel': "Rood"},
+{'color': "#E91E63", 'colorLabel': "Roze"},
+{'color': "#9C27B0", 'colorLabel': "Paars"},
+{'color': "#673AB7", 'colorLabel': "Donkerpaars"},
+{'color': "#3F51B5", 'colorLabel': "Indigo"},
+{'color': "#2196F3", 'colorLabel': "Blauw"},
+{'color': "#03A9F4", 'colorLabel': "Lichtblauw"},
+{'color': "#00BCD4", 'colorLabel': "Cyaan"},
+{'color': "#009688", 'colorLabel': "Blauwgroen"},
+{'color': "#4CAF50", 'colorLabel': "Groen"},
+{'color': "#8BC34A", 'colorLabel': "Lichtgroen"},
+{'color': "#CDDC39", 'colorLabel': "Limoen"},
+{'color': "#FFEB3B", 'colorLabel': "Geel"},
+{'color': "#FFC107", 'colorLabel': "Amber"},
+{'color': "#FF9800", 'colorLabel': "Oranje"},
+{'color': "#FF5722", 'colorLabel': "Oranjerood"},
+{'color': "#795548", 'colorLabel': "Bruin"},
+{'color': "#9E9E9E", 'colorLabel': "Grijs"},
+{'color': "#607D8B", 'colorLabel': "Blauwgrijs"}
+];

@@ -162,4 +162,12 @@ mixin UserModel on Model {
     _auth.signOut();
   }
 
+  Future<String> getUserDisplayName(String userId) async {
+    DocumentSnapshot userSnap = await _db.collection('users').document(userId).get();
+    if(userSnap.exists){ 
+      return userSnap.data['displayName'];
+    }
+    return null;
+  }
+
 }

@@ -41,8 +41,10 @@ class _GameAdminPageState extends State<GameAdminPage> {
               : StepState.indexed),
       Step(
           title: Text('Teams'),
-          content: GameAdminTeams(game.id),
-          state: StepState.indexed),
+          content: GameAdminTeams(game),
+          state: game.status.teamsCreated
+              ? StepState.complete
+              : StepState.indexed),
       Step(
           title: Text('Klaar'),
           content: Text('step 3'),

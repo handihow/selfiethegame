@@ -44,6 +44,7 @@ class GameAdminJuryMembers extends StatelessWidget {
         ),
         SizedBox(height: 10.0),
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             FlatButton(
               child: Text('NEE BEDANKT'),

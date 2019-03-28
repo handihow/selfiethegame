@@ -24,8 +24,7 @@ class _GameJuryMembersPageState extends State<GameJuryMembersPage> {
         Icons.label,
         color: Theme.of(context).primaryColor,
       );
-    } else if (widget.game.judges != null &&
-        widget.game.judges.contains(user.uid)) {
+    } else if (user.judging != null && user.judging.contains(widget.game.id)) {
       leadingIcon = Icon(
         Icons.label,
         color: Theme.of(context).primaryColor,
@@ -43,8 +42,7 @@ class _GameJuryMembersPageState extends State<GameJuryMembersPage> {
         icon: Icon(Icons.check),
         onPressed: null,
       );
-    } else if (widget.game.judges != null &&
-        widget.game.judges.contains(user.uid)) {
+    } else if (user.judging != null && user.judging.contains(widget.game.id)) {
       trailingIconButton = IconButton(
         icon: Icon(Icons.remove),
         onPressed: () {
@@ -68,8 +66,7 @@ class _GameJuryMembersPageState extends State<GameJuryMembersPage> {
     Widget subtitle;
     if (widget.game.administrator == user.uid) {
       subtitle = Text('Beheerder');
-    } else if (widget.game.judges != null &&
-        widget.game.judges.contains(user.uid)) {
+    } else if (user.judging != null && user.judging.contains(widget.game.id)) {
       subtitle = Text('Speler en jurylid');
     } else {
       subtitle = Text('Speler');

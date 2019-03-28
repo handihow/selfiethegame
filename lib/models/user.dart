@@ -10,13 +10,19 @@ class User {
   final String displayName;
   final String photoURL;
   final AuthMethod authMethod;
+  final List<String> participating;
+  final List<String> playing;
+  final List<String> judging;
 
   User(
       {@required this.uid,
       @required this.email,
       @required this.displayName,
       this.photoURL,
-      @required this.authMethod});
+      @required this.authMethod,
+      this.participating,
+      this.playing,
+      this.judging});
 
    factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
     Map<String, dynamic> toJson() => _$UserToJson(this);
