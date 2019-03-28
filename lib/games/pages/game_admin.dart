@@ -32,11 +32,13 @@ class _GameAdminPageState extends State<GameAdminPage> {
       Step(
           title: Text('Opdrachten'),
           content: GameAdminAssignments(game.id),
-          state: game.status.assigned ? StepState.complete: StepState.indexed),
+          state: game.status.assigned ? StepState.complete : StepState.indexed),
       Step(
           title: Text('Juryleden'),
           content: GameAdminJuryMembers(game),
-          state: game.status.judgesAssigned ? StepState.complete : StepState.indexed),
+          state: game.status.judgesAssigned
+              ? StepState.complete
+              : StepState.indexed),
       Step(
           title: Text('Teams'),
           content: GameAdminTeams(game.id),
@@ -76,6 +78,19 @@ class _GameAdminPageState extends State<GameAdminPage> {
       },
       type: StepperType.vertical,
       steps: _mySteps(game),
+      controlsBuilder: (BuildContext context,
+          {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+        return Row(
+          children: <Widget>[
+            Container(
+              child: null,
+            ),
+            Container(
+              child: null,
+            ),
+          ],
+        );
+      },
     );
   }
 

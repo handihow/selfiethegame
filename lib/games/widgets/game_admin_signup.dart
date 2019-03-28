@@ -11,7 +11,15 @@ class GameAdminSignUp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text("Spelers kunnen zich aanmelden met de code: "),
+        Text(
+          'Spelers melden zich aan via hun app',
+          style: TextStyle(
+            // fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 10.0),
+        Text("Aanmelden kan met de code: "),
         Text(
           code,
           style: TextStyle(
@@ -19,8 +27,8 @@ class GameAdminSignUp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        Divider(),
-        Text("Of scan om de code automatisch te vullen"),
+        SizedBox(height: 10.0),
+        Text("of door de QR code te scannen"),
         SizedBox(height: 10.0),
         QrImage(
           data: code,

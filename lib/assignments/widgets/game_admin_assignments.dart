@@ -60,7 +60,13 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
   Widget _makeNewAssignments(BuildContext context, AppModel model) {
     return Column(
       children: <Widget>[
-        Text('Maak automatisch opdrachten voor het spel!'),
+        Text(
+          'Maak opdrachten voor het spel',
+          style: TextStyle(
+            // fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         SizedBox(
           height: 10.0,
         ),
@@ -108,14 +114,17 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
           onChanged: _handleTypeOfAssignmentsChange,
         ),
         Divider(),
-        ButtonBar(
+        Row(
           children: <Widget>[
-            FlatButton(child: Text('HANDMATIG') ,onPressed: () {
-            Navigator.pushNamed(context, '/assignments/' + widget.gameId);
-          } ,),
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.pushNamed(context, '/assignments/' + widget.gameId);
+              },
+            ),
             RaisedButton(
               onPressed: () => _createNewAssignments(model),
-              child: Text('AUTOMATISCH'),
+              child: Text('MAAK OPDRACHTEN'),
             ),
           ],
         )
@@ -142,7 +151,8 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
     });
   }
 
-  Widget _displayExistingAssignments(BuildContext context, int numberOfAssignments) {
+  Widget _displayExistingAssignments(
+      BuildContext context, int numberOfAssignments) {
     return ListTile(
         // leading: Icon(Icons.done),
         title: Text('Opdrachten zijn klaar!'),
@@ -168,7 +178,8 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
                   snapshot.data.documents.length == 0) {
                 return _makeNewAssignments(context, model);
               } else {
-                return _displayExistingAssignments(context, snapshot.data.documents.length);
+                return _displayExistingAssignments(
+                    context, snapshot.data.documents.length);
               }
             });
       },

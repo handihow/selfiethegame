@@ -61,18 +61,16 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
           content:
               Text("Je verwijdert hiermee alle opdrachten. Wil je doorgaan?"),
           actions: <Widget>[
-            RaisedButton(
-              child: Text('Annuleren'),
-              color: Theme.of(context).primaryColor,
-              textColor: Colors.white,
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('ANNULEREN'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
-            RaisedButton(
-              child: Text('Verwijderen'),
-              color: Theme.of(context).errorColor,
-              textColor: Colors.white,
+            FlatButton(
+              textColor: Theme.of(context).errorColor,
+              child: Text('VERWIJDEREN'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },

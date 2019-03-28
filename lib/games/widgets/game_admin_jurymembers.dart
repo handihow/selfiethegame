@@ -26,9 +26,6 @@ class GameAdminJuryMembers extends StatelessWidget {
       children: <Widget>[
         Text(
           'Juryleden kunnen punten geven aan selfies',
-          style: TextStyle(
-            fontSize: 16.0,
-          ),
         ),
         SizedBox(height: 10.0),
         Text(
@@ -46,7 +43,7 @@ class GameAdminJuryMembers extends StatelessWidget {
           style: TextStyle(fontStyle: FontStyle.italic),
         ),
         SizedBox(height: 10.0),
-        ButtonBar(
+        Row(
           children: <Widget>[
             FlatButton(
               child: Text('NEE BEDANKT'),
