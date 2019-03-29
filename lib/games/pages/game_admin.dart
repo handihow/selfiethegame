@@ -8,6 +8,7 @@ import '../widgets/game_admin_signup.dart';
 import '../../assignments/widgets/game_admin_assignments.dart';
 import '../widgets/game_admin_jurymembers.dart';
 import '../../teams/widgets/game_admin_teams.dart';
+import '../widgets/game_admin_ready.dart';
 
 class GameAdminPage extends StatefulWidget {
   final String gameId;
@@ -47,7 +48,7 @@ class _GameAdminPageState extends State<GameAdminPage> {
               : StepState.indexed),
       Step(
           title: Text('Klaar'),
-          content: Text('step 3'),
+          content: GameAdminReady(game),
           state: StepState.indexed),
     ];
   }

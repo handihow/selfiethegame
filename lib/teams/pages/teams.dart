@@ -58,8 +58,7 @@ class _TeamsPageState extends State<TeamsPage> {
       itemCount: returnedTeams.length,
       itemBuilder: (BuildContext context, int index) {
         return DragTarget(
-          builder:
-              (BuildContext context, List<String> candidateData, rejectedData) {
+          builder: (BuildContext context, List<String> members, rejectedData) {
             return Card(
               child: Column(
                 children: <Widget>[
@@ -76,10 +75,12 @@ class _TeamsPageState extends State<TeamsPage> {
                     height: returnedTeams[index].members.length * 60.0,
                     child: ListView.builder(
                       itemBuilder: (BuildContext context, int userIndex) {
-                        final String userId = returnedTeams[index].members[userIndex];
-                        final String displayName =returnedUsers.firstWhere((u) => u.uid == userId).displayName;
-                        return TeamMemberListTile(
-                            displayName);
+                        final String userId =
+                            returnedTeams[index].members[userIndex];
+                        final String displayName = returnedUsers
+                            .firstWhere((u) => u.uid == userId)
+                            .displayName;
+                        return TeamMemberListTile(displayName, userId, index);
                       },
                       itemCount: returnedTeams[index].members.length,
                     ),
@@ -88,9 +89,32 @@ class _TeamsPageState extends State<TeamsPage> {
               ),
             );
           },
+          onWillAccept: (data){
+            return _checkWillAccept(data, index);
+          },
+          onAccept: (data) {
+            _acceptPlayer(data, index, returnedTeams, model);
+          },
         );
       },
     );
+  }
+
+  bool _checkWillAccept(String data, int acceptingTeamIndex){
+    bool willAccept = false;
+    int playerTeamIndex = int.parse(data.substring(0,1));
+    if(acceptingTeamIndex != playerTeamIndex){
+      willAccept = true;
+    }
+    return willAccept;
+  }
+
+  _acceptPlayer(String data, int acceptingTeamIndex, List<Team> teams, AppModel model){
+    int playerTeamIndex = int.parse(data.substring(0,1));
+    String playerId = data.substring(2);
+    teams[playerTeamIndex].members.remove(playerId);
+    teams[acceptingTeamIndex].members.add(playerId);
+    model.updateTeams(widget.gameId, teams);
   }
 
   Widget _makeTrailingIconButton(Team team, AppModel model) {
