@@ -6,6 +6,7 @@ import 'package:random_string/random_string.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/assignment.dart';
+import '../../models/rating.dart';
 import '../../settings/settings.dart';
 
 class GameAdminAssignments extends StatefulWidget {

@@ -66,11 +66,15 @@ class GameAdminReady extends StatelessWidget {
           ],
         );
       },
-    ).then((bool isCanceled) async {
-      if (!isCanceled) {
-        model.updateGameStatus(game.id, 'closedAdmin', true);
-      }
-    });
+    ).then(
+      (bool isCanceled) async {
+        if (!isCanceled) {
+          model.updateGameStatus(game.id, 'closedAdmin', true);
+          Navigator.pushReplacementNamed(
+              context, '/games/' + game.id + '/view');
+        }
+      },
+    );
   }
 
   Widget _buildNotReadyContent(BuildContext context) {

@@ -140,14 +140,16 @@ mixin GameModel on Model {
   Future<void> updateCompleteStatus(
       String gameId, Map<String, dynamic> status) {
     DocumentReference gameRef = _db.collection('games').document(gameId);
-    return Firestore.instance.runTransaction((Transaction tx) async {
-      DocumentSnapshot gameSnapshot = await tx.get(gameRef);
-      if (gameSnapshot.exists) {
-        await tx.update(gameRef, {
-          'status': status,
-          'updated': DateTime.now(),
-        });
-      }
-    });
+    return Firestore.instance.runTransaction(
+      (Transaction tx) async {
+        DocumentSnapshot gameSnapshot = await tx.get(gameRef);
+        if (gameSnapshot.exists) {
+          await tx.update(gameRef, {
+            'status': status,
+            'updated': DateTime.now(),
+          });
+        }
+      },
+    );
   }
 }

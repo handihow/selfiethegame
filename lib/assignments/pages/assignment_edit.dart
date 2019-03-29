@@ -5,6 +5,7 @@ import 'package:random_string/random_string.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/assignment.dart';
+import '../../models/rating.dart';
 
 class AssignmentEditPage extends StatefulWidget {
   final String gameId;

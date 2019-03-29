@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import './rating.dart';
 
 part 'assignment.g.dart';
 @JsonSerializable()
@@ -38,20 +39,3 @@ class Assignment {
       dt;
 
 }
-
-enum Rating {
-  @JsonValue(0)
-  invalid, 
-  @JsonValue(1)
-  easy,
-  @JsonValue(2)
-  donotusebut,
-  @JsonValue(3)
-  medium,
-  @JsonValue(4)
-  iunderstandthisishacky,
-  @JsonValue(5)
-  hard
-
-}
-
