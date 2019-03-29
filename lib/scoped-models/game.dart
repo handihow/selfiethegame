@@ -124,12 +124,27 @@ mixin GameModel on Model {
 
   Future<void> updateGameStatus(
       String gameId, String statusProperty, bool statusValue) {
+    print('updating status...');
     DocumentReference gameRef = _db.collection('games').document(gameId);
     return Firestore.instance.runTransaction((Transaction tx) async {
       DocumentSnapshot gameSnapshot = await tx.get(gameRef);
       if (gameSnapshot.exists) {
         await tx.update(gameRef, {
           'status.$statusProperty': statusValue,
+          'updated': DateTime.now(),
+        });
+      }
+    });
+  }
+
+  Future<void> updateCompleteStatus(
+      String gameId, Map<String, dynamic> status) {
+    DocumentReference gameRef = _db.collection('games').document(gameId);
+    return Firestore.instance.runTransaction((Transaction tx) async {
+      DocumentSnapshot gameSnapshot = await tx.get(gameRef);
+      if (gameSnapshot.exists) {
+        await tx.update(gameRef, {
+          'status': status,
           'updated': DateTime.now(),
         });
       }
