@@ -6,8 +6,8 @@ part of 'image.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Image _$ImageFromJson(Map json) {
-  return Image(
+ImageRef _$ImageRefFromJson(Map json) {
+  return ImageRef(
       id: json['id'] as String,
       pathOriginal: json['pathOriginal'] as String,
       path: json['path'] as String,
@@ -20,16 +20,16 @@ Image _$ImageFromJson(Map json) {
       teamName: json['teamName'] as String,
       created: json['created'] == null
           ? null
-          : Image._dateTimeDoNothingSerializer(json['created'] as DateTime),
+          : ImageRef._dateTimeDoNothingSerializer(json['created'] as DateTime),
       updated: json['updated'] == null
           ? null
-          : Image._dateTimeDoNothingSerializer(json['updated'] as DateTime),
+          : ImageRef._dateTimeDoNothingSerializer(json['updated'] as DateTime),
       size: json['size'] as int,
       imageState: json['imageState'] as String,
       maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']));
 }
 
-Map<String, dynamic> _$ImageToJson(Image instance) => <String, dynamic>{
+Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
       'id': instance.id,
       'pathOriginal': instance.pathOriginal,
       'path': instance.path,
@@ -42,10 +42,10 @@ Map<String, dynamic> _$ImageToJson(Image instance) => <String, dynamic>{
       'teamName': instance.teamName,
       'created': instance.created == null
           ? null
-          : Image._dateTimeDoNothingSerializer(instance.created),
+          : ImageRef._dateTimeDoNothingSerializer(instance.created),
       'updated': instance.updated == null
           ? null
-          : Image._dateTimeDoNothingSerializer(instance.updated),
+          : ImageRef._dateTimeDoNothingSerializer(instance.updated),
       'size': instance.size,
       'imageState': instance.imageState,
       'maxPoints': _$RatingEnumMap[instance.maxPoints]

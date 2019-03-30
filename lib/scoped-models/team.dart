@@ -19,11 +19,18 @@ mixin TeamModel on Model {
     return _db.collection('teams').add(team.toJson());
   }
 
-  Stream<QuerySnapshot> fetchTeam(String gameId, String userId){
-    return _db
+  Future<Team> fetchTeam(String gameId, String userId) async {
+    QuerySnapshot teamSnaps = await _db
       .collection('teams')
       .where('gameId', isEqualTo: gameId).where('members', arrayContains: userId)
-      .snapshots();
+      .snapshots().first;
+    if(teamSnaps.documents.isEmpty){
+      return null;
+    }
+    final Map<String, dynamic> teamData = teamSnaps.documents[0].data;
+    teamData['id'] = teamSnaps.documents[0].documentID;
+    final Team team = Team.fromJson(teamData);
+    return team;
   }
 
    //fetch teams for a game

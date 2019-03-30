@@ -44,13 +44,13 @@ mixin ImageModel on Model {
   }
 
   //update single image
-  Future<void> updateImageReference(Image image){
+  Future<void> updateImageReference(ImageRef image){
     return _db.collection('images').document(image.id).setData(image.toJson(), merge: true);
   }
 
  
   //delete single image
-	Future<void> deleteImage(Image image) async {
+	Future<void> deleteImage(ImageRef image) async {
     await _storage.ref().child(image.path).delete();
     await _storage.ref().child(image.pathOriginal).delete();
     await _storage.ref().child(image.pathTN).delete();

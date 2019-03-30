@@ -13,40 +13,27 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   bool _loading = false;
-  AppModel _model = AppModel();
-
-  @override
-  initState() {
-    super.initState();
-    _model.loading.listen((state) => setState(() => _loading = state));
-  }
-  
 
   Widget _buildLogoutButton(AppModel model) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-         RaisedButton(
-          child: Text('BEWERK'),
-          onPressed: () {},
-        ),
-        RaisedButton(
-          color: Theme.of(context).errorColor,
-          textColor: Colors.white,
-          child: Text('LOG UIT'),
-          onPressed: () {
-             model.signOut();
-             Navigator.pushReplacementNamed(context, '/');
-          },
-        )
-      ],
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: RaisedButton(
+        color: Theme.of(context).primaryColor,
+        textColor: Colors.white,
+        child: Text('LOG UIT'),
+        onPressed: () {
+          model.signOut();
+          Navigator.pushReplacementNamed(context, '/');
+        },
+      ),
     );
   }
 
   Widget _avatarBuilder(model) {
-    return Center(
+    return Hero(
+      tag: model.authenticatedUser.displayName,
       child: CircleAvatar(
-        radius: 30.0,
+        radius: 50.0,
         backgroundImage: NetworkImage(model.authenticatedUser.photoURL),
         backgroundColor: Colors.transparent,
       ),
@@ -126,6 +113,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       body: ScopedModelDescendant<AppModel>(
         builder: (BuildContext context, Widget child, AppModel model) {
+          model.loading.listen((state) => setState(() => _loading = state));
           return _loadingProfilePage(model);
         },
       ),

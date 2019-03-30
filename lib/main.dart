@@ -96,7 +96,7 @@ class _SelfieGameState extends State<SelfieGameApp> {
               return MaterialPageRoute<bool>(
                 builder: (BuildContext context) => TeamsPage(gameId),
               );
-            }
+            } 
           },
           onUnknownRoute: (RouteSettings settings) {
             return MaterialPageRoute(

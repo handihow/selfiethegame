@@ -5,7 +5,7 @@ import './rating.dart';
 part 'image.g.dart';
 @JsonSerializable()
 
-class Image {
+class ImageRef {
   final String id;
   final String pathOriginal;
   final String path;
@@ -27,7 +27,7 @@ class Image {
   final Rating maxPoints;
 
 
-  Image({
+  ImageRef({
     @required this.id,
     this.pathOriginal,
     this.path,
@@ -45,8 +45,8 @@ class Image {
     @required this.maxPoints,
   });
 
-  factory Image.fromJson(Map<String, dynamic> json) => _$ImageFromJson(json);
-  Map<String, dynamic> toJson() => _$ImageToJson(this);
+  factory ImageRef.fromJson(Map<String, dynamic> json) => _$ImageRefFromJson(json);
+  Map<String, dynamic> toJson() => _$ImageRefToJson(this);
 
   static DateTime _dateTimeDoNothingSerializer(DateTime dt) =>
       dt;

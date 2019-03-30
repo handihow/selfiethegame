@@ -142,7 +142,7 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildFacebookLoginButton() {
+  Widget _buildFacebookLoginButton(Function facebookSignIn) {
     return RaisedButton(
       color: Colors.blue,
       textColor: Colors.white,
@@ -153,7 +153,7 @@ class _AuthPageState extends State<AuthPage> {
           Text('INLOGGEN MET FACEBOOK'),
         ],
       ),
-      onPressed: () {},
+      onPressed: () => facebookSignIn(),
     );
   }
 
@@ -199,8 +199,8 @@ class _AuthPageState extends State<AuthPage> {
                             _buildRegistrationButton(),
                             Divider(),
                             _buildGoogleLoginButton(model.googleSignIn),
-                            _buildFacebookLoginButton(),
-                            _buildTwitterLoginButton(),
+                            _buildFacebookLoginButton(model.facebookSignIn),
+                            // _buildTwitterLoginButton(),
                           ],
                         );
                       },

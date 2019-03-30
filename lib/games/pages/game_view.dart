@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/game.dart';
+import '../../models/team.dart';
 import '../../assignments/widgets/game_view_assignments.dart';
 
 class GameViewPage extends StatefulWidget {
@@ -15,6 +16,10 @@ class GameViewPage extends StatefulWidget {
 }
 
 class _GameViewPageState extends State<GameViewPage> {
+
+  Team _team;
+  bool _hasTeam = false;
+
   Widget _buildGamePage(BuildContext context, Game game, AppModel model) {
     return DefaultTabController(
       length: 3,
@@ -32,7 +37,7 @@ class _GameViewPageState extends State<GameViewPage> {
         ),
         body: TabBarView(
           children: [
-            GameViewAssignments(game),
+            GameViewAssignments(game, _team),
             Icon(Icons.image),
             Icon(Icons.chat),
           ],
@@ -142,6 +147,25 @@ class _GameViewPageState extends State<GameViewPage> {
     });
   }
 
+  Widget _buildProgressIndicatorWidget(){
+    return Scaffold(
+                appBar: AppBar(
+                  title: Text('Spel wordt geladen...'),
+                ),
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+  }
+
+  _fetchTeam(AppModel model) async {
+    Team returnedTeam = await model.fetchTeam(widget.gameId, model.authenticatedUser.uid);
+    setState(() {
+      _team =returnedTeam;
+      _hasTeam = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
@@ -152,14 +176,10 @@ class _GameViewPageState extends State<GameViewPage> {
             if (snapshot.connectionState == ConnectionState.waiting ||
                 !snapshot.hasData ||
                 model.authenticatedUser == null) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text('Spel wordt geladen...'),
-                ),
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+              return _buildProgressIndicatorWidget();
+            } else if (!_hasTeam) {
+              _fetchTeam(model);
+              return _buildProgressIndicatorWidget();
             } else {
               final Map<String, dynamic> gameData = snapshot.data.data;
               gameData['id'] = widget.gameId;

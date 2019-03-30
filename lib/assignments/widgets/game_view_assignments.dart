@@ -5,10 +5,14 @@ import 'package:scoped_model/scoped_model.dart';
 import '../../scoped-models/main.dart';
 import '../../models/game.dart';
 import '../../models/assignment.dart';
+import '../../models/team.dart';
+import '../../models/image.dart';
+import './game_view_assignment.dart';
 
 class GameViewAssignments extends StatefulWidget {
   final Game game;
-  GameViewAssignments(this.game);
+  final Team team;
+  GameViewAssignments(this.game, this.team);
 
   @override
   State<StatefulWidget> createState() {
@@ -18,22 +22,21 @@ class GameViewAssignments extends StatefulWidget {
 
 class _GameViewAssignmentsState extends State<GameViewAssignments> {
   Widget _displayExistingAssignments(BuildContext context, AppModel model,
-      List<Assignment> returnedAssignments) {
+      List<Assignment> returnedAssignments, List<ImageRef> returnedImages) {
     return ListView.separated(
       separatorBuilder: (context, index) => Divider(),
       padding: const EdgeInsets.all(10.0),
       itemCount: returnedAssignments.length,
       itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://cdn.pixabay.com/photo/2019/02/06/15/18/puppy-3979350_960_720.jpg'),
-          ),
-          title: Text(returnedAssignments[index].assignment),
-          subtitle: Text('Maximum score: ' +
-              returnedAssignments[index].maxPoints.index.toString()),
-          onTap: () {},
-        );
+        final ImageRef assignmentImage = returnedImages.firstWhere((a) {
+          bool hasImage = false;
+          if (a.teamId == widget.team.id &&
+              a.assignmentId == returnedAssignments[index].id) {
+            hasImage = true;
+          }
+          return hasImage;
+        }, orElse: () => null);
+        return GameViewAssignment(returnedAssignments[index], assignmentImage, widget.team, model.authenticatedUser);
       },
     );
   }
@@ -44,8 +47,29 @@ class _GameViewAssignmentsState extends State<GameViewAssignments> {
       child: Text('Spel is nog niet begonnen'),
     );
     if (widget.game.status.playing) {
-      returnedContent =
-          _displayExistingAssignments(context, model, returnedAssignments);
+      returnedContent = StreamBuilder(
+        stream: model.fetchTeamImageReferences(widget.team.id),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            List<ImageRef> returnedImages = [];
+            if (snapshot.hasData) {
+              snapshot.data.documents.forEach((DocumentSnapshot document) {
+                final String imageId = document.documentID;
+                final Map<String, dynamic> imageData = document.data;
+                imageData['id'] = imageId;
+                final ImageRef returnedImage = ImageRef.fromJson(imageData);
+                returnedImages.add(returnedImage);
+              });
+            }
+            return _displayExistingAssignments(
+                context, model, returnedAssignments, returnedImages);
+          }
+        },
+      );
     } else if (widget.game.status.pauzed) {
       returnedContent = Center(
         child: Text('Spel is gepauzeerd'),

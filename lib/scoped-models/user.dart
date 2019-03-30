@@ -3,12 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 
 import '../models/user.dart';
 import '../models/contact-list.dart';
 
 mixin UserModel on Model {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FacebookLogin _facebookLogin = FacebookLogin();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final Firestore _db = Firestore.instance;
   PublishSubject loading = PublishSubject();
@@ -26,7 +30,9 @@ mixin UserModel on Model {
       _authenticatedUser = User(
           uid: userData['uid'],
           email: userData['email'],
-          authMethod: userData['authMethod'] != null ? AuthMethod.values[userData['authMethod']] : AuthMethod.unknown,
+          authMethod: userData['authMethod'] != null
+              ? AuthMethod.values[userData['authMethod']]
+              : AuthMethod.unknown,
           displayName: userData['displayName'] != null
               ? userData['displayName']
               : 'Anoniem',
@@ -98,10 +104,41 @@ mixin UserModel on Model {
     }
   }
 
+  Future<FirebaseUser> facebookSignIn() async {
+    loading.add(true);
+    FacebookLoginResult result = await _facebookLogin
+        .logInWithReadPermissions(['email', 'public_profile']);
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final token = result.accessToken.token;
+        // final graphResponse = await http.get(
+        //     'https://graph.facebook.com/v2.12/me?fields=name,first_name,last_name,email&access_token=${token}');
+        // final profile = json.decode(graphResponse.body);
+        // print(profile);
+        AuthCredential credential =
+            FacebookAuthProvider.getCredential(accessToken: token);
+        final FirebaseUser user =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+        await updateUserData(user, AuthMethod.facebook, null);
+        loading.add(false);
+        print("signed in " + user.displayName);
+        return user;
+        break;
+      case FacebookLoginStatus.cancelledByUser:
+        loading.add(false);
+        print('cancelled by user');
+        break;
+      case FacebookLoginStatus.error:
+        loading.add(false);
+        print(result.errorMessage);
+        break;
+    }
+    return null;
+  }
+
   Future<void> updateUserData(
       FirebaseUser user, AuthMethod method, String displayName) async {
-
-    if(user == null) {
+    if (user == null) {
       return print('no user');
     }
 
@@ -138,7 +175,7 @@ mixin UserModel on Model {
     final contactListSnap = await contactListRef.get();
     final contactListExists = contactListSnap.exists;
     print(contactListExists);
-    if(!contactListExists){
+    if (!contactListExists) {
       _addContactList(userId);
       return print('creating contact list');
     } else {
@@ -155,7 +192,10 @@ mixin UserModel on Model {
       createdAt: DateTime.now(),
       contacts: [],
     );
-    return _db.collection('contacts').document(userId).setData(newList.toJson());
+    return _db
+        .collection('contacts')
+        .document(userId)
+        .setData(newList.toJson());
   }
 
   void signOut() {
@@ -163,11 +203,11 @@ mixin UserModel on Model {
   }
 
   Future<String> getUserDisplayName(String userId) async {
-    DocumentSnapshot userSnap = await _db.collection('users').document(userId).get();
-    if(userSnap.exists){ 
+    DocumentSnapshot userSnap =
+        await _db.collection('users').document(userId).get();
+    if (userSnap.exists) {
       return userSnap.data['displayName'];
     }
     return null;
   }
-
 }
