@@ -19,13 +19,13 @@ Game _$GameFromJson(Map json) {
             )),
       date: json['date'] == null
           ? null
-          : Game._dateTimeDoNothingSerializer(json['date'] as DateTime),
+          : Game._timestampToDateSerializer(json['date']),
       created: json['created'] == null
           ? null
-          : Game._dateTimeDoNothingSerializer(json['created'] as DateTime),
+          : Game._timestampToDateSerializer(json['created']),
       updated: json['updated'] == null
           ? null
-          : Game._dateTimeDoNothingSerializer(json['updated'] as DateTime),
+          : Game._timestampToDateSerializer(json['updated']),
       administrator: json['administrator'] as String,
       judges: (json['judges'] as List)?.map((e) => e as String)?.toList(),
       players: (json['players'] as List)?.map((e) => e as String)?.toList(),

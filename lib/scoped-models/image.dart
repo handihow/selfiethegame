@@ -51,6 +51,7 @@ mixin ImageModel on Model {
  
   //delete single image
 	Future<void> deleteImage(ImageRef image) async {
+    print('deleting ' + image.path);
     await _storage.ref().child(image.path).delete();
     await _storage.ref().child(image.pathOriginal).delete();
     await _storage.ref().child(image.pathTN).delete();

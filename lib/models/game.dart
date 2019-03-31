@@ -2,21 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'game.g.dart';
-@JsonSerializable()
 
+@JsonSerializable()
 class Game {
   final String id;
   final String name;
   final String imageUrl;
   final String code;
   final Status status;
-  
+
   //timestamps
-  @JsonKey(fromJson: _dateTimeDoNothingSerializer, toJson: _dateTimeDoNothingSerializer)
+  @JsonKey(
+      fromJson: _timestampToDateSerializer,
+      toJson: _dateTimeDoNothingSerializer)
   final DateTime date;
-  @JsonKey(fromJson: _dateTimeDoNothingSerializer, toJson: _dateTimeDoNothingSerializer)
+  @JsonKey(
+      fromJson: _timestampToDateSerializer,
+      toJson: _dateTimeDoNothingSerializer)
   final DateTime created;
-  @JsonKey(fromJson: _dateTimeDoNothingSerializer, toJson: _dateTimeDoNothingSerializer)
+  @JsonKey(
+      fromJson: _timestampToDateSerializer,
+      toJson: _dateTimeDoNothingSerializer)
   final DateTime updated;
 
   //different user level user Ids
@@ -38,17 +44,26 @@ class Game {
       this.judges,
       this.players,
       this.participants});
-  
+
   factory Game.fromJson(Map<String, dynamic> json) => _$GameFromJson(json);
   Map<String, dynamic> toJson() => _$GameToJson(this);
 
-  static DateTime _dateTimeDoNothingSerializer(DateTime dt) =>
-      dt;
+  static DateTime _dateTimeDoNothingSerializer(DateTime dt) => dt;
+
+  static DateTime _timestampToDateSerializer(dt) {
+    try{
+      //this works on iOS
+      return dt.toDate();
+    } catch(e) {
+      //this works on Android
+      return dt;
+    }
+  }
 
 }
 
 @JsonSerializable()
-class Status{
+class Status {
   bool created;
   bool invited;
   bool judgesAssigned;
@@ -59,17 +74,16 @@ class Status{
   bool pauzed;
   bool finished;
 
-  Status({
-    @required this.created,
-    @required this.invited,
-    @required this.judgesAssigned,
-    @required this.teamsCreated,
-    @required this.assigned,
-    @required this.closedAdmin,
-    @required this.playing,
-    @required this.pauzed,
-    @required this.finished
-  });
+  Status(
+      {@required this.created,
+      @required this.invited,
+      @required this.judgesAssigned,
+      @required this.teamsCreated,
+      @required this.assigned,
+      @required this.closedAdmin,
+      @required this.playing,
+      @required this.pauzed,
+      @required this.finished});
 
   factory Status.fromJson(Map<String, dynamic> json) => _$StatusFromJson(json);
   Map<String, dynamic> toJson() => _$StatusToJson(this);

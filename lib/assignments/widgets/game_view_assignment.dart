@@ -6,6 +6,7 @@ import '../../models/assignment.dart';
 import '../../models/team.dart';
 import '../../models/user.dart';
 import '../pages/assignment.dart';
+import '../../images/pages/image_viewer.dart';
 
 class GameViewAssignment extends StatefulWidget {
   final Assignment assignment;
@@ -21,7 +22,7 @@ class GameViewAssignment extends StatefulWidget {
 }
 
 class _GameViewAssignmentState extends State<GameViewAssignment> {
-  String _url = 'https://via.placeholder.com/50x50.png?text=STG.com';
+  String _url = 'https://via.placeholder.com/80x80.png?text=processing..';
 
   @override
   void initState() {
@@ -37,12 +38,24 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
     }
   }
 
+  Widget _createHeroImage() {
+    return Hero(
+      child: Image(
+        image: NetworkImage(_url),
+        height: 80.0,
+        width: 80.0,
+        fit: BoxFit.fitWidth,
+      ),
+      tag: widget.image.id,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(_url),
-      ),
+      leading: widget.image == null
+          ? Icon(Icons.assignment)
+          : Icon(Icons.assignment_turned_in),
       title: Text(widget.assignment.assignment),
       subtitle: Text(
           'Maximum score: ' + widget.assignment.maxPoints.index.toString()),
@@ -50,12 +63,14 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (BuildContext context) {
-            return AssignmentPage(widget.assignment, widget.image, widget.team, widget.user);
+            return widget.image == null
+                ? AssignmentPage(
+                    widget.assignment, widget.image, widget.team, widget.user)
+                : ImageViewer(widget.image, _url);
           }),
         );
       },
-      trailing:
-          widget.image == null ? Icon(Icons.camera_alt) : Icon(Icons.done),
+      trailing: widget.image == null ? null : _createHeroImage(),
     );
   }
 }

@@ -12,8 +12,7 @@ ContactList _$ContactListFromJson(Map json) {
       count: json['count'] as int,
       createdAt: json['createdAt'] == null
           ? null
-          : ContactList._dateTimeDoNothingSerializer(
-              json['createdAt'] as DateTime),
+          : ContactList._timestampToDateSerializer(json['createdAt']),
       contacts: (json['contacts'] as List)
           ?.map((e) => e == null
               ? null

@@ -20,10 +20,10 @@ ImageRef _$ImageRefFromJson(Map json) {
       teamName: json['teamName'] as String,
       created: json['created'] == null
           ? null
-          : ImageRef._dateTimeDoNothingSerializer(json['created'] as DateTime),
+          : ImageRef._timestampToDateSerializer(json['created']),
       updated: json['updated'] == null
           ? null
-          : ImageRef._dateTimeDoNothingSerializer(json['updated'] as DateTime),
+          : ImageRef._timestampToDateSerializer(json['updated']),
       size: json['size'] as int,
       imageState: json['imageState'] as String,
       maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']));

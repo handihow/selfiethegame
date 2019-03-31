@@ -12,7 +12,7 @@ Chat _$ChatFromJson(Map json) {
       count: json['count'] as int,
       createdAt: json['createdAt'] == null
           ? null
-          : Chat._dateTimeDoNothingSerializer(json['createdAt'] as DateTime),
+          : Chat._timestampToDateSerializer(json['createdAt']),
       messages: (json['messages'] as List)
           ?.map((e) => e == null
               ? null
@@ -36,8 +36,7 @@ ChatMessage _$ChatMessageFromJson(Map json) {
       uid: json['uid'] as String,
       createdAt: json['createdAt'] == null
           ? null
-          : ChatMessage._dateTimeDoNothingSerializer(
-              json['createdAt'] as DateTime),
+          : ChatMessage._timestampToDateSerializer(json['createdAt']),
       content: json['content'] as String);
 }
 

@@ -18,12 +18,10 @@ Assignment _$AssignmentFromJson(Map json) {
       maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']),
       created: json['created'] == null
           ? null
-          : Assignment._dateTimeDoNothingSerializer(
-              json['created'] as DateTime),
+          : Assignment._timestampToDateSerializer(json['created']),
       updated: json['updated'] == null
           ? null
-          : Assignment._dateTimeDoNothingSerializer(
-              json['updated'] as DateTime));
+          : Assignment._timestampToDateSerializer(json['updated']));
 }
 
 Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>

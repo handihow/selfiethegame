@@ -3,8 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 import './rating.dart';
 
 part 'image.g.dart';
-@JsonSerializable()
 
+@JsonSerializable()
 class ImageRef {
   final String id;
   final String pathOriginal;
@@ -17,15 +17,18 @@ class ImageRef {
   final String teamId;
   final String teamName;
 
-  @JsonKey(fromJson: _dateTimeDoNothingSerializer, toJson: _dateTimeDoNothingSerializer)
+  @JsonKey(
+      fromJson: _timestampToDateSerializer,
+      toJson: _dateTimeDoNothingSerializer)
   final DateTime created;
-  @JsonKey(fromJson: _dateTimeDoNothingSerializer, toJson: _dateTimeDoNothingSerializer)
+  @JsonKey(
+      fromJson: _timestampToDateSerializer,
+      toJson: _dateTimeDoNothingSerializer)
   final DateTime updated;
 
   final int size;
   final String imageState;
   final Rating maxPoints;
-
 
   ImageRef({
     @required this.id,
@@ -45,10 +48,19 @@ class ImageRef {
     @required this.maxPoints,
   });
 
-  factory ImageRef.fromJson(Map<String, dynamic> json) => _$ImageRefFromJson(json);
+  factory ImageRef.fromJson(Map<String, dynamic> json) =>
+      _$ImageRefFromJson(json);
   Map<String, dynamic> toJson() => _$ImageRefToJson(this);
 
-  static DateTime _dateTimeDoNothingSerializer(DateTime dt) =>
-      dt;
+  static DateTime _dateTimeDoNothingSerializer(DateTime dt) => dt;
 
+  static DateTime _timestampToDateSerializer(dt) {
+    try {
+      //this works on iOS
+      return dt.toDate();
+    } catch (e) {
+      //this works on Android
+      return dt;
+    }
+  }
 }
