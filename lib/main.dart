@@ -17,6 +17,7 @@ import './scoped-models/main.dart';
 
 import './assignments/pages/assignments.dart';
 import './teams/pages/teams.dart';
+import './chats/pages/chat.dart';
 
 void main() => runApp(SelfieGameApp());
 
@@ -95,6 +96,11 @@ class _SelfieGameState extends State<SelfieGameApp> {
               final String gameId = pathElements[2];
               return MaterialPageRoute<bool>(
                 builder: (BuildContext context) => TeamsPage(gameId),
+              );
+            } else if(pathElements[1] == 'chat') {
+              final String gameId = pathElements[2];
+              return MaterialPageRoute<bool>(
+                builder: (BuildContext context) => ChatPage(gameId),
               );
             } 
           },

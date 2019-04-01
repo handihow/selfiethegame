@@ -5,7 +5,6 @@ import '../../scoped-models/main.dart';
 import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../assignments/widgets/game_view_assignments.dart';
-import '../../chats/widgets/game_view_chat.dart';
 
 class GameViewPage extends StatefulWidget {
   final String gameId;
@@ -31,7 +30,7 @@ class _GameViewPageState extends State<GameViewPage>
 
   Widget _buildGamePage(BuildContext context, Game game, AppModel model) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           actions: _buildAppBarActions(game, model),
@@ -45,9 +44,6 @@ class _GameViewPageState extends State<GameViewPage>
               Tab(
                 icon: Icon(Icons.image),
               ),
-              Tab(
-                icon: Icon(Icons.chat),
-              ),
             ],
           ),
         ),
@@ -56,8 +52,13 @@ class _GameViewPageState extends State<GameViewPage>
           children: [
             GameViewAssignments(game, _team),
             Icon(Icons.image),
-            GameViewChat(game.id),
           ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.chat),
+          onPressed: () {
+           Navigator.pushNamed(context, '/chat/' + widget.gameId);
+          },
         ),
       ),
     );
