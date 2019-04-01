@@ -5,6 +5,7 @@ import '../../scoped-models/main.dart';
 import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../assignments/widgets/game_view_assignments.dart';
+import '../../chats/widgets/game_view_chat.dart';
 
 class GameViewPage extends StatefulWidget {
   final String gameId;
@@ -15,10 +16,18 @@ class GameViewPage extends StatefulWidget {
   _GameViewPageState createState() => _GameViewPageState();
 }
 
-class _GameViewPageState extends State<GameViewPage> {
-
+class _GameViewPageState extends State<GameViewPage>
+    with SingleTickerProviderStateMixin {
   Team _team;
   bool _hasTeam = false;
+  TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    tabController = TabController(vsync: this, length: 3);
+  }
 
   Widget _buildGamePage(BuildContext context, Game game, AppModel model) {
     return DefaultTabController(
@@ -28,18 +37,26 @@ class _GameViewPageState extends State<GameViewPage> {
           actions: _buildAppBarActions(game, model),
           title: Text(game.name),
           bottom: TabBar(
+            controller: tabController,
             tabs: [
-              Tab(icon: Icon(Icons.camera)),
-              Tab(icon: Icon(Icons.image)),
-              Tab(icon: Icon(Icons.chat)),
+              Tab(
+                icon: Icon(Icons.camera),
+              ),
+              Tab(
+                icon: Icon(Icons.image),
+              ),
+              Tab(
+                icon: Icon(Icons.chat),
+              ),
             ],
           ),
         ),
         body: TabBarView(
+          controller: tabController,
           children: [
             GameViewAssignments(game, _team),
             Icon(Icons.image),
-            Icon(Icons.chat),
+            GameViewChat(game.id),
           ],
         ),
       ),
@@ -147,21 +164,22 @@ class _GameViewPageState extends State<GameViewPage> {
     });
   }
 
-  Widget _buildProgressIndicatorWidget(){
+  Widget _buildProgressIndicatorWidget() {
     return Scaffold(
-                appBar: AppBar(
-                  title: Text('Spel wordt geladen...'),
-                ),
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
+      appBar: AppBar(
+        title: Text('Spel wordt geladen...'),
+      ),
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
   _fetchTeam(AppModel model) async {
-    Team returnedTeam = await model.fetchTeam(widget.gameId, model.authenticatedUser.uid);
+    Team returnedTeam =
+        await model.fetchTeam(widget.gameId, model.authenticatedUser.uid);
     setState(() {
-      _team =returnedTeam;
+      _team = returnedTeam;
       _hasTeam = true;
     });
   }

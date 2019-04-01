@@ -23,15 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordTextController = TextEditingController();
 
-  bool _loading = false;
-  AppModel _model = AppModel();
-
-  @override
-  initState() {
-    super.initState();
-    _model.loading.listen((state) => setState(() => _loading = state));
-  }
-
   Widget _buildNameTextField() {
     return TextFormField(
       keyboardType: TextInputType.text,
@@ -104,7 +95,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  void _onSubmit(BuildContext context, Function registerWithEmailAndPassword) async {
+  void _onSubmit(
+      BuildContext context, Function registerWithEmailAndPassword) async {
     if (!_formKey.currentState.validate()) {
       return;
     } else if (!_formData['acceptTerms']) {
@@ -187,35 +179,30 @@ class _RegisterPageState extends State<RegisterPage> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
 
-    return _loading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : Center(
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(30.0),
+        child: Center(
+          child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.all(30.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Container(
-                    width: targetWidth,
-                    child: ScopedModelDescendant<AppModel>(
-                      builder:
-                          (BuildContext context, Widget child, AppModel model) {
-                        return Column(
-                          children: <Widget>[
-                            Image.asset('assets/selfie_the_game_text.png'),
-                            Divider(),
-                            _buildRegistrationForm(
-                                context, model.registerWithEmailAndPassword)
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
+              width: targetWidth,
+              child: ScopedModelDescendant<AppModel>(
+                builder: (BuildContext context, Widget child, AppModel model) {
+                  return Column(
+                    children: <Widget>[
+                      Image.asset('assets/selfie_the_game_text.png'),
+                      Divider(),
+                      _buildRegistrationForm(
+                          context, model.registerWithEmailAndPassword)
+                    ],
+                  );
+                },
               ),
             ),
-          );
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -224,7 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
       appBar: AppBar(
         title: Text('Registreren'),
       ),
-      body: _loading ? CircularProgressIndicator() : _buildRegistrationPage(),
+      body: _buildRegistrationPage(),
     );
   }
 }
