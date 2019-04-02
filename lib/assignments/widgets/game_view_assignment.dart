@@ -24,21 +24,18 @@ class GameViewAssignment extends StatefulWidget {
 class _GameViewAssignmentState extends State<GameViewAssignment> {
   String _url = 'https://via.placeholder.com/80x80.png?text=processing..';
 
-  @override
-  void initState() {
-    super.initState();
-    if (widget.image != null) {
-      StorageReference ref =
+  void _downloadThumbnail(){
+     StorageReference ref =
           FirebaseStorage.instance.ref().child(widget.image.pathTN);
       ref.getDownloadURL().then((value) {
         setState(() {
           _url = value;
         });
       });
-    }
   }
 
   Widget _createHeroImage() {
+    _downloadThumbnail();
     return Hero(
       child: Image(
         image: NetworkImage(_url),

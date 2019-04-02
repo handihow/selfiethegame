@@ -5,6 +5,7 @@ import '../../scoped-models/main.dart';
 import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../assignments/widgets/game_view_assignments.dart';
+import '../../images/widgets/image_list_view.dart';
 
 class GameViewPage extends StatefulWidget {
   final String gameId;
@@ -51,7 +52,7 @@ class _GameViewPageState extends State<GameViewPage>
           controller: tabController,
           children: [
             GameViewAssignments(game, _team),
-            Icon(Icons.image),
+            ImageListView(widget.gameId),
           ],
         ),
         floatingActionButton: FloatingActionButton(

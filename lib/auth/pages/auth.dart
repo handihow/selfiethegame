@@ -157,20 +157,6 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  Widget _buildTwitterLoginButton() {
-    return RaisedButton(
-      color: Colors.lightBlue,
-      textColor: Colors.white,
-      child: Row(
-        children: <Widget>[
-          Icon(FontAwesomeIcons.twitter),
-          SizedBox(width: 10.0),
-          Text('INLOGGEN MET TWITTER'),
-        ],
-      ),
-      onPressed: () {},
-    );
-  }
 
   Widget _buildLoginPage() {
     final double deviceWidth = MediaQuery.of(context).size.width;

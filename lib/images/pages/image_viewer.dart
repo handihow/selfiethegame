@@ -18,13 +18,14 @@ class ImageViewer extends StatefulWidget {
 }
 
 class _ImageViewerState extends State<ImageViewer> {
-  String _url =
-      'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com';
+  String _url;
 
   @override
   void initState() {
     super.initState();
-    if (widget.image != null) {
+      setState(() {
+        _url = widget.placeholder;
+      });
       StorageReference ref =
           FirebaseStorage.instance.ref().child(widget.image.path);
       ref.getDownloadURL().then((value) {
@@ -32,7 +33,6 @@ class _ImageViewerState extends State<ImageViewer> {
           _url = value;
         });
       });
-    }
   }
 
   @override

@@ -40,7 +40,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             ),
             Divider(height: 1.0),
             Container(
-              decoration: new BoxDecoration(color: Theme.of(context).cardColor),
+              decoration: BoxDecoration(color: Theme.of(context).cardColor),
               padding: EdgeInsets.all(10.0),
               child: _buildInput(context, model),
             ),
@@ -93,7 +93,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             focusNode: _focusNode,
             decoration: InputDecoration(hintText: 'Jouw bericht'),
             onSubmitted: (String content) {
-              _sendChatMessage(content, model);
+              if(_messageController.text.isNotEmpty){
+                _sendChatMessage(content, model);
+              }
             },
           ),
         ),
@@ -102,8 +104,9 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
             child: IconButton(
               icon: Icon(Icons.send),
               onPressed: () {
-                print('pressed');
-                _sendChatMessage(_messageController.text, model);
+                if(_messageController.text.isNotEmpty){
+                  _sendChatMessage(_messageController.text, model);
+                }
               },
             ))
       ],
