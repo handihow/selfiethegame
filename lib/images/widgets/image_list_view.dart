@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../images/widgets/image_thumbnail.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
+import './image_thumbnail.dart';
+import '../pages/image_viewer.dart';
 
 class ImageListView extends StatefulWidget {
   final String gameId;
@@ -17,50 +18,97 @@ class ImageListView extends StatefulWidget {
   }
 }
 
-Widget _buildCarousel(List<ImageRef> returnedImages) {
-  return CarouselSlider(
-    height: 380.0,
-    items: returnedImages.map((imageRef) {
-      return Builder(builder: (BuildContext context) {
-        return Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(10.0),
-              alignment: Alignment(0.0, -1.0),
-              child: Text(imageRef.teamName + ' met ' + imageRef.assignment,
-                  style: Theme.of(context).textTheme.subhead),
-            ),
-            ImageThumbnail(imageRef, false, 500.0, 500.0),
-          ],
-        );
-      });
-    }).toList(),
-  );
-}
-
 class _ImageListViewState extends State<ImageListView> {
-  Widget _displayListImages(
-      BuildContext context, AppModel model, List<ImageRef> returnedImages) {
-    return Column(
-      children: [
-        _buildCarousel(returnedImages),
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+
+    return result;
+  }
+
+  List<Widget> _buildCarouselList(
+      BuildContext context, List<ImageRef> returnedImages) {
+    return map<Widget>(
+      returnedImages,
+      (index, imageRef) {
+        return Container(
+          margin: EdgeInsets.all(5.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            child: Stack(children: <Widget>[
+              ImageThumbnail(imageRef, false, 500, 500),
+              Positioned(
+                bottom: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromARGB(200, 0, 0, 0),
+                        Color.fromARGB(0, 0, 0, 0)
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                    ),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Text(
+                    returnedImages[index].teamName +
+                        ' met ' +
+                        returnedImages[index].assignment,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+        );
+      },
+    ).toList();
+  }
+
+  Widget _displayCarouselImages(
+      BuildContext context, List<ImageRef> returnedImages) {
+    return Column(children: [
+      CarouselSlider(
+        items: _buildCarouselList(context, returnedImages),
+        autoPlay: false,
+        enlargeCenterPage: true,
+        aspectRatio: 1.0,
+      ),
+    ]);
+  }
+
+  Widget _buildImageViewerPage(
+      BuildContext context, List<ImageRef> returnedImages) {
+    return ListView(
+      children: <Widget>[
+        _displayCarouselImages(context, returnedImages),
         ButtonBar(
           alignment: MainAxisAlignment.center,
           children: <Widget>[
             IconButton(
-              onPressed: () {},
               icon: Icon(Icons.thumb_up),
+              onPressed: () {},
             ),
             IconButton(
-              onPressed: () {},
               icon: Icon(Icons.comment),
+              onPressed: () {},
             ),
             IconButton(
-              onPressed: () {},
               icon: Icon(Icons.assessment),
-            ),
+              onPressed: () {},
+            )
           ],
-        )
+        ),
       ],
     );
   }
@@ -87,7 +135,7 @@ class _ImageListViewState extends State<ImageListView> {
                 returnedImages.add(returnedImage);
               });
             }
-            return _displayListImages(context, model, returnedImages);
+            return _buildImageViewerPage(context, returnedImages);
           }
         },
       );

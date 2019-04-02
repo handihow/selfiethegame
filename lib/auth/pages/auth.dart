@@ -94,7 +94,7 @@ class _AuthPageState extends State<AuthPage> {
           SizedBox(height: 10.0),
           _buildPasswordTextField(),
           RaisedButton(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).accentColor,
             textColor: Colors.white,
             child: Row(
               children: <Widget>[
@@ -128,35 +128,22 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildGoogleLoginButton(Function googleSignIn) {
-    return RaisedButton(
+    return IconButton(
+      iconSize: 40.0,
       color: Colors.red,
-      textColor: Colors.white,
-      child: Row(
-        children: <Widget>[
-          Icon(FontAwesomeIcons.google),
-          SizedBox(width: 10.0),
-          Text('INLOGGEN MET GOOGLE'),
-        ],
-      ),
+      icon: Icon(FontAwesomeIcons.google),
       onPressed: () => googleSignIn(),
     );
   }
 
   Widget _buildFacebookLoginButton(Function facebookSignIn) {
-    return RaisedButton(
+    return IconButton(
+      iconSize: 40.0,
       color: Colors.blue,
-      textColor: Colors.white,
-      child: Row(
-        children: <Widget>[
-          Icon(FontAwesomeIcons.facebook),
-          SizedBox(width: 10.0),
-          Text('INLOGGEN MET FACEBOOK'),
-        ],
-      ),
+      icon: Icon(FontAwesomeIcons.facebook),
       onPressed: () => facebookSignIn(),
     );
   }
-
 
   Widget _buildLoginPage() {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -168,6 +155,13 @@ class _AuthPageState extends State<AuthPage> {
           )
         : Center(
             child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor
+                // image: DecorationImage(
+                //   image: AssetImage("assets/chat_bg.png"),
+                //   fit: BoxFit.cover,
+                // ),
+              ),
               padding: EdgeInsets.all(30.0),
               child: Center(
                 child: SingleChildScrollView(
@@ -183,9 +177,14 @@ class _AuthPageState extends State<AuthPage> {
                             _buildEmailPasswordForm(
                                 context, model.signInWithEmailAndPassword),
                             _buildRegistrationButton(),
-                            Divider(),
-                            _buildGoogleLoginButton(model.googleSignIn),
-                            _buildFacebookLoginButton(model.facebookSignIn),
+                            ButtonBar(
+                              alignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                _buildGoogleLoginButton(model.googleSignIn),
+                                _buildFacebookLoginButton(model.facebookSignIn),
+                              ],
+                            )
+
                             // _buildTwitterLoginButton(),
                           ],
                         );
