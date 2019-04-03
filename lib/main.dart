@@ -18,6 +18,7 @@ import './scoped-models/main.dart';
 import './assignments/pages/assignments.dart';
 import './teams/pages/teams.dart';
 import './chats/pages/chat.dart';
+import './settings/settings.dart';
 
 void main() => runApp(SelfieGameApp());
 
@@ -29,6 +30,8 @@ class SelfieGameApp extends StatefulWidget {
 }
 
 class _SelfieGameState extends State<SelfieGameApp> {
+
+
   Widget _loadingInitialScreen(AppModel model) {
     return new StreamBuilder<FirebaseUser>(
         stream: FirebaseAuth.instance.onAuthStateChanged,
@@ -58,8 +61,9 @@ class _SelfieGameState extends State<SelfieGameApp> {
           builder: (BuildContext context, Widget child, AppModel model) {
         return MaterialApp(
           theme: ThemeData(
-              primarySwatch: Colors.deepPurple,
-              accentColor: Colors.amber,
+              primarySwatch: primaryColorShades,
+              accentColor: accentColorShades,
+              primaryColorLight: primaryColorShades[50],
               errorColor: Colors.red,
               buttonColor: Colors.amber),
           home: _loadingInitialScreen(model),

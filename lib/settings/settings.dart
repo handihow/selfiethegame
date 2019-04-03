@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 const USERLEVEL = {
   'participant': {
     'level': 'deelnemer',
@@ -356,3 +358,35 @@ const List<Map<String, dynamic>> TEAM_COLORS = [
   {'color': "#9E9E9E", 'colorLabel': "Grijs"},
   {'color': "#607D8B", 'colorLabel': "Blauwgrijs"}
 ];
+
+
+MaterialColor primaryColorShades = const MaterialColor(
+  0xFF040046, //donkerblauw
+  const {
+    50: Color(0xFFD2FFD4), //lichtgroen
+    100: Color(0xFF040046),
+    200: Color(0xFF040046),
+    300: Color(0xFF040046),
+    400: Color(0xFF040046),
+    500: Color(0xFF040046),
+    600: Color(0xFF040046),
+    700: Color(0xFF040046),
+    800: Color(0xFF040046),
+    900: Color(0xFF040046),
+  },
+);
+MaterialColor accentColorShades = const MaterialColor(
+  0xFF86FFCB, //groen
+  const {
+    50: Color(0xFFD2FFD4),
+    100: Color(0xFF86FFCB),
+    200: Color(0xFF86FFCB),
+    300: Color(0xFF86FFCB),
+    400: Color(0xFF86FFCB),
+    500: Color(0xFF86FFCB),
+    600: Color(0xFF86FFCB),
+    700: Color(0xFF86FFCB),
+    800: Color(0xFF86FFCB),
+    900: Color(0xFF86FFCB),
+  },
+);

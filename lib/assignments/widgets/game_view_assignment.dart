@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+import '../../scoped-models/main.dart';
 import '../../models/image.dart';
 import '../../models/assignment.dart';
 import '../../models/team.dart';
@@ -22,25 +24,28 @@ class GameViewAssignment extends StatefulWidget {
 }
 
 class _GameViewAssignmentState extends State<GameViewAssignment> {
-  String _url = 'https://via.placeholder.com/80x80.png?text=processing..';
+  String _url = 'https://via.placeholder.com/70x70.png?text=processing...';
 
-  void _downloadThumbnail(){
-     StorageReference ref =
+  @override
+  void initState() {
+    super.initState();
+    if (widget.image != null) {
+      StorageReference ref =
           FirebaseStorage.instance.ref().child(widget.image.pathTN);
       ref.getDownloadURL().then((value) {
         setState(() {
           _url = value;
         });
-      });
+      }).catchError((error) => print(error.message));
+    }
   }
 
   Widget _createHeroImage() {
-    _downloadThumbnail();
     return Hero(
       child: Image(
         image: NetworkImage(_url),
-        height: 80.0,
-        width: 80.0,
+        height: 70.0,
+        width: 70.0,
         fit: BoxFit.fitWidth,
       ),
       tag: widget.image.id,
@@ -49,25 +54,38 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: widget.image == null
-          ? Icon(Icons.assignment)
-          : Icon(Icons.assignment_turned_in),
-      title: Text(widget.assignment.assignment),
-      subtitle: Text(
-          'Maximum score: ' + widget.assignment.maxPoints.index.toString()),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return widget.image == null
-                ? AssignmentPage(
-                    widget.assignment, widget.image, widget.team, widget.user)
-                : ImageViewer(widget.image, _url);
-          }),
+    return ScopedModelDescendant<AppModel>(
+      builder: (BuildContext context, Widget child, AppModel model) {
+        return Container(
+          color: Colors.white,
+          child: ListTile(
+            leading: widget.image == null
+                ? Icon(
+                    Icons.assignment,
+                    color: Theme.of(context).primaryColor,
+                  )
+                : Icon(
+                    Icons.assignment_turned_in,
+                    color: Theme.of(context).primaryColor,
+                  ),
+            title: Text(widget.assignment.assignment),
+            subtitle: Text('Maximum score: ' +
+                widget.assignment.maxPoints.index.toString()),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return widget.image == null
+                      ? AssignmentPage(widget.assignment, widget.image,
+                          widget.team, widget.user)
+                      : ImageViewer(widget.image, _url);
+                }),
+              );
+            },
+            trailing: widget.image == null ? null : _createHeroImage(),
+          ),
         );
       },
-      trailing: widget.image == null ? null : _createHeroImage(),
     );
   }
 }

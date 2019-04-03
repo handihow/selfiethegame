@@ -52,10 +52,10 @@ mixin ImageModel on Model {
   //delete single image
 	Future<void> deleteImage(ImageRef image) async {
     print('deleting ' + image.path);
+    await _db.collection('images').document(image.id).delete();
     await _storage.ref().child(image.path).delete();
     await _storage.ref().child(image.pathOriginal).delete();
-    await _storage.ref().child(image.pathTN).delete();
-		await _db.collection('images').document(image.id).delete();
+    return _storage.ref().child(image.pathTN).delete();
 	}
 
   Stream<QuerySnapshot> getUserGameReactions(String gameId, String userId){

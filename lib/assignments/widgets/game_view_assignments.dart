@@ -23,21 +23,25 @@ class GameViewAssignments extends StatefulWidget {
 class _GameViewAssignmentsState extends State<GameViewAssignments> {
   Widget _displayExistingAssignments(BuildContext context, AppModel model,
       List<Assignment> returnedAssignments, List<ImageRef> returnedImages) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
-      padding: const EdgeInsets.all(10.0),
-      itemCount: returnedAssignments.length,
-      itemBuilder: (BuildContext context, int index) {
-        final ImageRef assignmentImage = returnedImages.firstWhere((a) {
-          bool hasImage = false;
-          if (a.teamId == widget.team.id &&
-              a.assignmentId == returnedAssignments[index].id) {
-            hasImage = true;
-          }
-          return hasImage;
-        }, orElse: () => null);
-        return GameViewAssignment(returnedAssignments[index], assignmentImage, widget.team, model.authenticatedUser);
-      },
+    return Container(
+      color: Theme.of(context).primaryColorLight,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => SizedBox(height: 10.0,),
+        padding: const EdgeInsets.all(10.0),
+        itemCount: returnedAssignments.length,
+        itemBuilder: (BuildContext context, int index) {
+          final ImageRef assignmentImage = returnedImages.firstWhere((a) {
+            bool hasImage = false;
+            if (a.teamId == widget.team.id &&
+                a.assignmentId == returnedAssignments[index].id) {
+              hasImage = true;
+            }
+            return hasImage;
+          }, orElse: () => null);
+          return GameViewAssignment(returnedAssignments[index], assignmentImage,
+              widget.team, model.authenticatedUser);
+        },
+      ),
     );
   }
 

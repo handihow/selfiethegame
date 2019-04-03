@@ -29,7 +29,7 @@ class _ImageListViewState extends State<ImageListView> {
   }
 
   List<Widget> _buildCarouselList(
-      BuildContext context, List<ImageRef> returnedImages) {
+      BuildContext context, List<ImageRef> returnedImages, AppModel model) {
     return map<Widget>(
       returnedImages,
       (index, imageRef) {
@@ -38,24 +38,36 @@ class _ImageListViewState extends State<ImageListView> {
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(5.0)),
             child: Stack(children: <Widget>[
-              ImageThumbnail(imageRef, false, 500, 500),
+              GestureDetector(
+                child: ImageThumbnail(imageRef, false, 500, 500),
+                onDoubleTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return ImageViewer(imageRef,
+                          'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com');
+                    }),
+                  );
+                },
+              ),
               Positioned(
-                bottom: 0.0,
+                top: 0.0,
                 left: 0.0,
                 right: 0.0,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromARGB(200, 0, 0, 0),
-                        Color.fromARGB(0, 0, 0, 0)
-                      ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                    ),
+                    color: Theme.of(context).primaryColor,
+                    // gradient: LinearGradient(
+                    //   colors: [
+                    //     Color.fromARGB(150, 0, 0, 0),
+                    //     Theme.of(context).accentColor,
+                    //   ],
+                    //   begin: Alignment.topCenter,
+                    //   end: Alignment.bottomCenter,
+                    // ),
                   ),
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                      EdgeInsets.symmetric(vertical: 11.0, horizontal: 20.0),
                   child: Text(
                     returnedImages[index].teamName +
                         ' met ' +
@@ -68,6 +80,27 @@ class _ImageListViewState extends State<ImageListView> {
                   ),
                 ),
               ),
+              Positioned(
+                bottom: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    // gradient: LinearGradient(
+                    //   colors: [
+                    //     Color.fromARGB(150, 0, 0, 0),
+                    //     Theme.of(context).accentColor,
+                    //   ],
+                    //   begin: Alignment.bottomCenter,
+                    //   end: Alignment.topCenter,
+                    // ),
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
+                  child: _buildButtonRow(context, model),
+                ),
+              ),
             ]),
           ),
         );
@@ -75,41 +108,67 @@ class _ImageListViewState extends State<ImageListView> {
     ).toList();
   }
 
+  Widget _buildButtonRow(BuildContext context, AppModel model) {
+    return Row(
+      // alignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          child: Container(),
+        ),
+        IconButton(
+          color: Colors.white,
+          icon: Icon(Icons.thumb_up),
+          onPressed: () {},
+        ),
+        IconButton(
+          color: Colors.white,
+          icon: Icon(Icons.comment),
+          onPressed: () {},
+        ),
+        IconButton(
+          color: Colors.white,
+          icon: Icon(Icons.assessment),
+          onPressed: () {},
+        ),
+        Expanded(
+          child: Container(),
+        ),
+      ],
+    );
+  }
+
   Widget _displayCarouselImages(
-      BuildContext context, List<ImageRef> returnedImages) {
-    return Column(children: [
-      CarouselSlider(
-        items: _buildCarouselList(context, returnedImages),
-        autoPlay: false,
-        enlargeCenterPage: true,
-        aspectRatio: 1.0,
-      ),
-    ]);
+      BuildContext context, List<ImageRef> returnedImages, AppModel model) {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text(
+            'Selfies van alle teams',
+            style: Theme.of(context).textTheme.title,
+          ),
+        ),
+        CarouselSlider(
+          items: _buildCarouselList(context, returnedImages, model),
+          autoPlay: false,
+          enlargeCenterPage: true,
+          aspectRatio: 1.0,
+        ),
+      ],
+    );
   }
 
   Widget _buildImageViewerPage(
-      BuildContext context, List<ImageRef> returnedImages) {
-    return ListView(
-      children: <Widget>[
-        _displayCarouselImages(context, returnedImages),
-        ButtonBar(
-          alignment: MainAxisAlignment.center,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.thumb_up),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.comment),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.assessment),
-              onPressed: () {},
-            )
-          ],
-        ),
-      ],
+      BuildContext context, List<ImageRef> returnedImages, AppModel model) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColorLight,
+      ),
+      child: ListView(
+        children: <Widget>[
+          _displayCarouselImages(context, returnedImages, model),
+        ],
+      ),
     );
   }
 
@@ -135,7 +194,7 @@ class _ImageListViewState extends State<ImageListView> {
                 returnedImages.add(returnedImage);
               });
             }
-            return _buildImageViewerPage(context, returnedImages);
+            return _buildImageViewerPage(context, returnedImages, model);
           }
         },
       );
