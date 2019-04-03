@@ -95,7 +95,6 @@ class _AuthPageState extends State<AuthPage> {
           _buildPasswordTextField(),
           RaisedButton(
             color: Theme.of(context).accentColor,
-            textColor: Colors.white,
             child: Row(
               children: <Widget>[
                 Icon(FontAwesomeIcons.signInAlt),
@@ -128,20 +127,24 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildGoogleLoginButton(Function googleSignIn) {
-    return IconButton(
-      iconSize: 40.0,
-      color: Colors.red,
-      icon: Icon(FontAwesomeIcons.google),
+    return RawMaterialButton(
       onPressed: () => googleSignIn(),
+      child: Icon(FontAwesomeIcons.google, color: Colors.red, size: 40.0),
+      shape: new CircleBorder(),
+      elevation: 2.0,
+      fillColor: Theme.of(context).primaryColorLight,
+      padding: const EdgeInsets.all(15.0),
     );
   }
 
   Widget _buildFacebookLoginButton(Function facebookSignIn) {
-    return IconButton(
-      iconSize: 40.0,
-      color: Colors.blue,
-      icon: Icon(FontAwesomeIcons.facebook),
+    return RawMaterialButton(
       onPressed: () => facebookSignIn(),
+      child: Icon(FontAwesomeIcons.facebook, color: Colors.blue, size: 40.0),
+      shape: new CircleBorder(),
+      elevation: 2.0,
+      fillColor: Theme.of(context).primaryColorLight,
+      padding: const EdgeInsets.all(15.0),
     );
   }
 
@@ -156,7 +159,7 @@ class _AuthPageState extends State<AuthPage> {
         : Center(
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor
+                color: Theme.of(context).primaryColor,
                 // image: DecorationImage(
                 //   image: AssetImage("assets/chat_bg.png"),
                 //   fit: BoxFit.cover,
@@ -172,7 +175,7 @@ class _AuthPageState extends State<AuthPage> {
                           (BuildContext context, Widget child, AppModel model) {
                         return Column(
                           children: <Widget>[
-                            Image.asset('assets/selfie_the_game_text.png'),
+                            Image.asset('assets/selfiethegame_banner.png'),
                             Divider(),
                             _buildEmailPasswordForm(
                                 context, model.signInWithEmailAndPassword),
