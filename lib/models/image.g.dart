@@ -26,7 +26,13 @@ ImageRef _$ImageRefFromJson(Map json) {
           : ImageRef._timestampToDateSerializer(json['updated']),
       size: json['size'] as int,
       imageState: json['imageState'] as String,
-      maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']));
+      maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']),
+      likes: json['likes'] as int,
+      userLikeId: json['userLikeId'] as String,
+      comments: json['comments'] as int,
+      userAwardedPoints:
+          _$enumDecodeNullable(_$RatingEnumMap, json['userAwardedPoints']),
+      userRatingId: json['userRatingId'] as String);
 }
 
 Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
@@ -48,7 +54,12 @@ Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
           : ImageRef._dateTimeDoNothingSerializer(instance.updated),
       'size': instance.size,
       'imageState': instance.imageState,
-      'maxPoints': _$RatingEnumMap[instance.maxPoints]
+      'maxPoints': _$RatingEnumMap[instance.maxPoints],
+      'likes': instance.likes,
+      'userLikeId': instance.userLikeId,
+      'comments': instance.comments,
+      'userAwardedPoints': _$RatingEnumMap[instance.userAwardedPoints],
+      'userRatingId': instance.userRatingId
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {

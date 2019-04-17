@@ -5,12 +5,18 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
+import '../../models/game.dart';
+import '../../models/reaction.dart';
+import '../../models/reaction-type.dart';
 import './image_thumbnail.dart';
 import '../pages/image_viewer.dart';
+import '../../shared-widgets/ui_elements/title_default.dart';
+import './image_rating_buttons.dart';
+import './image_like_comment_buttons.dart';
 
 class ImageListView extends StatefulWidget {
-  final String gameId;
-  ImageListView(this.gameId);
+  final Game game;
+  ImageListView(this.game);
 
   @override
   State<StatefulWidget> createState() {
@@ -60,7 +66,7 @@ class _ImageListViewState extends State<ImageListView> {
                     // gradient: LinearGradient(
                     //   colors: [
                     //     Color.fromARGB(150, 0, 0, 0),
-                    //     Theme.of(context).accentColor,
+                    //     Theme.of(context).primaryColor,
                     //   ],
                     //   begin: Alignment.topCenter,
                     //   end: Alignment.bottomCenter,
@@ -68,14 +74,16 @@ class _ImageListViewState extends State<ImageListView> {
                   ),
                   padding:
                       EdgeInsets.symmetric(vertical: 11.0, horizontal: 20.0),
-                  child: Text(
-                    returnedImages[index].teamName +
-                        ' met ' +
-                        returnedImages[index].assignment,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+                  child: Center(
+                    child: Text(
+                      returnedImages[index].teamName +
+                          ' met ' +
+                          returnedImages[index].assignment,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        // fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -89,8 +97,9 @@ class _ImageListViewState extends State<ImageListView> {
                     color: Theme.of(context).primaryColor,
                     // gradient: LinearGradient(
                     //   colors: [
-                    //     Color.fromARGB(150, 0, 0, 0),
-                    //     Theme.of(context).accentColor,
+                    //     Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)
+                    //     // Theme.of(context).primaryColor,
+                    //     // Color.fromARGB(150, 0, 0, 0),
                     //   ],
                     //   begin: Alignment.bottomCenter,
                     //   end: Alignment.topCenter,
@@ -98,7 +107,7 @@ class _ImageListViewState extends State<ImageListView> {
                   ),
                   padding:
                       EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
-                  child: _buildButtonRow(context, model),
+                  child: _buildButtonRow(context, model, returnedImages[index]),
                 ),
               ),
             ]),
@@ -108,33 +117,14 @@ class _ImageListViewState extends State<ImageListView> {
     ).toList();
   }
 
-  Widget _buildButtonRow(BuildContext context, AppModel model) {
-    return Row(
-      // alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          child: Container(),
-        ),
-        IconButton(
-          color: Colors.white,
-          icon: Icon(Icons.thumb_up),
-          onPressed: () {},
-        ),
-        IconButton(
-          color: Colors.white,
-          icon: Icon(Icons.comment),
-          onPressed: () {},
-        ),
-        IconButton(
-          color: Colors.white,
-          icon: Icon(Icons.assessment),
-          onPressed: () {},
-        ),
-        Expanded(
-          child: Container(),
-        ),
-      ],
-    );
+  Widget _buildButtonRow(
+      BuildContext context, AppModel model, ImageRef imageRef) {
+    if (widget.game.judges.contains(model.authenticatedUser.uid) ||
+        widget.game.administrator == model.authenticatedUser.uid) {
+      return ImageRatingButtons(imageRef);
+    } else {
+      return ImageLikeCommentButtons(imageRef);
+    }
   }
 
   Widget _displayCarouselImages(
@@ -143,61 +133,96 @@ class _ImageListViewState extends State<ImageListView> {
       children: [
         Padding(
           padding: EdgeInsets.all(10.0),
-          child: Text(
-            'Selfies van alle teams',
-            style: Theme.of(context).textTheme.title,
-          ),
+          child: TitleDefault('Selfies van alle teams'),
         ),
         CarouselSlider(
           items: _buildCarouselList(context, returnedImages, model),
           autoPlay: false,
           enlargeCenterPage: true,
           aspectRatio: 1.0,
+          viewportFraction: 0.90,
+          enableInfiniteScroll: false,
         ),
       ],
     );
   }
 
-  Widget _buildImageViewerPage(
-      BuildContext context, List<ImageRef> returnedImages, AppModel model) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColorLight,
-      ),
-      child: ListView(
-        children: <Widget>[
-          _displayCarouselImages(context, returnedImages, model),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
-        builder: (BuildContext context, Widget child, AppModel model) {
-      return StreamBuilder(
-        stream: model.fetchGameImageReferences(widget.gameId),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            List<ImageRef> returnedImages = [];
-            if (snapshot.hasData) {
-              snapshot.data.documents.forEach((DocumentSnapshot document) {
-                final String imageId = document.documentID;
-                final Map<String, dynamic> imageData = document.data;
-                imageData['id'] = imageId;
-                final ImageRef returnedImage = ImageRef.fromJson(imageData);
-                returnedImages.add(returnedImage);
-              });
+      builder: (BuildContext context, Widget child, AppModel model) {
+        return StreamBuilder(
+          stream: model.fetchGameImageReferences(widget.game.id),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return StreamBuilder(
+                stream: model.getUserGameReactions(
+                    widget.game.id, model.authenticatedUser.uid),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> reactionSnap) {
+                  if (reactionSnap.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    List<Reaction> returnedReactions = [];
+                    List<ImageRef> returnedImages = [];
+                    if (reactionSnap.hasData) {
+                      reactionSnap.data.documents
+                          .forEach((DocumentSnapshot reactionDoc) {
+                        final String reactionId = reactionDoc.documentID;
+                        final Map<String, dynamic> reactionData =
+                            reactionDoc.data;
+                        reactionData['id'] = reactionId;
+                        returnedReactions.add(Reaction.fromJson(reactionData));
+                      });
+                    }
+                    if (snapshot.hasData) {
+                      snapshot.data.documents
+                          .forEach((DocumentSnapshot document) {
+                        final String imageId = document.documentID;
+                        final Map<String, dynamic> imageData = document.data;
+                        imageData['id'] = imageId;
+                        final Reaction userLikeReaction =
+                            returnedReactions.firstWhere(
+                                (reaction) =>
+                                    reaction.imageId == imageId &&
+                                    reaction.reactionType == ReactionType.like,
+                                orElse: () => null);
+                        if (userLikeReaction != null) {
+                          imageData['userLikeId'] = userLikeReaction.id;
+                        }
+                        final Reaction userRatingReaction =
+                            returnedReactions.firstWhere(
+                                (reaction) =>
+                                    reaction.imageId == imageId &&
+                                    reaction.reactionType ==
+                                        ReactionType.rating,
+                                orElse: () => null);
+                        if (userRatingReaction != null) {
+                          imageData['userRatingId'] = userRatingReaction.id;
+                          imageData['userAwardedPoints'] =
+                              userRatingReaction.rating.index;
+                        }
+                        final ImageRef returnedImage =
+                            ImageRef.fromJson(imageData);
+                        returnedImages.add(returnedImage);
+                      });
+                    }
+                    return _displayCarouselImages(context, returnedImages, model);
+                  }
+                },
+              );
             }
-            return _buildImageViewerPage(context, returnedImages, model);
-          }
-        },
-      );
-    });
+          },
+        );
+      },
+    );
   }
 }

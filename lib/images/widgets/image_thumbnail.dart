@@ -19,14 +19,18 @@ class ImageThumbnail extends StatefulWidget {
 class _ImageThumbnailState extends State<ImageThumbnail> {
   String _url = 'https://via.placeholder.com/80x80.png?text=processing..';
 
+  @override
   initState() {
     super.initState();
-    StorageReference ref =
-        FirebaseStorage.instance.ref().child(widget.isThumbnail ? widget.image.pathTN : widget.image.path);
+    StorageReference ref = FirebaseStorage.instance
+        .ref()
+        .child(widget.isThumbnail ? widget.image.pathTN : widget.image.path);
     ref.getDownloadURL().then((value) {
-      setState(() {
-        _url = value;
-      });
+      if (mounted) {
+        setState(() {
+          _url = value;
+        });
+      }
     });
   }
 

@@ -23,67 +23,50 @@ class GameViewAssignments extends StatefulWidget {
 class _GameViewAssignmentsState extends State<GameViewAssignments> {
   Widget _displayExistingAssignments(BuildContext context, AppModel model,
       List<Assignment> returnedAssignments, List<ImageRef> returnedImages) {
-    return Container(
-      color: Theme.of(context).primaryColorLight,
-      child: ListView.separated(
-        separatorBuilder: (context, index) => SizedBox(height: 10.0,),
-        padding: const EdgeInsets.all(10.0),
-        itemCount: returnedAssignments.length,
-        itemBuilder: (BuildContext context, int index) {
-          final ImageRef assignmentImage = returnedImages.firstWhere((a) {
-            bool hasImage = false;
-            if (a.teamId == widget.team.id &&
-                a.assignmentId == returnedAssignments[index].id) {
-              hasImage = true;
-            }
-            return hasImage;
-          }, orElse: () => null);
-          return GameViewAssignment(returnedAssignments[index], assignmentImage,
-              widget.team, model.authenticatedUser);
-        },
-      ),
+    return ListView.separated(
+      separatorBuilder: (context, index) => Divider(),
+      padding: const EdgeInsets.all(10.0),
+      itemCount: returnedAssignments.length,
+      itemBuilder: (BuildContext context, int index) {
+        final ImageRef assignmentImage = returnedImages.firstWhere((a) {
+          bool hasImage = false;
+          if (a.teamId == widget.team.id &&
+              a.assignmentId == returnedAssignments[index].id) {
+            hasImage = true;
+          }
+          return hasImage;
+        }, orElse: () => null);
+        return GameViewAssignment(returnedAssignments[index], assignmentImage,
+            widget.team, model.authenticatedUser, widget.game.status.playing);
+      },
     );
   }
 
   Widget _buildAssignmentViewPage(BuildContext context, AppModel model,
       List<Assignment> returnedAssignments) {
-    Widget returnedContent = Center(
-      child: Text('Spel is nog niet begonnen'),
-    );
-    if (widget.game.status.playing) {
-      returnedContent = StreamBuilder(
-        stream: model.fetchTeamImageReferences(widget.team.id),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            List<ImageRef> returnedImages = [];
-            if (snapshot.hasData) {
-              snapshot.data.documents.forEach((DocumentSnapshot document) {
-                final String imageId = document.documentID;
-                final Map<String, dynamic> imageData = document.data;
-                imageData['id'] = imageId;
-                final ImageRef returnedImage = ImageRef.fromJson(imageData);
-                returnedImages.add(returnedImage);
-              });
-            }
-            return _displayExistingAssignments(
-                context, model, returnedAssignments, returnedImages);
+    return StreamBuilder(
+      stream: model.fetchTeamImageReferences(widget.team.id),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          List<ImageRef> returnedImages = [];
+          if (snapshot.hasData) {
+            snapshot.data.documents.forEach((DocumentSnapshot document) {
+              final String imageId = document.documentID;
+              final Map<String, dynamic> imageData = document.data;
+              imageData['id'] = imageId;
+              final ImageRef returnedImage = ImageRef.fromJson(imageData);
+              returnedImages.add(returnedImage);
+            });
           }
-        },
-      );
-    } else if (widget.game.status.pauzed) {
-      returnedContent = Center(
-        child: Text('Spel is gepauzeerd'),
-      );
-    } else if (widget.game.status.finished) {
-      returnedContent = Center(
-        child: Text('Spel is afgelopen'),
-      );
-    }
-    return returnedContent;
+          return _displayExistingAssignments(
+              context, model, returnedAssignments, returnedImages);
+        }
+      },
+    );
   }
 
   @override

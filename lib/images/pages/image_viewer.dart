@@ -29,9 +29,11 @@ class _ImageViewerState extends State<ImageViewer> {
     StorageReference ref =
         FirebaseStorage.instance.ref().child(widget.image.path);
     ref.getDownloadURL().then((value) {
-      setState(() {
-        _url = value;
-      });
+      if (mounted) {
+        setState(() {
+          _url = value;
+        });
+      }
     });
   }
 
@@ -111,12 +113,6 @@ class _ImageViewerState extends State<ImageViewer> {
                           ButtonBar(
                             alignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              RaisedButton(
-                                color: Theme.of(context).primaryColor,
-                                textColor: Colors.white,
-                                child: Text('BEWERKEN'),
-                                onPressed: () {},
-                              ),
                               RaisedButton(
                                 color: Theme.of(context).errorColor,
                                 textColor: Colors.white,

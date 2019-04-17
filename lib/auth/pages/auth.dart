@@ -127,24 +127,34 @@ class _AuthPageState extends State<AuthPage> {
   }
 
   Widget _buildGoogleLoginButton(Function googleSignIn) {
-    return RawMaterialButton(
-      onPressed: () => googleSignIn(),
-      child: Icon(FontAwesomeIcons.google, color: Colors.red, size: 40.0),
-      shape: new CircleBorder(),
-      elevation: 2.0,
-      fillColor: Theme.of(context).primaryColorLight,
-      padding: const EdgeInsets.all(15.0),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: SizedBox(
+        height: 90,
+        width: 90,
+        child: RaisedButton(
+          child: Image.asset('assets/google_icon.png'),
+          shape: StadiumBorder(),
+          color: Colors.transparent,
+          onPressed: () => googleSignIn(),
+        ),
+      ),
     );
   }
 
   Widget _buildFacebookLoginButton(Function facebookSignIn) {
-    return RawMaterialButton(
-      onPressed: () => facebookSignIn(),
-      child: Icon(FontAwesomeIcons.facebook, color: Colors.blue, size: 40.0),
-      shape: new CircleBorder(),
-      elevation: 2.0,
-      fillColor: Theme.of(context).primaryColorLight,
-      padding: const EdgeInsets.all(15.0),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: SizedBox(
+        height: 90,
+        width: 90,
+        child: RaisedButton(
+          child: Image.asset('assets/fb_icon.png'),
+          shape: StadiumBorder(),
+          color: Colors.transparent,
+          onPressed: () => facebookSignIn(),
+        ),
+      ),
     );
   }
 

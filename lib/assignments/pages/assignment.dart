@@ -18,7 +18,9 @@ class AssignmentPage extends StatefulWidget {
   final ImageRef image;
   final Team team;
   final User user;
-  AssignmentPage(this.assignment, this.image, this.team, this.user);
+  final bool isPlaying;
+  AssignmentPage(
+      this.assignment, this.image, this.team, this.user, this.isPlaying);
 
   @override
   State<StatefulWidget> createState() {
@@ -101,9 +103,12 @@ class _AssignmentPageState extends State<AssignmentPage> {
   }
 
   Widget _buildAssignmentPage() {
+    final String text = widget.isPlaying
+        ? 'Maak een selfie met ' + widget.assignment.assignment
+        : 'Spel is niet actief. Je kunt nu geen selfies uploaden.';
     Widget pageContent = Center(
       child: Text(
-        'Maak een selfie met ' + widget.assignment.assignment,
+        text,
         style: TextStyle(fontSize: 16.0),
       ),
     );
@@ -161,11 +166,13 @@ class _AssignmentPageState extends State<AssignmentPage> {
                 : null,
           ),
           body: _buildAssignmentPage(),
-          floatingActionButton: _image == null
-              ? _takeImageFloatingActionButton()
-              : _done
-                  ? _doneActionButton(context)
-                  : _uploadImageFloatingActionButton(),
+          floatingActionButton: !widget.isPlaying
+              ? null
+              : _image == null
+                  ? _takeImageFloatingActionButton()
+                  : _done
+                      ? _doneActionButton(context)
+                      : _uploadImageFloatingActionButton(),
         );
       },
     );

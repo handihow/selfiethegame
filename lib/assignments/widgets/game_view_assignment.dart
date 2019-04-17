@@ -15,7 +15,9 @@ class GameViewAssignment extends StatefulWidget {
   final ImageRef image;
   final Team team;
   final User user;
-  GameViewAssignment(this.assignment, this.image, this.team, this.user);
+  final bool isPlaying;
+  GameViewAssignment(
+      this.assignment, this.image, this.team, this.user, this.isPlaying);
 
   @override
   State<StatefulWidget> createState() {
@@ -56,34 +58,31 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
-        return Container(
-          color: Colors.white,
-          child: ListTile(
-            leading: widget.image == null
-                ? Icon(
-                    Icons.assignment,
-                    color: Theme.of(context).primaryColor,
-                  )
-                : Icon(
-                    Icons.assignment_turned_in,
-                    color: Theme.of(context).primaryColor,
-                  ),
-            title: Text(widget.assignment.assignment),
-            subtitle: Text('Maximum score: ' +
-                widget.assignment.maxPoints.index.toString()),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (BuildContext context) {
-                  return widget.image == null
-                      ? AssignmentPage(widget.assignment, widget.image,
-                          widget.team, widget.user)
-                      : ImageViewer(widget.image, _url);
-                }),
-              );
-            },
-            trailing: widget.image == null ? null : _createHeroImage(),
-          ),
+        return ListTile(
+          leading: widget.image == null
+              ? Icon(
+                  Icons.assignment,
+                  color: Theme.of(context).primaryColor,
+                )
+              : Icon(
+                  Icons.assignment_turned_in,
+                  color: Theme.of(context).primaryColor,
+                ),
+          title: Text(widget.assignment.assignment),
+          subtitle: Text(
+              'Maximum score: ' + widget.assignment.maxPoints.index.toString()),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return widget.image == null
+                    ? AssignmentPage(widget.assignment, widget.image,
+                        widget.team, widget.user, widget.isPlaying)
+                    : ImageViewer(widget.image, _url);
+              }),
+            );
+          },
+          trailing: widget.image == null ? null : _createHeroImage(),
         );
       },
     );

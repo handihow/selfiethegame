@@ -29,24 +29,34 @@ class ImageRef {
   final int size;
   final String imageState;
   final Rating maxPoints;
+  final int likes; // the number of likes on the image (calculated)
+  final String userLikeId; // the like ID of the user (calculated)
+  final int comments; // the number of comments on the image (calculated)
+  final Rating
+      userAwardedPoints; // the awarded number of points of the user (calculated)
+  final String userRatingId; // the rating ID of the user (calculated)
 
-  ImageRef({
-    @required this.id,
-    this.pathOriginal,
-    this.path,
-    this.pathTN,
-    @required this.assignmentId,
-    @required this.assignment,
-    @required this.gameId,
-    @required this.userId,
-    @required this.teamId,
-    @required this.teamName,
-    @required this.created,
-    @required this.updated,
-    this.size,
-    this.imageState,
-    @required this.maxPoints,
-  });
+  ImageRef(
+      {@required this.id,
+      this.pathOriginal,
+      this.path,
+      this.pathTN,
+      @required this.assignmentId,
+      @required this.assignment,
+      @required this.gameId,
+      @required this.userId,
+      @required this.teamId,
+      @required this.teamName,
+      @required this.created,
+      @required this.updated,
+      this.size,
+      this.imageState,
+      @required this.maxPoints,
+      this.likes,
+      this.userLikeId,
+      this.comments,
+      this.userAwardedPoints,
+      this.userRatingId});
 
   factory ImageRef.fromJson(Map<String, dynamic> json) =>
       _$ImageRefFromJson(json);

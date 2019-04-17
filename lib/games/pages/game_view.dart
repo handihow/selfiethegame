@@ -52,13 +52,17 @@ class _GameViewPageState extends State<GameViewPage>
           controller: tabController,
           children: [
             GameViewAssignments(game, _team),
-            ImageListView(widget.gameId),
+            ImageListView(game),
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.chat),
+          child: Image.asset(
+            'assets/chat.png',
+            height: 22.0,
+          ),
+          // child: Icon(Icons.chat),
           onPressed: () {
-           Navigator.pushNamed(context, '/chat/' + widget.gameId);
+            Navigator.pushNamed(context, '/chat/' + widget.gameId);
           },
         ),
       ),
