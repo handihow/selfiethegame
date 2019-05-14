@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
+import '../../models/reaction.dart';
+import '../../models/reaction-type.dart';
+import '../widgets/image_like_comment_buttons.dart';
+import '../widgets/image_rating_buttons.dart';
 
 class ImageViewer extends StatefulWidget {
   final ImageRef image;
   final String placeholder;
+  final bool canEdit;
+  final bool isJudging;
 
-  ImageViewer(this.image, this.placeholder);
+  ImageViewer(this.image, this.placeholder, this.canEdit, this.isJudging);
 
   @override
   State<StatefulWidget> createState() {
@@ -19,6 +26,8 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   String _url;
+  final Key _buttonsAndInfoKey = new Key('buttonsAndInfo');
+  final Key _imageReactionsListKey = new Key('imageReactionsList');
 
   @override
   void initState() {
@@ -72,8 +81,73 @@ class _ImageViewerState extends State<ImageViewer> {
     );
   }
 
+  Widget _showButtonBar(AppModel model) {
+    Widget buttons;
+    if (widget.canEdit) {
+      buttons = ButtonBar(
+        alignment: MainAxisAlignment.center,
+        children: <Widget>[
+          RaisedButton(
+            color: Theme.of(context).errorColor,
+            textColor: Colors.white,
+            child: Text('VERWIJDEREN'),
+            onPressed: () {
+              _showWarningDialog(context, model);
+            },
+          ),
+        ],
+      );
+    } else {
+      buttons = widget.isJudging
+          ? ImageRatingButtons(widget.image)
+          : ImageLikeCommentButtons(widget.image);
+    }
+    return buttons;
+  }
+
+  Widget _showImageInformation(AppModel model) {
+    return StreamBuilder(
+      stream: model.getImageReactions(widget.image.id),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        List<Reaction> returnedReactions = [];
+        if (snapshot.hasData) {
+          snapshot.data.documents.forEach((DocumentSnapshot document) {
+            final String reactionId = document.documentID;
+            final Map<String, dynamic> reactionData = document.data;
+            reactionData['id'] = reactionId;
+            final Reaction returnedReaction = Reaction.fromJson(reactionData);
+            returnedReactions.add(returnedReaction);
+          });
+        }
+        return SliverList(
+          key: _imageReactionsListKey,
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              String subtitle = 'Leuk';
+              IconData listIcon = Icons.thumb_up;
+              if(returnedReactions[index].reactionType ==ReactionType.comment){
+                subtitle =returnedReactions[index].comment;
+                listIcon = Icons.comment;
+              } else if(returnedReactions[index].reactionType ==ReactionType.rating){
+                subtitle = returnedReactions[index].rating.index.toString() + ' punt(en)';
+                listIcon = Icons.assessment;
+              }
+              return ListTile(
+                leading: Icon(listIcon),
+                title: Text(returnedReactions[index].userDisplayName),
+                subtitle: Text(subtitle),
+              );
+            },
+            childCount: returnedReactions.length,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('building image viewer');
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         return Scaffold(
@@ -100,6 +174,7 @@ class _ImageViewerState extends State<ImageViewer> {
                       ),
                     ),
                     SliverList(
+                      key: _buttonsAndInfoKey,
                       delegate: SliverChildListDelegate(
                         [
                           Container(
@@ -110,32 +185,11 @@ class _ImageViewerState extends State<ImageViewer> {
                               style: TextStyle(fontSize: 20.0),
                             ),
                           ),
-                          ButtonBar(
-                            alignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              RaisedButton(
-                                color: Theme.of(context).errorColor,
-                                textColor: Colors.white,
-                                child: Text('VERWIJDEREN'),
-                                onPressed: () {
-                                  _showWarningDialog(context, model);
-                                },
-                              ),
-                            ],
-                          ),
-                          // Container(
-                          //   padding: EdgeInsets.all(10.0),
-                          //   child: Column(
-                          //     children: <Widget>[
-                          //       Text('Likes: 3'),
-                          //       Text('Comments: 4'),
-                          //       Text('Total rating: 6'),
-                          //     ],
-                          //   ),
-                          // )
+                          _showButtonBar(model),
                         ],
                       ),
-                    )
+                    ),
+                    _showImageInformation(model)
                   ],
                 ),
         );

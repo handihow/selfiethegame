@@ -50,8 +50,14 @@ class _ImageListViewState extends State<ImageListView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                      return ImageViewer(imageRef,
-                          'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com');
+                      return ImageViewer(
+                          imageRef,
+                          'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com',
+                          false,
+                          widget.game.judges
+                                  .contains(model.authenticatedUser.uid) ||
+                              widget.game.administrator ==
+                                  model.authenticatedUser.uid);
                     }),
                   );
                 },
@@ -147,7 +153,6 @@ class _ImageListViewState extends State<ImageListView> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
@@ -215,7 +220,8 @@ class _ImageListViewState extends State<ImageListView> {
                         returnedImages.add(returnedImage);
                       });
                     }
-                    return _displayCarouselImages(context, returnedImages, model);
+                    return _displayCarouselImages(
+                        context, returnedImages, model);
                   }
                 },
               );

@@ -26,7 +26,7 @@ class _GameViewPageState extends State<GameViewPage>
   void initState() {
     super.initState();
 
-    tabController = TabController(vsync: this, length: 3);
+    tabController = TabController(vsync: this, length: 2);
   }
 
   Widget _buildGamePage(BuildContext context, Game game, AppModel model) {

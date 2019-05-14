@@ -78,7 +78,7 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
                 return widget.image == null
                     ? AssignmentPage(widget.assignment, widget.image,
                         widget.team, widget.user, widget.isPlaying)
-                    : ImageViewer(widget.image, _url);
+                    : ImageViewer(widget.image, _url, true, false);
               }),
             );
           },

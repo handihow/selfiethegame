@@ -17,6 +17,8 @@ class ImageRatingButtons extends StatefulWidget {
 }
 
 class _ImageRatingButtonsState extends State<ImageRatingButtons> {
+  Rating optimisticRatingUpdate = Rating.donotusebut;
+
   Widget _buildButtonRow(
       BuildContext context, AppModel model, ImageRef imageRef) {
     List<Widget> buttons = [];
@@ -24,9 +26,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: imageRef.userAwardedPoints == Rating.invalid
-            ? Colors.white30
-            : Theme.of(context).primaryColor,
+        color: _buttonColor(Rating.invalid),
         child: Image.asset(
           'assets/points_zero.png',
           height: 22.0,
@@ -40,9 +40,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: imageRef.userAwardedPoints == Rating.easy
-            ? Colors.white30
-            : Theme.of(context).primaryColor,
+        color: _buttonColor(Rating.easy),
         child: Image.asset(
           'assets/points_one.png',
           height: 22.0,
@@ -56,9 +54,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: imageRef.userAwardedPoints == Rating.medium
-            ? Colors.white30
-            : Theme.of(context).primaryColor,
+        color: _buttonColor(Rating.medium),
         child: imageRef.maxPoints.index > Rating.easy.index
             ? Image.asset(
                 'assets/points_three.png',
@@ -80,9 +76,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: imageRef.userAwardedPoints == Rating.hard
-            ? Colors.white30
-            : Theme.of(context).primaryColor,
+        color: _buttonColor(Rating.hard),
         child: imageRef.maxPoints.index > Rating.medium.index
             ? Image.asset(
                 'assets/points_five.png',
@@ -107,8 +101,31 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
     // return Row(children: buttons,);
   }
 
+  Color _buttonColor(Rating rating) {
+    Color returnedColor;
+    if (optimisticRatingUpdate == Rating.donotusebut) {
+      //the initial state loaded
+      returnedColor = widget.imageRef.userAwardedPoints == rating
+          ? Colors.white30
+          : Theme.of(context).primaryColor;
+    } else {
+      //use the optimistic updated color for the button
+      returnedColor = optimisticRatingUpdate == rating
+          ? Colors.white30
+          : Theme.of(context).primaryColor;
+    }
+    return returnedColor;
+  }
+
   Future<void> _updateScore(AppModel model, ImageRef imageRef,
       String reactionId, Rating updatedScore) {
+    //optimistic update of rating
+    if (mounted) {
+      setState(() {
+        optimisticRatingUpdate = updatedScore;
+      });
+    }
+    //update the database
     if (reactionId != null) {
       return model.updateAwardedPoints(reactionId, updatedScore.index);
     } else {
