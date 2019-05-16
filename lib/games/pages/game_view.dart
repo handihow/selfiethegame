@@ -6,6 +6,7 @@ import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../assignments/widgets/game_view_assignments.dart';
 import '../../images/widgets/image_list_view.dart';
+import '../../teams/pages/team_scores.dart';
 
 class GameViewPage extends StatefulWidget {
   final String gameId;
@@ -26,16 +27,16 @@ class _GameViewPageState extends State<GameViewPage>
   void initState() {
     super.initState();
 
-    tabController = TabController(vsync: this, length: 2);
+    tabController = TabController(vsync: this, length: 3);
   }
 
   Widget _buildGamePage(BuildContext context, Game game, AppModel model) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           actions: _buildAppBarActions(game, model),
-          title: Text(game.name),
+          title: Text(_hasTeam ? 'Team ' + _team.name : game.name),
           bottom: TabBar(
             controller: tabController,
             tabs: [
@@ -45,6 +46,9 @@ class _GameViewPageState extends State<GameViewPage>
               Tab(
                 icon: Icon(Icons.image),
               ),
+              Tab(
+                icon: Icon(Icons.assessment),
+              ),
             ],
           ),
         ),
@@ -53,6 +57,7 @@ class _GameViewPageState extends State<GameViewPage>
           children: [
             GameViewAssignments(game, _team),
             ImageListView(game),
+            TeamScoresPage(game, _team)
           ],
         ),
         floatingActionButton: FloatingActionButton(

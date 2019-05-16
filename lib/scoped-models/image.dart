@@ -92,6 +92,15 @@ mixin ImageModel on Model {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> getTeamRatingReactions(
+      String teamId) {
+    return _db
+        .collection('reactions')
+        .where('teamId', isEqualTo: teamId)
+        .where('reactionType', isEqualTo: ReactionType.rating.index)
+        .snapshots();
+  }
+
   Future<void> reactOnImage(ImageRef image, User user,
       ReactionType reactionType, String comment, Rating rating) {
     final Reaction reaction = Reaction(
