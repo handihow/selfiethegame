@@ -90,17 +90,17 @@ class GameCardState extends State<GameCard> {
         ),
       );
     }
-    if(widget.game.administrator == widget.user.uid) {
-      buttons.add(
-        RaisedButton(
-          child: Text('DELETE'),
-          color: Colors.white,
-          textColor: Theme.of(context).errorColor,
-          onPressed: () =>
-              Navigator.pushNamed<bool>(context, '/games/' + widget.game.id + '/delete'),
-        ),
-      );
-    }
+    // if(widget.game.administrator == widget.user.uid) {
+    //   buttons.add(
+    //     RaisedButton(
+    //       child: Text('DELETE'),
+    //       color: Colors.white,
+    //       textColor: Theme.of(context).errorColor,
+    //       onPressed: () =>
+    //           Navigator.pushNamed<bool>(context, '/games/' + widget.game.id + '/delete'),
+    //     ),
+    //   );
+    // }
     return buttons;
   }
 

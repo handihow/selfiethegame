@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:481686152233:android:f87a62620cbef6f2",
+        "mobilesdk_app_id": "1:481686152233:android:76517204f49ac6ac",
         "android_client_info": {
-          "package_name": "com.handihow.selfiespel"
+          "package_name": "com.handihow.selfiethegame"
         }
       },
       "oauth_client": [
         {
-          "client_id": "481686152233-ebm84h6cr2f37g21pnr0l2bkg996vfb3.apps.googleusercontent.com",
+          "client_id": "481686152233-j1unkma3r9vdadgfb860k0at26m0i4dj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.handihow.selfiespel",
+            "package_name": "com.handihow.selfiethegame",
             "certificate_hash": "fe67c7e48e7362eddc4a88703d6276198c7e752a"
           }
         },
@@ -33,27 +33,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "481686152233-iavsgmepf75rui3koscriikjahacioec.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "481686152233-4ltsmtiglt8iap942500acuvuisqaq19.apps.googleusercontent.com",
+              "client_id": "481686152233-aq0rg98b6qil63uetp3ukr829qimv0i4.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.handihow.selfiespel"
+                "bundle_id": "com.handihow.selfiethegame"
               }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

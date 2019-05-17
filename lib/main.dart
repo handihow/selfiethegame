@@ -13,6 +13,7 @@ import './games/pages/games.dart';
 import './games/pages/game_view.dart';
 import './games/pages/game_admin.dart';
 import './games/pages/game_register.dart';
+import './images/pages/images_grid.dart';
 import './scoped-models/main.dart';
 
 import './assignments/pages/assignments.dart';
@@ -74,6 +75,7 @@ class _SelfieGameState extends State<SelfieGameApp> {
             '/choose': (BuildContext context) => GameChoosePage(),
             '/new': (BuildContext context) => GameAddPage(),
             '/register-game': (BuildContext context) => GameRegisterPage(),
+            '/images': (BuildContext context) => ImagesGridView(),
           },
           onGenerateRoute: (RouteSettings settings) {
             final List<String> pathElements = settings.name.split('/');
