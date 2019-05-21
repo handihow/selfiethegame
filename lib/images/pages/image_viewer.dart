@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
+// import 'package:share/share.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
@@ -9,6 +10,7 @@ import '../../models/reaction.dart';
 import '../../models/reaction-type.dart';
 import '../widgets/image_like_comment_buttons.dart';
 import '../widgets/image_rating_buttons.dart';
+import '../share/constants.dart';
 
 class ImageViewer extends StatefulWidget {
   final ImageRef image;
@@ -125,15 +127,27 @@ class _ImageViewerState extends State<ImageViewer> {
             (context, index) {
               String subtitle = 'Leuk';
               IconData listIcon = Icons.thumb_up;
-              if(returnedReactions[index].reactionType ==ReactionType.comment){
-                subtitle =returnedReactions[index].comment;
+              bool hasWarningColor = false;
+              if (returnedReactions[index].reactionType ==
+                  ReactionType.comment) {
+                subtitle = returnedReactions[index].comment;
                 listIcon = Icons.comment;
-              } else if(returnedReactions[index].reactionType ==ReactionType.rating){
-                subtitle = returnedReactions[index].rating.index.toString() + ' punt(en)';
+              } else if (returnedReactions[index].reactionType ==
+                  ReactionType.rating) {
+                subtitle = returnedReactions[index].rating.index.toString() +
+                    ' punt(en)';
                 listIcon = Icons.assessment;
+              } else if (returnedReactions[index].reactionType ==
+                  ReactionType.inappropriate) {
+                subtitle = 'Ongepast';
+                listIcon = Icons.report;
+                hasWarningColor = true;
               }
               return ListTile(
-                leading: Icon(listIcon),
+                leading: Icon(listIcon,
+                    color: hasWarningColor
+                        ? Theme.of(context).errorColor
+                        : Theme.of(context).primaryColor),
                 title: Text(returnedReactions[index].userDisplayName),
                 subtitle: Text(subtitle),
               );
@@ -158,6 +172,31 @@ class _ImageViewerState extends State<ImageViewer> {
               : CustomScrollView(
                   slivers: <Widget>[
                     SliverAppBar(
+                      actions: <Widget>[
+                        PopupMenuButton<String>(
+                          onSelected: (String choice) {
+                            if (choice == Constants.Report) {
+                              model.reactOnImage(
+                                  widget.image,
+                                  model.authenticatedUser,
+                                  ReactionType.inappropriate,
+                                  null,
+                                  null);
+                            } else {
+                              print('other functionality coming soon...');
+                              // Share.share('Deze selfie is gemaakt met SelfieTheGame! Bekijk via de link: ' + _url);
+                            }
+                          },
+                          itemBuilder: (BuildContext context) {
+                            return Constants.choices.map((String choice) {
+                              return PopupMenuItem<String>(
+                                value: choice,
+                                child: Text(choice),
+                              );
+                            }).toList();
+                          },
+                        ),
+                      ],
                       expandedHeight: 256.0,
                       pinned: true,
                       flexibleSpace: FlexibleSpaceBar(

@@ -73,7 +73,8 @@ T _$enumDecodeNullable<T>(Map<T, dynamic> enumValues, dynamic source) {
 const _$ReactionTypeEnumMap = <ReactionType, dynamic>{
   ReactionType.like: 0,
   ReactionType.comment: 1,
-  ReactionType.rating: 2
+  ReactionType.rating: 2,
+  ReactionType.inappropriate: 3
 };
 
 const _$RatingEnumMap = <Rating, dynamic>{

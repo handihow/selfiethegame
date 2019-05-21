@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "481686152233-kdbr3rp6ma70ac2ibh468on3b3k79kmn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.handihow.selfiethegame",
+            "certificate_hash": "473867b78e0dac161212345151b26596489c0c35"
+          }
+        },
+        {
           "client_id": "481686152233-j1unkma3r9vdadgfb860k0at26m0i4dj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

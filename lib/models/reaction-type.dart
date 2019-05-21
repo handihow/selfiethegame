@@ -7,5 +7,6 @@ enum ReactionType {
   comment,
   @JsonValue(2)
   rating,
-
+  @JsonValue(3)
+  inappropriate
 }
