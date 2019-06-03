@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
 // import 'package:share/share.dart';
@@ -12,7 +11,7 @@ import '../widgets/image_like_comment_buttons.dart';
 import '../widgets/image_rating_buttons.dart';
 import '../share/constants.dart';
 
-class ImageViewer extends StatefulWidget {
+class ImageViewer extends StatelessWidget {
   final ImageRef image;
   final String placeholder;
   final bool canEdit;
@@ -20,33 +19,8 @@ class ImageViewer extends StatefulWidget {
 
   ImageViewer(this.image, this.placeholder, this.canEdit, this.isJudging);
 
-  @override
-  State<StatefulWidget> createState() {
-    return _ImageViewerState();
-  }
-}
-
-class _ImageViewerState extends State<ImageViewer> {
-  String _url;
   final Key _buttonsAndInfoKey = new Key('buttonsAndInfo');
   final Key _imageReactionsListKey = new Key('imageReactionsList');
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _url = widget.placeholder;
-    });
-    StorageReference ref =
-        FirebaseStorage.instance.ref().child(widget.image.path);
-    ref.getDownloadURL().then((value) {
-      if (mounted) {
-        setState(() {
-          _url = value;
-        });
-      }
-    });
-  }
 
   _showWarningDialog(BuildContext context, AppModel model) {
     showDialog<bool>(
@@ -76,16 +50,16 @@ class _ImageViewerState extends State<ImageViewer> {
     ).then(
       (bool isCanceled) async {
         if (!isCanceled) {
-          await model.deleteImage(widget.image);
+          await model.deleteImage(image);
           Navigator.pop(context);
         }
       },
     );
   }
 
-  Widget _showButtonBar(AppModel model) {
+  Widget _showButtonBar(AppModel model, BuildContext context) {
     Widget buttons;
-    if (widget.canEdit) {
+    if (canEdit) {
       buttons = ButtonBar(
         alignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -100,16 +74,16 @@ class _ImageViewerState extends State<ImageViewer> {
         ],
       );
     } else {
-      buttons = widget.isJudging
-          ? ImageRatingButtons(widget.image)
-          : ImageLikeCommentButtons(widget.image);
+      buttons = isJudging
+          ? ImageRatingButtons(image)
+          : ImageLikeCommentButtons(image);
     }
     return buttons;
   }
 
   Widget _showImageInformation(AppModel model) {
     return StreamBuilder(
-      stream: model.getImageReactions(widget.image.id),
+      stream: model.getImageReactions(image.id),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         List<Reaction> returnedReactions = [];
         if (snapshot.hasData) {
@@ -165,7 +139,7 @@ class _ImageViewerState extends State<ImageViewer> {
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         return Scaffold(
-          body: widget.image == null
+          body: image == null
               ? Center(
                   child: CircularProgressIndicator(),
                 )
@@ -177,7 +151,7 @@ class _ImageViewerState extends State<ImageViewer> {
                           onSelected: (String choice) {
                             if (choice == Constants.Report) {
                               model.reactOnImage(
-                                  widget.image,
+                                  image,
                                   model.authenticatedUser,
                                   ReactionType.inappropriate,
                                   null,
@@ -197,17 +171,17 @@ class _ImageViewerState extends State<ImageViewer> {
                           },
                         ),
                       ],
-                      expandedHeight: 256.0,
+                      expandedHeight: MediaQuery.of(context).size.width > 600 ? 500.0 : 256.0,
                       pinned: true,
                       flexibleSpace: FlexibleSpaceBar(
-                        title: Text('Team ' + widget.image.teamName),
+                        title: Text('Team ' + image.teamName),
                         background: Hero(
-                          tag: widget.image.id,
+                          tag: image.id,
                           child: FadeInImage(
-                            image: NetworkImage(_url),
-                            height: 500.0,
-                            fit: BoxFit.cover,
-                            placeholder: NetworkImage(widget.placeholder),
+                            image: NetworkImage(image.downloadUrl),
+                            height: 500,
+                            fit: MediaQuery.of(context).size.width > 600 ? null : BoxFit.cover,
+                            placeholder: NetworkImage(placeholder),
                           ),
                         ),
                       ),
@@ -220,11 +194,11 @@ class _ImageViewerState extends State<ImageViewer> {
                             padding: EdgeInsets.all(10.0),
                             alignment: Alignment.center,
                             child: Text(
-                              'Selfie met ' + widget.image.assignment,
+                              'Selfie met ' + image.assignment,
                               style: TextStyle(fontSize: 20.0),
                             ),
                           ),
-                          _showButtonBar(model),
+                          _showButtonBar(model, context),
                         ],
                       ),
                     ),

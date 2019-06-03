@@ -122,6 +122,7 @@ mixin GameModel on Model {
         .snapshots();
   }
 
+
   Future<void> updateGameStatus(
       String gameId, String statusProperty, bool statusValue) {
     print('updating status...');

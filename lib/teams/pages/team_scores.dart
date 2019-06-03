@@ -6,16 +6,14 @@ import '../../scoped-models/main.dart';
 import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../models/hexcolor.dart';
-import '../widgets/team_score.dart';
-import '../widgets/team_assignment_count.dart';
 
 class TeamScoresPage extends StatelessWidget {
   final Game game;
   final Team myTeam;
   TeamScoresPage(this.game, this.myTeam);
 
-  Widget _displayScoreCards(BuildContext context, AppModel model,
-      List<Team> returnedTeams) {
+  Widget _displayScoreCards(
+      BuildContext context, AppModel model, List<Team> returnedTeams) {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: returnedTeams.length,
@@ -29,9 +27,33 @@ class TeamScoresPage extends StatelessWidget {
                   color: HexColor(returnedTeams[index].color),
                 ),
                 title: Text('Team ' + returnedTeams[index].name),
+                trailing: returnedTeams[index]
+                        .members
+                        .contains(model.authenticatedUser.uid)
+                    ? Icon(
+                        Icons.check,
+                      )
+                    : null,
               ),
-              TeamAssignmentCount(game, returnedTeams[index]),
-              TeamScore(game, returnedTeams[index]),
+              ListTile(
+                leading: Icon(Icons.face),
+                title: Text('Spelers'),
+                subtitle: returnedTeams[index].memberDisplayNames != null
+                    ? Text(returnedTeams[index].memberDisplayNames.join(", "))
+                    : null,
+              ),
+              ListTile(
+                leading: Icon(Icons.camera),
+                title: Text('Opdrachten'),
+                subtitle: Text(
+                    returnedTeams[index].progress.toString() + ' opdrachten'),
+              ),
+              ListTile(
+                leading: Icon(Icons.assessment),
+                title: Text('Totale score'),
+                subtitle:
+                    Text(returnedTeams[index].rating.toString() + ' punten'),
+              ),
             ],
           ),
         );

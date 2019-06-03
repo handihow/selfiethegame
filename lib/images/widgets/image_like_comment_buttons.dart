@@ -21,31 +21,21 @@ class _ImageLikeCommentButtonsState extends State<ImageLikeCommentButtons> {
     List<Widget> buttons = [];
     buttons.add(
       Padding(
-          padding: EdgeInsets.all(2.0),
-          child: Material(
-            borderRadius: BorderRadius.circular(10.0),
-            color: imageRef.userLikeId != null
-            ? Theme.of(context).accentColor
-            : Theme.of(context).primaryColor,
-            child: 
-            MaterialButton(
-              height: 30,
-              minWidth: 30,
-              // color: imageRef.userAwardedPoints == Rating.invalid
-              //   ? Theme.of(context).accentColor
-              //   : Theme.of(context).primaryColor,
-              child: Image.asset('assets/thumb_up.png'),
-              onPressed: () => _updateLike(model, imageRef),
-            ),
+        padding: EdgeInsets.all(2.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(10.0),
+          color: imageRef.likes != null &&
+                  imageRef.likes.contains(model.authenticatedUser.uid)
+              ? Theme.of(context).accentColor
+              : Theme.of(context).primaryColor,
+          child: MaterialButton(
+            height: 30,
+            minWidth: 30,
+            child: Image.asset('assets/thumb_up.png'),
+            onPressed: () => _updateLike(model, imageRef),
           ),
         ),
-      // IconButton(
-      //   color: imageRef.userLikeId != null
-      //       ? Theme.of(context).accentColor
-      //       : Colors.white,
-      //   icon: Icon(Icons.thumb_up),
-      //   onPressed: () => _updateLike(model, imageRef),
-      // ),
+      ),
     );
     return Wrap(
       alignment: WrapAlignment.center,
@@ -54,12 +44,17 @@ class _ImageLikeCommentButtonsState extends State<ImageLikeCommentButtons> {
   }
 
   void _updateLike(AppModel model, ImageRef imageRef) {
-    print(imageRef.userLikeId);
-    if (imageRef.userLikeId == null) {
+    if (imageRef.likes != null &&
+        imageRef.likes.contains(model.authenticatedUser.uid)) {
+      final reactionId = ReactionType.like.index.toString() +
+          "_" +
+          imageRef.id +
+          "_" +
+          model.authenticatedUser.uid;
+      model.removeReactionFromImage(reactionId);
+    } else {
       model.reactOnImage(
           imageRef, model.authenticatedUser, ReactionType.like, null, null);
-    } else {
-      model.removeReactionFromImage(imageRef.userLikeId);
     }
   }
 

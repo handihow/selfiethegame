@@ -38,6 +38,7 @@ mixin TeamModel on Model {
     return _db
         .collection('teams')
         .where('gameId', isEqualTo: gameId)
+        .orderBy('rating')
         .orderBy('order')
         .snapshots();
   }

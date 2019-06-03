@@ -80,12 +80,7 @@ class _GameAdminTeamsState extends State<GameAdminTeams> {
   _createNewTeams(AppModel model) async {
     List<Team> teams = [];
     List<int> randomIndices = [];
-    List<String> returnedUserIds = [];
-    QuerySnapshot playerSnap =
-        await model.fetchGameParticipants(widget.game.id, 'player').first;
-    playerSnap.documents.forEach((DocumentSnapshot snap) {
-      returnedUserIds.add(snap.documentID);
-    });
+    List<String> returnedUserIds = widget.game.players;
     returnedUserIds.shuffle();
     for (var i = 0;
         i < returnedUserIds.length;
@@ -109,6 +104,8 @@ class _GameAdminTeamsState extends State<GameAdminTeams> {
         name: TEAM_NAMES[randomIndex],
         order: i,
         color: TEAM_COLORS[randomIndex]['color'],
+        progress: 0,
+        rating: 0
       );
 
       teams.add(newTeam);

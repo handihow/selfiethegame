@@ -20,7 +20,7 @@ mixin UserModel on Model {
   User _authenticatedUser;
 
   //set the custom user data as the authenticated user in the app
-  void setAuthenticatedUser() async {
+  Future<void> setAuthenticatedUser() async {
     FirebaseUser user = await _auth.currentUser();
     if (user != null) {
       loading.add(true);
@@ -42,6 +42,7 @@ mixin UserModel on Model {
       _authenticatedUser = null;
     }
     notifyListeners();
+    return;
   }
 
   //get the authenticated user

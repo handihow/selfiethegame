@@ -35,9 +35,11 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
       StorageReference ref =
           FirebaseStorage.instance.ref().child(widget.image.pathTN);
       ref.getDownloadURL().then((value) {
-        setState(() {
-          _url = value;
-        });
+        if (mounted) {
+          setState(() {
+            _url = value;
+          });
+        }
       }).catchError((error) => print(error.message));
     }
   }

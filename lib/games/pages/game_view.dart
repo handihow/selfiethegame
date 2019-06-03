@@ -19,7 +19,15 @@ class GameViewPage extends StatefulWidget {
 
 class _GameViewPageState extends State<GameViewPage>
     with SingleTickerProviderStateMixin {
-  Team _team;
+  Team _team = Team(
+      color: "#607D8B",
+      name: ' - ',
+      gameId: null,
+      id: 'NOTEAM',
+      members: null,
+      order: 100,
+      progress: 0,
+      rating: 0);
   bool _hasTeam = false;
   TabController tabController;
 
@@ -36,7 +44,7 @@ class _GameViewPageState extends State<GameViewPage>
       child: Scaffold(
         appBar: AppBar(
           actions: _buildAppBarActions(game, model),
-          title: Text(_hasTeam ? 'Team ' + _team.name : game.name),
+          title: Text(_hasTeam ? _team.name : game.name),
           bottom: TabBar(
             controller: tabController,
             tabs: [
@@ -55,7 +63,11 @@ class _GameViewPageState extends State<GameViewPage>
         body: TabBarView(
           controller: tabController,
           children: [
-            GameViewAssignments(game, _team),
+            _team.id == 'NOTEAM'
+                ? Center(
+                    child: Text('Je speelt niet mee'),
+                  )
+                : GameViewAssignments(game, _team),
             ImageListView(game),
             TeamScoresPage(game, _team)
           ],
@@ -187,10 +199,14 @@ class _GameViewPageState extends State<GameViewPage>
   }
 
   _fetchTeam(AppModel model) async {
+    print(model.authenticatedUser.uid);
+    print(widget.gameId);
     Team returnedTeam =
         await model.fetchTeam(widget.gameId, model.authenticatedUser.uid);
     setState(() {
-      _team = returnedTeam;
+      if (returnedTeam != null) {
+        _team = returnedTeam;
+      }
       _hasTeam = true;
     });
   }

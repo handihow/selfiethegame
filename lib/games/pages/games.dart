@@ -10,6 +10,9 @@ import '../widgets/game_card.dart';
 import '../../shared-widgets/ui_elements/side_drawer.dart';
 
 class GamesPage extends StatelessWidget {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+
   Widget _buildPage(BuildContext context, AppModel model) {
     return StreamBuilder(
       stream: model.fetchGames(model.authenticatedUser),
@@ -49,7 +52,11 @@ class GamesPage extends StatelessWidget {
         appBar: AppBar(
           title: Text('Spellen'),
         ),
-        body: _buildPage(context, model),
+        body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          child: _buildPage(context, model),
+          onRefresh: () => model.setAuthenticatedUser(),
+        ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {

@@ -54,8 +54,9 @@ class _ImageListViewState extends State<ImageListView> {
                           imageRef,
                           'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com',
                           false,
-                          widget.game.judges
-                                  .contains(model.authenticatedUser.uid) ||
+                          (widget.game.judges != null &&
+                                  widget.game.judges
+                                      .contains(model.authenticatedUser.uid)) ||
                               widget.game.administrator ==
                                   model.authenticatedUser.uid);
                     }),
@@ -125,7 +126,8 @@ class _ImageListViewState extends State<ImageListView> {
 
   Widget _buildButtonRow(
       BuildContext context, AppModel model, ImageRef imageRef) {
-    if (widget.game.judges.contains(model.authenticatedUser.uid) ||
+    if ((widget.game.judges != null &&
+            widget.game.judges.contains(model.authenticatedUser.uid)) ||
         widget.game.administrator == model.authenticatedUser.uid) {
       return ImageRatingButtons(imageRef);
     } else {
@@ -142,13 +144,13 @@ class _ImageListViewState extends State<ImageListView> {
           child: TitleDefault('Selfies van alle teams'),
         ),
         CarouselSlider(
-          items: _buildCarouselList(context, returnedImages, model),
-          autoPlay: false,
-          enlargeCenterPage: true,
-          aspectRatio: 1.0,
-          viewportFraction: 0.90,
-          enableInfiniteScroll: false,
-        ),
+            items: _buildCarouselList(context, returnedImages, model),
+            autoPlay: false,
+            enlargeCenterPage: true,
+            aspectRatio: 0.9,
+            viewportFraction: 0.90,
+            enableInfiniteScroll: false,
+            height: MediaQuery.of(context).size.width > 600 ? 500 : null),
       ],
     );
   }

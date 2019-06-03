@@ -103,9 +103,7 @@ mixin ImageModel on Model {
   Future<void> reactOnImage(ImageRef image, User user,
       ReactionType reactionType, String comment, Rating rating) {
     final Reaction reaction = Reaction(
-      id: reactionType == ReactionType.inappropriate
-          ? image.id + '_' + user.uid
-          : randomAlphaNumeric(20),
+      id: reactionType.index.toString() + '_' + image.id + '_' + user.uid,
       userDisplayName: user.displayName,
       userId: user.uid,
       imageId: image.id,

@@ -11,6 +11,9 @@ class Team {
   final String color;
   final String gameId;
   final List<String> members;
+  final List<String> memberDisplayNames;
+  final int progress;
+  final int rating;
 
   Team({
     @required this.id,
@@ -18,7 +21,10 @@ class Team {
     @required this.order,
     @required this.color,
     @required this.gameId,
-    @required this.members
+    @required this.members,
+    this.memberDisplayNames,
+    @required this.progress,
+    @required this.rating
   });
 
   factory Team.fromJson(Map<String, dynamic> json) => _$TeamFromJson(json);

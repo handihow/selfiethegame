@@ -21,6 +21,11 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
 
   Widget _buildButtonRow(
       BuildContext context, AppModel model, ImageRef imageRef) {
+    final String reactionId = ReactionType.rating.index.toString() +
+        '_' +
+        imageRef.id +
+        '_' +
+        model.authenticatedUser.uid;
     List<Widget> buttons = [];
     buttons.add(
       MaterialButton(
@@ -32,7 +37,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
           height: 22.0,
         ),
         onPressed: () {
-          _updateScore(model, imageRef, imageRef.userRatingId, Rating.invalid);
+          _updateScore(model, imageRef, reactionId, Rating.invalid);
         },
       ),
     );
@@ -46,7 +51,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
           height: 22.0,
         ),
         onPressed: () {
-          _updateScore(model, imageRef, imageRef.userRatingId, Rating.easy);
+          _updateScore(model, imageRef, reactionId, Rating.easy);
         },
       ),
     );
@@ -67,7 +72,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
         onPressed: imageRef.maxPoints.index > Rating.easy.index
             ? () {
                 _updateScore(
-                    model, imageRef, imageRef.userRatingId, Rating.medium);
+                    model, imageRef, reactionId, Rating.medium);
               }
             : null,
       ),
@@ -89,7 +94,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
         onPressed: imageRef.maxPoints.index > Rating.medium.index
             ? () {
                 _updateScore(
-                    model, imageRef, imageRef.userRatingId, Rating.hard);
+                    model, imageRef, reactionId, Rating.hard);
               }
             : null,
       ),
@@ -126,7 +131,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       });
     }
     //update the database
-    if (reactionId != null) {
+    if (imageRef.ratings != null && imageRef.ratings.contains(model.authenticatedUser.uid)) {
       return model.updateAwardedPoints(reactionId, updatedScore.index);
     } else {
       return model.reactOnImage(imageRef, model.authenticatedUser,

@@ -13,7 +13,12 @@ Team _$TeamFromJson(Map json) {
       order: json['order'] as int,
       color: json['color'] as String,
       gameId: json['gameId'] as String,
-      members: (json['members'] as List)?.map((e) => e as String)?.toList());
+      members: (json['members'] as List)?.map((e) => e as String)?.toList(),
+      memberDisplayNames: (json['memberDisplayNames'] as List)
+          ?.map((e) => e as String)
+          ?.toList(),
+      progress: json['progress'] as int,
+      rating: json['rating'] as int);
 }
 
 Map<String, dynamic> _$TeamToJson(Team instance) => <String, dynamic>{
@@ -22,5 +27,8 @@ Map<String, dynamic> _$TeamToJson(Team instance) => <String, dynamic>{
       'order': instance.order,
       'color': instance.color,
       'gameId': instance.gameId,
-      'members': instance.members
+      'members': instance.members,
+      'memberDisplayNames': instance.memberDisplayNames,
+      'progress': instance.progress,
+      'rating': instance.rating
     };

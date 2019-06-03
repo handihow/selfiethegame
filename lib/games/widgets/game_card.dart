@@ -31,11 +31,13 @@ class GameCardState extends State<GameCard> {
     StorageReference ref =
         FirebaseStorage.instance.ref().child(widget.game.imageUrl);
     ref.getDownloadURL().then((value) {
-      setState(() {
-        _url = value;
-      });
+      if (mounted) {
+        setState(() {
+          _url = value;
+        });
+      }
     });
-    if (widget.game.administrator == widget.user.uid) {
+    if (widget.game.administrator == widget.user.uid && mounted) {
       setState(() {
         _isAdmin = true;
       });
@@ -68,17 +70,17 @@ class GameCardState extends State<GameCard> {
         RaisedButton(
           child: Text('OPEN'),
           color: Theme.of(context).accentColor,
-          onPressed: () =>
-              Navigator.pushNamed<bool>(context, '/games/' + widget.game.id + '/view'),
+          onPressed: () => Navigator.pushNamed<bool>(
+              context, '/games/' + widget.game.id + '/view'),
         ),
       );
-    } else if(widget.game.administrator == widget.user.uid) {
-       buttons.add(
+    } else if (widget.game.administrator == widget.user.uid) {
+      buttons.add(
         RaisedButton(
           child: Text('ADMIN'),
           color: Theme.of(context).accentColor,
-          onPressed: () =>
-              Navigator.pushNamed(context, '/games/' + widget.game.id + '/admin'),
+          onPressed: () => Navigator.pushNamed(
+              context, '/games/' + widget.game.id + '/admin'),
         ),
       );
     } else {

@@ -33,7 +33,7 @@ class GameAdminReady extends StatelessWidget {
                 onPressed: () {
                   _showWarningDialog(context, model);
                 },
-                child: Text('IK WIL SPEL BEGINNEN'))
+                child: Text('SPEL BEGINNEN'))
           ],
         );
       },
@@ -69,7 +69,8 @@ class GameAdminReady extends StatelessWidget {
     ).then(
       (bool isCanceled) async {
         if (!isCanceled) {
-          model.updateGameStatus(game.id, 'closedAdmin', true);
+          await model.updateGameStatus(game.id, 'closedAdmin', true);
+          await model.updateGameStatus(game.id, 'playing', true);
           Navigator.pushReplacementNamed(
               context, '/games/' + game.id + '/view');
         }

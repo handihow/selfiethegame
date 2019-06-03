@@ -128,6 +128,8 @@ class _TeamEditPageState extends State<TeamEditPage> {
       gameId: widget.gameId,
       members: widget.team == null ? [] : widget.team.members,
       order: widget.team == null ? widget.order : widget.team.order,
+      progress: 0,
+      rating: 0
     );
     await model.updateGameStatus(widget.gameId, 'teamsCreated', true);
     model.updateTeam(updatedTeam).then((_) {

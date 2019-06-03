@@ -12,6 +12,8 @@ ImageRef _$ImageRefFromJson(Map json) {
       pathOriginal: json['pathOriginal'] as String,
       path: json['path'] as String,
       pathTN: json['pathTN'] as String,
+      downloadUrl: json['downloadUrl'] as String,
+      downloadUrlTN: json['downloadUrlTN'] as String,
       assignmentId: json['assignmentId'] as String,
       assignment: json['assignment'] as String,
       gameId: json['gameId'] as String,
@@ -27,12 +29,12 @@ ImageRef _$ImageRefFromJson(Map json) {
       size: json['size'] as int,
       imageState: json['imageState'] as String,
       maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']),
-      likes: json['likes'] as int,
-      userLikeId: json['userLikeId'] as String,
-      comments: json['comments'] as int,
+      likes: (json['likes'] as List)?.map((e) => e as String)?.toList(),
+      comments: (json['comments'] as List)?.map((e) => e as String)?.toList(),
+      ratings: (json['ratings'] as List)?.map((e) => e as String)?.toList(),
+      abuses: (json['abuses'] as List)?.map((e) => e as String)?.toList(),
       userAwardedPoints:
-          _$enumDecodeNullable(_$RatingEnumMap, json['userAwardedPoints']),
-      userRatingId: json['userRatingId'] as String);
+          _$enumDecodeNullable(_$RatingEnumMap, json['userAwardedPoints']));
 }
 
 Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
@@ -40,6 +42,8 @@ Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
       'pathOriginal': instance.pathOriginal,
       'path': instance.path,
       'pathTN': instance.pathTN,
+      'downloadUrl': instance.downloadUrl,
+      'downloadUrlTN': instance.downloadUrlTN,
       'assignmentId': instance.assignmentId,
       'assignment': instance.assignment,
       'gameId': instance.gameId,
@@ -56,10 +60,10 @@ Map<String, dynamic> _$ImageRefToJson(ImageRef instance) => <String, dynamic>{
       'imageState': instance.imageState,
       'maxPoints': _$RatingEnumMap[instance.maxPoints],
       'likes': instance.likes,
-      'userLikeId': instance.userLikeId,
       'comments': instance.comments,
-      'userAwardedPoints': _$RatingEnumMap[instance.userAwardedPoints],
-      'userRatingId': instance.userRatingId
+      'ratings': instance.ratings,
+      'abuses': instance.abuses,
+      'userAwardedPoints': _$RatingEnumMap[instance.userAwardedPoints]
     };
 
 T _$enumDecode<T>(Map<T, dynamic> enumValues, dynamic source) {
