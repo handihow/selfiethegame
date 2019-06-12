@@ -36,7 +36,7 @@ class GamesPage extends StatelessWidget {
               final Map<String, dynamic> gameData = document.data;
               gameData['id'] = gameId;
               final Game game = Game.fromJson(gameData);
-              return new GameCard(game, model.authenticatedUser);
+              return new GameCard(game, model);
             }).toList(),
           );
         }

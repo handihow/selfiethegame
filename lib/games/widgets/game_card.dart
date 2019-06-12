@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../../scoped-models/main.dart';
 
 import './date_tag.dart';
 import './code_tag.dart';
@@ -9,9 +10,9 @@ import '../../models/user.dart';
 
 class GameCard extends StatefulWidget {
   final Game game;
-  final User user;
+  final AppModel model;
 
-  GameCard(this.game, this.user);
+  GameCard(this.game, this.model);
 
   @override
   State<StatefulWidget> createState() {
@@ -37,7 +38,7 @@ class GameCardState extends State<GameCard> {
         });
       }
     });
-    if (widget.game.administrator == widget.user.uid && mounted) {
+    if (widget.game.administrator == widget.model.authenticatedUser.uid && mounted) {
       setState(() {
         _isAdmin = true;
       });
@@ -74,7 +75,7 @@ class GameCardState extends State<GameCard> {
               context, '/games/' + widget.game.id + '/view'),
         ),
       );
-    } else if (widget.game.administrator == widget.user.uid) {
+    } else if (widget.game.administrator == widget.model.authenticatedUser.uid) {
       buttons.add(
         RaisedButton(
           child: Text('ADMIN'),
@@ -92,18 +93,95 @@ class GameCardState extends State<GameCard> {
         ),
       );
     }
-    // if(widget.game.administrator == widget.user.uid) {
-    //   buttons.add(
-    //     RaisedButton(
-    //       child: Text('DELETE'),
-    //       color: Colors.white,
-    //       textColor: Theme.of(context).errorColor,
-    //       onPressed: () =>
-    //           Navigator.pushNamed<bool>(context, '/games/' + widget.game.id + '/delete'),
-    //     ),
-    //   );
-    // }
+    if(widget.game.administrator == widget.model.authenticatedUser.uid) {
+      buttons.add(
+        RaisedButton(
+          child: Text('VERWIJDEREN'),
+          color: Colors.white,
+          textColor: Theme.of(context).errorColor,
+          onPressed: () => _showWarningDialogForGameRemoval(context),
+        ),
+      );
+    } else {
+      buttons.add(
+        RaisedButton(
+          child: Text('VERLATEN'),
+          color: Colors.white,
+          textColor: Theme.of(context).errorColor,
+          onPressed: () => _showWarningDialogForLeavingGame(context),
+        ),
+      );
+    }
     return buttons;
+  }
+
+  _showWarningDialogForGameRemoval(BuildContext context) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Spel verwijderen"),
+          content: Text("Je wilt dit spel verwijderen. Selfies van het spel worden niet verwijderd. Wil je doorgaan?"),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('ANNULEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            FlatButton(
+              textColor: Theme.of(context).errorColor,
+              child: Text('VERWIJDEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    ).then(
+      (bool isCanceled) {
+        if (!isCanceled) {
+          widget.model.deleteGame(widget.game);
+        }
+      },
+    );
+  }
+
+  _showWarningDialogForLeavingGame(BuildContext context) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Spel verlaten"),
+          content: Text("Je wilt dit spel verlaten. Selfies van het spel worden niet verwijderd. Wil je doorgaan?"),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('ANNULEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            FlatButton(
+              textColor: Theme.of(context).errorColor,
+              child: Text('VERLATEN'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    ).then(
+      (bool isCanceled) async {
+        if (!isCanceled) {
+          await widget.model.manageGameParticipants(widget.model.authenticatedUser, widget.game.id, 'player',false);
+          widget.model.manageGameParticipants(widget.model.authenticatedUser, widget.game.id, 'participant',false);
+        }
+      },
+    );
   }
 
   @override

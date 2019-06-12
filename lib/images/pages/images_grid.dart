@@ -71,10 +71,7 @@ class ImagesGridView extends StatelessWidget {
                       context,
                       MaterialPageRoute(builder: (BuildContext context) {
                         return ImageViewer(
-                            returnedImages[index],
-                            'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com',
-                            true,
-                            false);
+                            returnedImages[index], false, false, true);
                       }),
                     );
                   },

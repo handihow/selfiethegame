@@ -7,7 +7,6 @@ import '../models/reaction-type.dart';
 import '../models/user.dart';
 import '../models/reaction.dart';
 import '../models/rating.dart';
-import 'package:random_string/random_string.dart';
 
 mixin ImageModel on Model {
   final Firestore _db = Firestore.instance;
@@ -22,12 +21,22 @@ mixin ImageModel on Model {
   }
 
   //fetch image references for a game
-  Stream<QuerySnapshot> fetchGameImageReferences(String gameId) {
-    return _db
+  Future<List<ImageRef>> fetchGameImageReferences(String gameId) async {
+    List<ImageRef> imageReferences = [];
+    await _db
         .collection('images')
         .where('gameId', isEqualTo: gameId)
         .orderBy('created', descending: true)
-        .snapshots();
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((DocumentSnapshot document) {
+        final ImageRef _returnedImage = ImageRef.fromJson(document.data);
+        imageReferences.add(_returnedImage);
+      });
+    }).catchError((err) {
+      print("Error: " + err);
+    });
+    return imageReferences;
   }
 
   //fetch image references for a team
@@ -62,7 +71,23 @@ mixin ImageModel on Model {
     await _db.collection('images').document(image.id).delete();
     await _storage.ref().child(image.path).delete();
     await _storage.ref().child(image.pathOriginal).delete();
-    return _storage.ref().child(image.pathTN).delete();
+    await _storage.ref().child(image.pathTN).delete();
+    //delete any reactions that have been given to the image
+    return _db
+        .collection('reactions')
+        .where('gameId', isEqualTo: image.gameId)
+        .getDocuments()
+        .then((snapshot) {
+      if (snapshot.documents != null && snapshot.documents.length > 0) {
+        final _batch = _db.batch();
+        snapshot.documents.forEach((DocumentSnapshot document) {
+          final DocumentReference _reactionRef =
+              _db.collection('reactions').document(document.documentID);
+          _batch.delete(_reactionRef);
+        });
+        _batch.commit();
+      }
+    });
   }
 
   Stream<QuerySnapshot> getUserGameReactions(String gameId, String userId) {
@@ -71,7 +96,7 @@ mixin ImageModel on Model {
         .where('gameId', isEqualTo: gameId)
         .where('userId', isEqualTo: userId)
         .orderBy('created', descending: false)
-        .snapshots().distinct();
+        .snapshots();
   }
 
   Stream<QuerySnapshot> getImageReactions(String imageId) {

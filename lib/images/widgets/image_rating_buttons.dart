@@ -3,12 +3,14 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
+import '../../models/user.dart';
 import '../../models/rating.dart';
 import '../../models/reaction-type.dart';
 
 class ImageRatingButtons extends StatefulWidget {
   final ImageRef imageRef;
-  ImageRatingButtons(this.imageRef);
+  final User user;
+  ImageRatingButtons(this.imageRef, this.user);
 
   @override
   State<StatefulWidget> createState() {
@@ -20,24 +22,24 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
   Rating optimisticRatingUpdate = Rating.donotusebut;
 
   Widget _buildButtonRow(
-      BuildContext context, AppModel model, ImageRef imageRef) {
+      BuildContext context, AppModel model) {
     final String reactionId = ReactionType.rating.index.toString() +
         '_' +
-        imageRef.id +
+        widget.imageRef.id +
         '_' +
-        model.authenticatedUser.uid;
+        widget.user.uid;
     List<Widget> buttons = [];
     buttons.add(
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: _buttonColor(Rating.invalid),
+        // color: _buttonColor(Rating.invalid),
         child: Image.asset(
           'assets/points_zero.png',
           height: 22.0,
         ),
         onPressed: () {
-          _updateScore(model, imageRef, reactionId, Rating.invalid);
+          _updateScore(model, widget.imageRef, reactionId, Rating.invalid);
         },
       ),
     );
@@ -45,13 +47,13 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: _buttonColor(Rating.easy),
+        // color: _buttonColor(Rating.easy),
         child: Image.asset(
           'assets/points_one.png',
           height: 22.0,
         ),
         onPressed: () {
-          _updateScore(model, imageRef, reactionId, Rating.easy);
+          _updateScore(model, widget.imageRef, reactionId, Rating.easy);
         },
       ),
     );
@@ -59,8 +61,8 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: _buttonColor(Rating.medium),
-        child: imageRef.maxPoints.index > Rating.easy.index
+        // color: _buttonColor(Rating.medium),
+        child: widget.imageRef.maxPoints.index > Rating.easy.index
             ? Image.asset(
                 'assets/points_three.png',
                 height: 22.0,
@@ -69,10 +71,10 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
                 'assets/points_three_disabled.png',
                 height: 22.0,
               ),
-        onPressed: imageRef.maxPoints.index > Rating.easy.index
+        onPressed: widget.imageRef.maxPoints.index > Rating.easy.index
             ? () {
                 _updateScore(
-                    model, imageRef, reactionId, Rating.medium);
+                    model, widget.imageRef, reactionId, Rating.medium);
               }
             : null,
       ),
@@ -81,8 +83,8 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
       MaterialButton(
         height: 35.0,
         minWidth: 35.0,
-        color: _buttonColor(Rating.hard),
-        child: imageRef.maxPoints.index > Rating.medium.index
+        // color: _buttonColor(Rating.hard),
+        child: widget.imageRef.maxPoints.index > Rating.medium.index
             ? Image.asset(
                 'assets/points_five.png',
                 height: 22.0,
@@ -91,10 +93,10 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
                 'assets/points_five_disabled.png',
                 height: 22.0,
               ),
-        onPressed: imageRef.maxPoints.index > Rating.medium.index
+        onPressed: widget.imageRef.maxPoints.index > Rating.medium.index
             ? () {
                 _updateScore(
-                    model, imageRef, reactionId, Rating.hard);
+                    model, widget.imageRef, reactionId, Rating.hard);
               }
             : null,
       ),
@@ -106,21 +108,21 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
     // return Row(children: buttons,);
   }
 
-  Color _buttonColor(Rating rating) {
-    Color returnedColor;
-    if (optimisticRatingUpdate == Rating.donotusebut) {
-      //the initial state loaded
-      returnedColor = widget.imageRef.userAwardedPoints == rating
-          ? Colors.white30
-          : Theme.of(context).primaryColor;
-    } else {
-      //use the optimistic updated color for the button
-      returnedColor = optimisticRatingUpdate == rating
-          ? Colors.white30
-          : Theme.of(context).primaryColor;
-    }
-    return returnedColor;
-  }
+  // Color _buttonColor(Rating rating) {
+  //   Color returnedColor;
+  //   if (optimisticRatingUpdate == Rating.donotusebut) {
+  //     //the initial state loaded
+  //     returnedColor = widget.imageRef.userAwardedPoints == rating
+  //         ? Colors.white30
+  //         : Theme.of(context).primaryColor;
+  //   } else {
+  //     //use the optimistic updated color for the button
+  //     returnedColor = optimisticRatingUpdate == rating
+  //         ? Colors.white30
+  //         : Theme.of(context).primaryColor;
+  //   }
+  //   return returnedColor;
+  // }
 
   Future<void> _updateScore(AppModel model, ImageRef imageRef,
       String reactionId, Rating updatedScore) {
@@ -143,7 +145,7 @@ class _ImageRatingButtonsState extends State<ImageRatingButtons> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
-        return _buildButtonRow(context, model, widget.imageRef);
+        return _buildButtonRow(context, model);
       },
     );
   }

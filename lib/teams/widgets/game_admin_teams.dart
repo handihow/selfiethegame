@@ -45,9 +45,9 @@ class _GameAdminTeamsState extends State<GameAdminTeams> {
                   Flexible(
                     flex: 1,
                     child: Slider(
-                      min: 2.0,
+                      min: 1.0,
                       max: 5.0,
-                      divisions: 3,
+                      divisions: 4,
                       value: _numberOfPlayersPerTeam,
                       onChanged: (value) {
                         setState(() {

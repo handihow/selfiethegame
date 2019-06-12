@@ -2,6 +2,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
 
+import './main.dart';
 import '../models/game.dart';
 import '../models/user.dart';
 import '../settings/settings.dart';
@@ -153,4 +154,35 @@ mixin GameModel on Model {
       },
     );
   }
+  
+  Future<void> deleteGame(Game game) async {
+    final WriteBatch batch = _db.batch();
+    //first find all assignments and delete them
+    final QuerySnapshot assignmentSnaps = await _db
+        .collection('assignments')
+        .where('gameId', isEqualTo: game.id)
+        .snapshots().first;
+    assignmentSnaps.documents.forEach((assignmentSnap){
+      final assignmentRef = _db.collection('assignments').document(assignmentSnap.documentID);
+      batch.delete(assignmentRef);
+    });
+    //then find all teams and delete them
+    final QuerySnapshot teamSnaps = await _db
+        .collection('teams')
+        .where('gameId', isEqualTo: game.id)
+        .snapshots().first;
+    teamSnaps.documents.forEach((teamSnap){
+      final teamRef = _db.collection('teams').document(teamSnap.documentID);
+      batch.delete(teamRef);
+    });
+    //then delete the chat
+    final chatRef = _db.collection('chats').document(game.id);
+    batch.delete(chatRef);
+    //then delete the game;
+    final gameRef = _db.collection('games').document(game.id);
+    batch.delete(gameRef);
+    //commit the batch;
+    return batch.commit();
+  }
+
 }
