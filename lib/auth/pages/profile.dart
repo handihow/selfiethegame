@@ -4,17 +4,9 @@ import 'package:scoped_model/scoped_model.dart';
 import '../../scoped-models/main.dart';
 import '../../shared-widgets/ui_elements/side_drawer.dart';
 
-class ProfilePage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return ProfilePageState();
-  }
-}
+class ProfilePage extends StatelessWidget {
 
-class ProfilePageState extends State<ProfilePage> {
-  bool _loading = false;
-
-  Widget _buildLogoutButton(AppModel model) {
+  Widget _buildLogoutButton(BuildContext context, AppModel model) {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: RaisedButton(
@@ -40,7 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _profilePageWithAuthenticatedUser(model) {
+  Widget _profilePageWithAuthenticatedUser(BuildContext context, AppModel model) {
     return Padding(
       padding: EdgeInsets.all(20.0),
       child: Column(
@@ -74,29 +66,23 @@ class ProfilePageState extends State<ProfilePage> {
             model.authenticatedUser.authMethod.toString().split('.').last,
             style: TextStyle(fontSize: 16.0),
           ),
-          _buildLogoutButton(model)
+          _buildLogoutButton(context, model)
         ],
       ),
     );
   }
 
-  Widget _loadingProfilePage(AppModel model) {
+  Widget _loadingProfilePage(BuildContext context, AppModel model) {
     Widget profilePage;
     if (model.authenticatedUser != null) {
-      if (_loading) {
-        profilePage = Center(
-          child: CircularProgressIndicator(),
-        );
-      } else {
-        profilePage = _profilePageWithAuthenticatedUser(model);
-      }
+      profilePage = _profilePageWithAuthenticatedUser(context, model);
     } else {
       model.setAuthenticatedUser();
       profilePage = Center(
         child: Column(
           children: <Widget>[
             Text('no user info'),
-            _buildLogoutButton(model),
+            _buildLogoutButton(context, model),
           ],
         ),
       );
@@ -113,8 +99,7 @@ class ProfilePageState extends State<ProfilePage> {
       ),
       body: ScopedModelDescendant<AppModel>(
         builder: (BuildContext context, Widget child, AppModel model) {
-          model.loading.listen((state) => setState(() => _loading = state));
-          return _loadingProfilePage(model);
+          return _loadingProfilePage(context, model);
         },
       ),
     );

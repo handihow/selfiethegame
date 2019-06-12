@@ -14,17 +14,11 @@ import '../../shared-widgets/ui_elements/title_default.dart';
 import './image_rating_buttons.dart';
 import './image_like_comment_buttons.dart';
 
-class ImageListView extends StatefulWidget {
+class ImageListView extends StatelessWidget {
+
   final Game game;
   ImageListView(this.game);
 
-  @override
-  State<StatefulWidget> createState() {
-    return _ImageListViewState();
-  }
-}
-
-class _ImageListViewState extends State<ImageListView> {
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -54,10 +48,10 @@ class _ImageListViewState extends State<ImageListView> {
                           imageRef,
                           'https://via.placeholder.com/500x500.png?text=SelfieTheGame.com',
                           false,
-                          (widget.game.judges != null &&
-                                  widget.game.judges
+                          (game.judges != null &&
+                                  game.judges
                                       .contains(model.authenticatedUser.uid)) ||
-                              widget.game.administrator ==
+                              game.administrator ==
                                   model.authenticatedUser.uid);
                     }),
                   );
@@ -70,14 +64,6 @@ class _ImageListViewState extends State<ImageListView> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    // gradient: LinearGradient(
-                    //   colors: [
-                    //     Color.fromARGB(150, 0, 0, 0),
-                    //     Theme.of(context).primaryColor,
-                    //   ],
-                    //   begin: Alignment.topCenter,
-                    //   end: Alignment.bottomCenter,
-                    // ),
                   ),
                   padding:
                       EdgeInsets.symmetric(vertical: 11.0, horizontal: 20.0),
@@ -89,7 +75,6 @@ class _ImageListViewState extends State<ImageListView> {
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16.0,
-                        // fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -102,15 +87,6 @@ class _ImageListViewState extends State<ImageListView> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
-                    // gradient: LinearGradient(
-                    //   colors: [
-                    //     Color.fromARGB(200, 0, 0, 0), Color.fromARGB(0, 0, 0, 0)
-                    //     // Theme.of(context).primaryColor,
-                    //     // Color.fromARGB(150, 0, 0, 0),
-                    //   ],
-                    //   begin: Alignment.bottomCenter,
-                    //   end: Alignment.topCenter,
-                    // ),
                   ),
                   padding:
                       EdgeInsets.symmetric(vertical: 0.0, horizontal: 20.0),
@@ -126,9 +102,9 @@ class _ImageListViewState extends State<ImageListView> {
 
   Widget _buildButtonRow(
       BuildContext context, AppModel model, ImageRef imageRef) {
-    if ((widget.game.judges != null &&
-            widget.game.judges.contains(model.authenticatedUser.uid)) ||
-        widget.game.administrator == model.authenticatedUser.uid) {
+    if ((game.judges != null &&
+            game.judges.contains(model.authenticatedUser.uid)) ||
+        game.administrator == model.authenticatedUser.uid) {
       return ImageRatingButtons(imageRef);
     } else {
       return ImageLikeCommentButtons(imageRef);
@@ -157,10 +133,11 @@ class _ImageListViewState extends State<ImageListView> {
 
   @override
   Widget build(BuildContext context) {
+    print("building");
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         return StreamBuilder(
-          stream: model.fetchGameImageReferences(widget.game.id),
+          stream: model.fetchGameImageReferences(game.id),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -170,7 +147,7 @@ class _ImageListViewState extends State<ImageListView> {
             } else {
               return StreamBuilder(
                 stream: model.getUserGameReactions(
-                    widget.game.id, model.authenticatedUser.uid),
+                    game.id, model.authenticatedUser.uid),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> reactionSnap) {
                   if (reactionSnap.connectionState == ConnectionState.waiting) {

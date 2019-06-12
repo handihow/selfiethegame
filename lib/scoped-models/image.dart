@@ -71,7 +71,7 @@ mixin ImageModel on Model {
         .where('gameId', isEqualTo: gameId)
         .where('userId', isEqualTo: userId)
         .orderBy('created', descending: false)
-        .snapshots();
+        .snapshots().distinct();
   }
 
   Stream<QuerySnapshot> getImageReactions(String imageId) {
