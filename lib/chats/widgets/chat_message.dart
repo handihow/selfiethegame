@@ -6,7 +6,8 @@ class ChatMessageListItem extends StatelessWidget {
   final String userId;
   ChatMessageListItem(this.chatMessage, this.userId);
 
-  _buildChatRow(BuildContext context) {
+
+  _buildChatRow(BuildContext context, double width) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -22,6 +23,7 @@ class ChatMessageListItem extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: Container(
+            width: width,
             color: Colors.cyanAccent,
             padding: EdgeInsets.all(15.0),
             child: Column(
@@ -44,7 +46,7 @@ class ChatMessageListItem extends StatelessWidget {
     );
   }
 
-  _buildOwnChatRow(BuildContext context) {
+  _buildOwnChatRow(BuildContext context, double width) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
@@ -54,6 +56,7 @@ class ChatMessageListItem extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20.0),
           child: Container(
+            width: width,
             color: Colors.tealAccent,
             padding: EdgeInsets.all(15.0),
             child: Column(
@@ -87,11 +90,12 @@ class ChatMessageListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width * 0.6;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: chatMessage.uid == userId
-          ? _buildOwnChatRow(context)
-          : _buildChatRow(context),
+          ? _buildOwnChatRow(context, width)
+          : _buildChatRow(context, width),
     );
   }
 }

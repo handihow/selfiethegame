@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import './about/pages/about.dart';
 import './auth/pages/auth.dart';
 import './auth/pages/register.dart';
 import './auth/pages/profile.dart';
 import './auth/pages/loading.dart';
+
+import './contacts/pages/contacts.dart';
 
 import './games/pages/game_choose.dart';
 import './games/pages/game_add.dart';
@@ -76,6 +79,8 @@ class _SelfieGameState extends State<SelfieGameApp> {
             '/new': (BuildContext context) => GameAddPage(),
             '/register-game': (BuildContext context) => GameRegisterPage(),
             '/images': (BuildContext context) => ImagesGridView(),
+            '/about': (BuildContext context) => AboutPage(),
+            '/contacts': (BuildContext context) => ContactsPage()
           },
           onGenerateRoute: (RouteSettings settings) {
             final List<String> pathElements = settings.name.split('/');

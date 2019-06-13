@@ -199,6 +199,17 @@ mixin UserModel on Model {
         .setData(newList.toJson());
   }
 
+  Stream<DocumentSnapshot> getUserContacts(User user) {
+    return _db.collection('contacts').document(user.uid).snapshots();
+  }
+
+  Future<void> deleteAllUserContacts(User user) {
+    return _db
+        .collection('contacts')
+        .document(user.uid)
+        .updateData({'contacts': []});
+  }
+
   void signOut() {
     _auth.signOut();
   }

@@ -41,7 +41,7 @@ class ImageCard extends StatelessWidget {
                       image.likes.contains(model.authenticatedUser.uid)
                   ? Icon(Icons.thumb_up, color: Theme.of(context).accentColor)
                   : null,
-              title: Text('Team ' + image.teamName),
+              title: Text(image.teamName),
               subtitle: Text('Selfie met ' + image.assignment),
               trailing: image.ratings != null &&
                       image.ratings.contains(model.authenticatedUser.uid)

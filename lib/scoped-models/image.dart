@@ -90,6 +90,21 @@ mixin ImageModel on Model {
     });
   }
 
+  Future<void> deleteAllUserImages(User user) async {
+    _db
+        .collection('images')
+        .where('userId', isEqualTo: user.uid)
+        .getDocuments()
+           .then((snapshot) {
+      if (snapshot.documents != null && snapshot.documents.length > 0) {
+        snapshot.documents.forEach((DocumentSnapshot document) async {
+          final ImageRef imageRef = ImageRef.fromJson(document.data);
+          await deleteImage(imageRef);
+        });
+      }
+    });
+  }
+
   Stream<QuerySnapshot> getUserGameReactions(String gameId, String userId) {
     return _db
         .collection('reactions')

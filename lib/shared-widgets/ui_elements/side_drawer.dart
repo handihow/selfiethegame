@@ -31,13 +31,20 @@ class MainSideDrawer extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/images');
             },
           ),
-          // ListTile(
-          //   leading: Icon(Icons.contacts),
-          //   title: Text('Contacten'),
-          //   onTap: () {
-          //     Navigator.pushReplacementNamed(context, '/profile');
-          //   },
-          // )
+          ListTile(
+            leading: Icon(Icons.contacts),
+            title: Text('Contacten'),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/contacts');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.info),
+            title: Text('Info'),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/about');
+            },
+          )
         ],
       ),
     );

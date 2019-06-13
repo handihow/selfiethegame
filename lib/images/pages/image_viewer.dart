@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'dart:io';
 
 import '../widgets/image_rating_buttons.dart';
 import '../widgets/image_like_comment_buttons.dart';
@@ -9,6 +10,8 @@ import '../../models/image.dart';
 import '../../models/reaction.dart';
 import '../../models/reaction-type.dart';
 import '../share/constants.dart';
+import 'package:share_extend/share_extend.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class ImageViewer extends StatefulWidget {
   final ImageRef image;
@@ -22,16 +25,64 @@ class ImageViewer extends StatefulWidget {
 }
 
 class _ImageViewerState extends State<ImageViewer> {
+  final _commentController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _commentController.dispose();
+    super.dispose();
+  }
+
   _informDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text("Selfie kan niet worden verwijderd"),
+            title: Text("Selfie verwijderen"),
             content: Text(
-                "Je kunt de selfie alleen verwijderen bij de opdrachten of op de pagina met jouw selfies"),
+                "Je kunt selfies alleen verwijderen vanuit de opdrachten of de pagina met jouw selfies"),
           );
         });
+  }
+
+  _showCommentDialog(BuildContext context, AppModel model) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          actions: <Widget>[
+            FlatButton(
+              textColor: Theme.of(context).errorColor,
+              child: Text('ANNULEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('BEWAAR'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+          title: Text('Geef commentaar'),
+          content: TextFormField(
+            controller: _commentController,
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+              labelText: 'Jouw commentaar',
+            ),
+          ),
+        );
+      },
+    ).then((bool isCanceled) {
+      if (!isCanceled) {
+        model.reactOnImage(widget.image, model.authenticatedUser,
+            ReactionType.comment, _commentController.text, null);
+      }
+    });
   }
 
   _showWarningDialog(BuildContext context, AppModel model) {
@@ -79,8 +130,10 @@ class _ImageViewerState extends State<ImageViewer> {
           );
         }
         if (!snapshot.hasData || snapshot.data.documents.length == 0) {
-          return Center(
-            child: Text('Nog geen reacties op deze selfie'),
+          return ListTile(
+            leading: Icon(Icons.announcement),
+            title: Text('Geen reactie'),
+            subtitle: Text('Nog geen reacties op deze selfie'),
           );
         }
         List<Reaction> returnedReactions = [];
@@ -132,7 +185,7 @@ class _ImageViewerState extends State<ImageViewer> {
   List<Widget> _buildAppbarActions(AppModel model) {
     return <Widget>[
       PopupMenuButton<String>(
-        onSelected: (String choice) {
+        onSelected: (String choice) async {
           if (choice == Constants.Report) {
             model.reactOnImage(widget.image, model.authenticatedUser,
                 ReactionType.inappropriate, null, null);
@@ -142,9 +195,25 @@ class _ImageViewerState extends State<ImageViewer> {
             } else {
               _informDialog(context);
             }
+          } else if (choice == Constants.Like) {
+            if (widget.image.likes != null &&
+                widget.image.likes.contains(model.authenticatedUser.uid)) {
+              final reactionId = ReactionType.like.index.toString() +
+                  "_" +
+                  widget.image.id +
+                  "_" +
+                  model.authenticatedUser.uid;
+              model.removeReactionFromImage(reactionId);
+            } else {
+              model.reactOnImage(widget.image, model.authenticatedUser,
+                  ReactionType.like, null, null);
+            }
+          } else if (choice == Constants.Comment) {
+            _showCommentDialog(context, model);
           } else {
-            print('other functionality coming soon...');
-            // Share.share('Deze selfie is gemaakt met SelfieTheGame! Bekijk via de link: ' + _url);
+            File f = await DefaultCacheManager()
+                .getSingleFile(widget.image.downloadUrl);
+            ShareExtend.share(f.path, "image");
           }
         },
         itemBuilder: (BuildContext context) {
@@ -161,7 +230,7 @@ class _ImageViewerState extends State<ImageViewer> {
 
   Widget _showMainActionButtons(AppModel model) {
     if (!widget.hasGame) {
-      return null;
+      return SizedBox(height: 0.0);
     } else if (widget.isJudging) {
       return ImageRatingButtons(widget.image, model.authenticatedUser);
     } else {
@@ -186,6 +255,9 @@ class _ImageViewerState extends State<ImageViewer> {
             width: targetDimension,
           ),
         ),
+        Center(
+          child: Text('Selfie met ' + widget.image.assignment),
+        ),
         _showMainActionButtons(model),
         _showImageInformation(model),
       ],
@@ -194,6 +266,7 @@ class _ImageViewerState extends State<ImageViewer> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.image.teamName);
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         return Scaffold(

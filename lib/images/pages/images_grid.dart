@@ -11,12 +11,54 @@ import '../../shared-widgets/ui_elements/side_drawer.dart';
 class ImagesGridView extends StatelessWidget {
   ImagesGridView();
 
+    _showWarningDialog(BuildContext context, AppModel model) {
+    showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Selfies verwijderen"),
+          content: Text("Je wilt al jouw selfies verwijderen. Je kunt dit niet herstellen. Wil je doorgaan?"),
+          actions: <Widget>[
+            FlatButton(
+              textColor: Theme.of(context).primaryColor,
+              child: Text('ANNULEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            FlatButton(
+              textColor: Theme.of(context).errorColor,
+              child: Text('VERWIJDEREN'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    ).then(
+      (bool isCanceled) async {
+        if (!isCanceled) {
+          await model.deleteAllUserImages(model.authenticatedUser);
+        }
+      },
+    );
+  }
+
   Widget _buildImagesPage(BuildContext context, AppModel model) {
     Widget imagesPage;
     if (model.authenticatedUser != null) {
       imagesPage = Scaffold(
         drawer: MainSideDrawer(),
         appBar: AppBar(
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                _showWarningDialog(context, model);
+              },
+            ),
+          ],
           title: Text('Jouw Selfies'),
         ),
         body: _displayGridOfImages(context, model),
@@ -60,10 +102,7 @@ class ImagesGridView extends StatelessWidget {
               returnedImages.add(returnedImage);
             });
             return GridView.count(
-              // Create a grid with 2 columns. If you change the scrollDirection to
-              // horizontal, this would produce 2 rows.
               crossAxisCount: 2,
-              // Generate 100 Widgets that display their index in the List
               children: List.generate(returnedImages.length, (index) {
                 return GestureDetector(
                   onTap: () {
