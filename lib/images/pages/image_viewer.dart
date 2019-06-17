@@ -13,12 +13,14 @@ import '../share/constants.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import './image_editor.dart';
+
 class ImageViewer extends StatefulWidget {
   final ImageRef image;
   final bool hasGame;
   final bool isJudging;
-  final bool canRemove;
-  ImageViewer(this.image, this.hasGame, this.isJudging, this.canRemove);
+  final bool canEdit;
+  ImageViewer(this.image, this.hasGame, this.isJudging, this.canEdit);
 
   @override
   _ImageViewerState createState() => _ImageViewerState();
@@ -34,16 +36,18 @@ class _ImageViewerState extends State<ImageViewer> {
     super.dispose();
   }
 
-  _informDialog(BuildContext context) {
+  _informDialog(BuildContext context, String functionality) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Selfie verwijderen"),
-            content: Text(
-                "Je kunt selfies alleen verwijderen vanuit de opdrachten of de pagina met jouw selfies"),
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Selfie " + functionality),
+          content: Text("Je kunt selfies alleen " +
+              functionality +
+              " vanuit de opdrachten of de pagina met jouw selfies"),
+        );
+      },
+    );
   }
 
   _showCommentDialog(BuildContext context, AppModel model) {
@@ -190,10 +194,10 @@ class _ImageViewerState extends State<ImageViewer> {
             model.reactOnImage(widget.image, model.authenticatedUser,
                 ReactionType.inappropriate, null, null);
           } else if (choice == Constants.Delete) {
-            if (widget.canRemove) {
+            if (widget.canEdit) {
               _showWarningDialog(context, model);
             } else {
-              _informDialog(context);
+              _informDialog(context, 'verwijderen');
             }
           } else if (choice == Constants.Like) {
             if (widget.image.likes != null &&
@@ -210,6 +214,12 @@ class _ImageViewerState extends State<ImageViewer> {
             }
           } else if (choice == Constants.Comment) {
             _showCommentDialog(context, model);
+          } else if (choice == Constants.Mask) {
+            if (widget.canEdit) {
+              _editImage(widget.image);
+            } else {
+              _informDialog(context, 'maskeren');
+            }
           } else {
             File f = await DefaultCacheManager()
                 .getSingleFile(widget.image.downloadUrl);
@@ -226,6 +236,17 @@ class _ImageViewerState extends State<ImageViewer> {
         },
       ),
     ];
+  }
+
+  _editImage(ImageRef image) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) {
+        return ImageEditor(
+          image,
+        );
+      }),
+    );
   }
 
   Widget _showMainActionButtons(AppModel model) {
