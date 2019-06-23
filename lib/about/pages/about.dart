@@ -35,7 +35,7 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('SelfieTheGame'),
-            subtitle: Text('Versie nummer 1.06'),
+            subtitle: Text('Versie nummer 1.08'),
           ),
           ListTile(
             leading: Icon(
@@ -47,7 +47,7 @@ class AboutPage extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 _launchURL(context, 'https://handihow.com');
@@ -72,7 +72,7 @@ class AboutPage extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 _launchURL(context, 'https://selfiethegame.com/info');
@@ -89,7 +89,7 @@ class AboutPage extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 _launchURL(context, 'https://selfiethegame.com/privacy');
@@ -106,7 +106,7 @@ class AboutPage extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 _launchURL(context, 'https://selfiethegame.com/tos');
@@ -123,7 +123,7 @@ class AboutPage extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).primaryColor,
               ),
               onPressed: () {
                 _launchURL(context, 'https://selfiethegame.com/faq');

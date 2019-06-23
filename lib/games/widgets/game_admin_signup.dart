@@ -1,11 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share/share.dart';
 
 class GameAdminSignUp extends StatelessWidget {
   final String code;
   final int participants;
 
   GameAdminSignUp(this.code, {this.participants: 1});
+
+  
+  ButtonBar _buildButtonRow(BuildContext context) {
+    return ButtonBar(
+      alignment: MainAxisAlignment.end,
+      children: <Widget>[
+        RaisedButton(
+          color: Colors.white,
+          child: Text("Deel code"),
+          onPressed: () {
+            share("Speel mee met SelfieTheGame! Spelcode is: " + code);
+          },
+        )
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +44,7 @@ class GameAdminSignUp extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: 10.0),
+        _buildButtonRow(context),
         Text("of door de QR code te scannen"),
         SizedBox(height: 10.0),
         QrImage(

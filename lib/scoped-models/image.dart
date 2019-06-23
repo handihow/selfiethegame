@@ -75,7 +75,7 @@ mixin ImageModel on Model {
     //delete any reactions that have been given to the image
     return _db
         .collection('reactions')
-        .where('gameId', isEqualTo: image.gameId)
+        .where('imageId', isEqualTo: image.id)
         .getDocuments()
         .then((snapshot) {
       if (snapshot.documents != null && snapshot.documents.length > 0) {

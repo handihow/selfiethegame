@@ -20,6 +20,7 @@ Game _$GameFromJson(Map json) {
       date: json['date'] == null
           ? null
           : Game._timestampToDateSerializer(json['date']),
+      duration: json['duration'] as int,
       created: json['created'] == null
           ? null
           : Game._timestampToDateSerializer(json['created']),
@@ -42,6 +43,7 @@ Map<String, dynamic> _$GameToJson(Game instance) => <String, dynamic>{
       'date': instance.date == null
           ? null
           : Game._dateTimeDoNothingSerializer(instance.date),
+      'duration': instance.duration,
       'created': instance.created == null
           ? null
           : Game._dateTimeDoNothingSerializer(instance.created),

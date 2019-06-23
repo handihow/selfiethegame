@@ -6,7 +6,6 @@ import './date_tag.dart';
 import './code_tag.dart';
 
 import '../../models/game.dart';
-import '../../models/user.dart';
 
 class GameCard extends StatefulWidget {
   final Game game;

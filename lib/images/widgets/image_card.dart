@@ -6,6 +6,8 @@ import '../../scoped-models/main.dart';
 import '../../models/image.dart';
 import '../../models/game.dart';
 
+import './image_rating_buttons.dart';
+
 class ImageCard extends StatelessWidget {
   final ImageRef image;
   final Game game;
@@ -25,12 +27,7 @@ class ImageCard extends StatelessWidget {
       onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (BuildContext context) {
-              return ImageViewer(
-                image,
-                true,
-                isJudging,
-                false
-              );
+              return ImageViewer(image, true, isJudging, false);
             }),
           ),
       child: Card(
@@ -69,6 +66,9 @@ class ImageCard extends StatelessWidget {
                       ? Theme.of(context).primaryColor
                       : null),
             ),
+            isJudging
+                ? ImageRatingButtons(image, model.authenticatedUser)
+                : SizedBox(height: 0.0)
           ],
         ),
       ),

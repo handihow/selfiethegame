@@ -8,6 +8,8 @@ import '../../assignments/widgets/game_view_assignments.dart';
 import '../../images/widgets/image_list_view.dart';
 import '../../teams/pages/team_scores.dart';
 
+import '../share/constants.dart';
+
 class GameViewPage extends StatefulWidget {
   final String gameId;
 
@@ -43,7 +45,9 @@ class _GameViewPageState extends State<GameViewPage>
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          actions: _buildAppBarActions(game, model),
+          actions: game.administrator == model.authenticatedUser.uid
+              ? _buildAppbarActions(game, model)
+              : null,
           title: Text(_hasTeam ? _team.name : game.name),
           bottom: TabBar(
             controller: tabController,
@@ -86,68 +90,100 @@ class _GameViewPageState extends State<GameViewPage>
     );
   }
 
-  List<IconButton> _buildAppBarActions(Game game, AppModel model) {
-    List<IconButton> buttons = [];
-    if (game.administrator == model.authenticatedUser.uid) {
-      buttons.add(
-        IconButton(
-          icon: Icon(Icons.play_arrow),
-          onPressed: _playButtonFunction(game, model),
-        ),
-      );
-      buttons.add(
-        IconButton(
-          icon: Icon(Icons.pause),
-          onPressed: _pauzeButtonFunction(game, model),
-        ),
-      );
-      buttons.add(
-        IconButton(
-          icon: Icon(Icons.stop),
-          onPressed: _finishedButtonFunction(context, game, model),
-        ),
-      );
-    }
-    return buttons;
+  List<Widget> _buildAppbarActions(Game game, AppModel model) {
+    return <Widget>[
+      PopupMenuButton<String>(
+        onSelected: (String choice) async {
+          if (choice == Constants.Play) {
+            _playButtonFunction(game, model);
+          } else if (choice == Constants.Pauze) {
+            _pauzeButtonFunction(game, model);
+          } else if (choice == Constants.Stop) {
+            _finishedButtonFunction(context, game, model);
+          } else if (choice == Constants.Timer) {
+            _showTimerDialog(context, game);
+          } else if (choice == Constants.Notify) {
+            _showNotificationDialog(context);
+          }
+        },
+        itemBuilder: (BuildContext context) {
+          return Constants.choices.map((String choice) {
+            return PopupMenuItem<String>(
+              value: choice,
+              child: Text(choice),
+            );
+          }).toList();
+        },
+      ),
+    ];
+  }
+
+  _showTimerDialog(BuildContext context, Game game) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final now = DateTime.now();
+        final Duration difference = game.date.isAfter(now)
+            ? Duration(minutes: 0)
+            : now.difference(game.date);
+        int remaining;
+        if (game.duration != null) {
+          remaining = (game.duration - difference.inMinutes) < 0
+              ? 0
+              : game.duration - difference.inMinutes;
+        }
+        return AlertDialog(
+          title: Text("Resterende tijd"),
+          content: Text(remaining != null
+              ? remaining.toString() + " minuten"
+              : 'Geen looptijd ingesteld'),
+        );
+      },
+    );
+  }
+
+  _showNotificationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Meldingen"),
+          content: Text(
+              'Meldingen naar alle spelers komen pas in volgende releases van SelfieTheGame app beschikbaar'),
+        );
+      },
+    );
   }
 
   Function _playButtonFunction(Game game, AppModel model) {
-    if (game.status.playing || game.status.finished) {
-      return null;
-    } else {
-      return () {
-        Map<String, dynamic> status = game.toJson()['status'];
-        status['pauzed'] = false;
-        status['playing'] = true;
-        status['finished'] = false;
-        model.updateCompleteStatus(game.id, status);
-      };
+    if (!game.status.playing && !game.status.finished) {
+      Map<String, dynamic> status = game.toJson()['status'];
+      status['pauzed'] = false;
+      status['playing'] = true;
+      status['finished'] = false;
+      print(status);
+      model.updateCompleteStatus(game.id, status);
     }
+    return null;
   }
 
   Function _pauzeButtonFunction(Game game, AppModel model) {
-    if (!game.status.playing || game.status.finished) {
-      return null;
-    } else {
-      return () {
-        Map<String, dynamic> status = game.toJson()['status'];
-        status['pauzed'] = true;
-        status['playing'] = false;
-        status['finished'] = false;
-        model.updateCompleteStatus(game.id, status);
-      };
+    if (game.status.playing && !game.status.finished) {
+      Map<String, dynamic> status = game.toJson()['status'];
+      status['pauzed'] = true;
+      status['playing'] = false;
+      status['finished'] = false;
+      model.updateCompleteStatus(game.id, status);
     }
+    return null;
   }
 
   Function _finishedButtonFunction(
       BuildContext context, Game game, AppModel model) {
-    if (!game.status.playing) {
-      return null;
-    } else {
-      return () {
-        _showWarningDialog(context, model, game);
-      };
+    if (game.status.playing) {
+      _showWarningDialog(context, model, game);
     }
+    return null;
   }
 
   _showWarningDialog(BuildContext context, AppModel model, Game game) {

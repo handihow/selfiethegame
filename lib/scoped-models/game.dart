@@ -2,7 +2,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:random_string/random_string.dart';
 
-import './main.dart';
 import '../models/game.dart';
 import '../models/user.dart';
 import '../settings/settings.dart';
@@ -25,11 +24,12 @@ mixin GameModel on Model {
 
   //add game to the database
   Future<String> addGame(String name, DateTime date, bool isPlaying,
-      String image, User user) async {
+      String image, User user, int duration) async {
     Game newGame = Game(
       id: randomAlphaNumeric(20),
       name: name,
       date: date,
+      duration: duration,
       code: randomAlphaNumeric(6),
       created: DateTime.now(),
       updated: DateTime.now(),

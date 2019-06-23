@@ -22,6 +22,7 @@ class _GameAddState extends State<GameAddPage> {
   final Map<String, dynamic> _formData = {
     'name': null,
     'date': DateTime.now(),
+    'duration': null,
     'isPlaying': true,
     'image': ''
   };
@@ -29,6 +30,7 @@ class _GameAddState extends State<GameAddPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _nameFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
+  final _durationFocusNode = FocusNode();
   final _switchFocusNode = FocusNode();
 
   @override
@@ -68,28 +70,46 @@ class _GameAddState extends State<GameAddPage> {
         title: DateTimePickerFormField(
           focusNode: _dateFocusNode,
           keyboardType: TextInputType.datetime,
-          inputType: InputType.date,
-          format: DateFormat('dd-MM-yyyy'),
-          initialValue: DateTime.now(),
+          inputType: InputType.both,
+          format: DateFormat("dd-MM-yyyy 'om' H:mm"),
+          // initialValue: DateTime.now(),
           validator: (DateTime dt) {
+            if (dt == null) {
+              return 'Datum en tijd spel is verplicht.';
+            }
             final now = DateTime.now();
-            final lastMidnight = now.subtract(Duration(
-              hours: now.hour,
-              minutes: now.minute,
-              seconds: now.second,
-              milliseconds: now.millisecond,
-              microseconds: now.microsecond,
-            ));
-            if (dt.isBefore(lastMidnight)) {
-              return 'Datum spel moet in de toekomst liggen.';
+            if (dt.isBefore(now)) {
+              return 'Datum en tijd van het spel moet in de toekomst liggen.';
             }
           },
           decoration: InputDecoration(
-              labelText: 'Datum spel', hasFloatingPlaceholder: false),
+              labelText: 'Datum & begintijd spel',
+              hasFloatingPlaceholder: false),
           onSaved: (DateTime dt) {
             _formData['date'] = dt;
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildDurationField() {
+    return EnsureVisibleWhenFocused(
+      focusNode: _dateFocusNode,
+      child: ListTile(
+        leading: Icon(Icons.timer),
+        title: TextFormField(
+            focusNode: _durationFocusNode,
+            keyboardType: TextInputType.numberWithOptions(decimal: false),
+            decoration:
+                InputDecoration(labelText: 'Hoeveel minuten duurt het spel?'),
+            onSaved: (String value) {
+              if(value.isNotEmpty){
+                _formData['duration'] = int.parse(value);
+              } else {
+                _formData['duration'] = null;
+              }
+            }),
       ),
     );
   }
@@ -154,6 +174,7 @@ class _GameAddState extends State<GameAddPage> {
               children: <Widget>[
                 _buildNameTextField(),
                 _buildDatepickerField(),
+                _buildDurationField(),
                 _buildCheckboxField(),
                 SizedBox(height: 20.0),
                 _buildSubmitButton(context)
@@ -174,7 +195,7 @@ class _GameAddState extends State<GameAddPage> {
     }
     _formKey.currentState.save();
     String gameId = await model.addGame(_formData['name'], _formData['date'],
-        _formData['isPlaying'], _formData['image'], model.authenticatedUser);
+        _formData['isPlaying'], _formData['image'], model.authenticatedUser, _formData['duration']);
     if (gameId != null) {
       await model.addChat(gameId, model.authenticatedUser.uid);
     }

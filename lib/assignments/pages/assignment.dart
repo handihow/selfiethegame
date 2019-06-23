@@ -29,29 +29,43 @@ class AssignmentPage extends StatefulWidget {
 }
 
 class _AssignmentPageState extends State<AssignmentPage> {
-  File _image;
-  bool _isLoading = false;
-  bool _done = false;
-  double _progress;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      maxWidth: 512.0,
-    );
+  bool _isImageButtonDisabled = false;
+  bool _isUploading = false;
+  bool _doneUploading = false;
+  File _image;
 
-    setState(() {
-      _image = image;
-    });
+  Future getImage(BuildContext context) async {
+
+    if(mounted){
+      setState(() {
+        _isImageButtonDisabled = true;
+      });
+    }
+
+    final File image = await ImagePicker.pickImage(
+        source: ImageSource.camera, maxWidth: 500.0, maxHeight: 500.0);
+
+    if (mounted && image != null) {
+      setState(() {
+        _isUploading = true;
+        _image = image;
+      });
+      uploadImage(context, image);
+    } else if(mounted) {
+      setState(() {
+        _isImageButtonDisabled = false;
+      });
+    }
   }
 
-  void uploadImage() {
+  void uploadImage(BuildContext context, File image) {
     final StorageReference firebaseStorageRef = FirebaseStorage.instance
         .ref()
         .child('/images/' + randomAlphaNumeric(20) + '.jpg');
     final StorageUploadTask task = firebaseStorageRef.putFile(
-      _image,
+      image,
       StorageMetadata(
         customMetadata: {
           'teamId': widget.team.id,
@@ -66,75 +80,42 @@ class _AssignmentPageState extends State<AssignmentPage> {
       ),
     );
     task.events.listen((event) {
-      setState(() {
-        _isLoading = true;
-        _progress = event.snapshot.bytesTransferred.toDouble() /
-            event.snapshot.totalByteCount.toDouble();
-      });
-      if (event.snapshot.bytesTransferred == event.snapshot.totalByteCount) {
+      if (event.snapshot.bytesTransferred == event.snapshot.totalByteCount &&
+          mounted) {
         setState(() {
-          _done = true;
+          _isUploading = false;
+          _doneUploading = true;
         });
       }
-    }).onError((error) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text(error.toString()),
-        backgroundColor: Theme.of(context).errorColor,
-      ));
+    }, onError: (error) {
+      if (mounted) {
+        _scaffoldKey.currentState.showSnackBar(SnackBar(
+          content: Text(error.toString()),
+          backgroundColor: Theme.of(context).errorColor,
+        ));
+        setState(() {
+          _isUploading = false;
+        });
+      }
     });
   }
 
-  Widget _enableUpload(BuildContext context) {
+  Widget _showWaitingIndicator(BuildContext context) {
     return Center(
-      child: Image.file(_image),
+      child: CircularProgressIndicator(),
     );
   }
 
-  Widget _doneUploading(BuildContext context) {
+  Widget _showImage(BuildContext context) {
     return Stack(children: <Widget>[
       Image.file(_image),
       Center(
         child: Text(
           "Je bent klaar met uploaden!",
-          style: TextStyle(fontSize: 20.0, color: Colors.white),
+          style: TextStyle(fontSize: 14.0, color: Colors.white),
         ),
       ),
     ]);
-  }
-
-  Widget _buildAssignmentPage() {
-    final String text = widget.isPlaying
-        ? 'Maak een selfie met ' + widget.assignment.assignment
-        : 'Spel is niet actief. Je kunt nu geen selfies uploaden.';
-    Widget pageContent = Center(
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 16.0),
-      ),
-    );
-    if (_image != null) {
-      pageContent = _enableUpload(context);
-    }
-    if (_done) {
-      pageContent = _doneUploading(context);
-    }
-    return pageContent;
-  }
-
-  FloatingActionButton _uploadImageFloatingActionButton() {
-    return FloatingActionButton.extended(
-        onPressed: uploadImage,
-        tooltip: 'Upload selfie',
-        icon: Icon(Icons.cloud_upload),
-        label: Text('Upload selfie'));
-  }
-
-  FloatingActionButton _takeImageFloatingActionButton() {
-    return FloatingActionButton.extended(
-        onPressed: getImage,
-        tooltip: 'Maak selfie',
-        icon: Icon(Icons.add_a_photo),
-        label: Text('Maak selfie'));
   }
 
   FloatingActionButton _doneActionButton(BuildContext context) {
@@ -147,6 +128,34 @@ class _AssignmentPageState extends State<AssignmentPage> {
         label: Text('Klaar'));
   }
 
+  Widget _buildAssignmentPage(BuildContext context) {
+    final String text = widget.isPlaying
+        ? 'Maak een selfie met ' + widget.assignment.assignment
+        : 'Spel is niet actief. Je kunt nu geen selfies uploaden.';
+    Widget pageContent = Center(
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 14.0),
+      ),
+    );
+    if (_isUploading) {
+      pageContent = _showWaitingIndicator(context);
+    }
+    if (_doneUploading) {
+      pageContent = _showImage(context);
+    }
+    return pageContent;
+  }
+
+  FloatingActionButton _takeImageFloatingActionButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: _isImageButtonDisabled ? null : () => getImage(context),
+      tooltip: 'Maak selfie',
+      icon: Icon(Icons.add_a_photo),
+      label: Text('Maak selfie'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
@@ -154,25 +163,16 @@ class _AssignmentPageState extends State<AssignmentPage> {
         return Scaffold(
           key: _scaffoldKey,
           appBar: AppBar(
-            title: Text('Selfie met ' + widget.assignment.assignment),
-            bottom: _isLoading
-                ? PreferredSize(
-                    child: LinearProgressIndicator(
-                      value: _progress,
-                      backgroundColor: Colors.white,
-                    ),
-                    preferredSize: Size(MediaQuery.of(context).size.width, 5.0),
-                  )
-                : null,
+            title: _isUploading
+                ? Text('Selfie upload..')
+                : Text('Selfie met ' + widget.assignment.assignment),
           ),
-          body: _buildAssignmentPage(),
-          floatingActionButton: !widget.isPlaying
+          body: _buildAssignmentPage(context),
+          floatingActionButton: !widget.isPlaying || _isUploading
               ? null
-              : _image == null
-                  ? _takeImageFloatingActionButton()
-                  : _done
-                      ? _doneActionButton(context)
-                      : _uploadImageFloatingActionButton(),
+              : _doneUploading
+                  ? _doneActionButton(context)
+                  : _takeImageFloatingActionButton(context),
         );
       },
     );

@@ -16,6 +16,7 @@ class Game {
       fromJson: _timestampToDateSerializer,
       toJson: _dateTimeDoNothingSerializer)
   final DateTime date;
+  final int duration;
   @JsonKey(
       fromJson: _timestampToDateSerializer,
       toJson: _dateTimeDoNothingSerializer)
@@ -38,6 +39,7 @@ class Game {
       @required this.code,
       @required this.status,
       @required this.date,
+      this.duration,
       @required this.created,
       @required this.updated,
       @required this.administrator,
