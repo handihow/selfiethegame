@@ -113,7 +113,8 @@ class _SelfieGameState extends State<SelfieGameApp> {
               return MaterialPageRoute<bool>(
                 builder: (BuildContext context) => ChatPage(gameId),
               );
-            } 
+            }
+            return null; 
           },
           onUnknownRoute: (RouteSettings settings) {
             return MaterialPageRoute(

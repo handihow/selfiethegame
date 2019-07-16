@@ -56,9 +56,7 @@ class _TeamEditPageState extends State<TeamEditPage> {
             keyboardType: TextInputType.text,
             initialValue: widget.team == null ? null : widget.team.name,
             validator: (String value) {
-              if (value.isEmpty) {
-                return 'Team naam is verplicht';
-              }
+              return value.isEmpty ? 'Team naam is verplicht' : null;
             },
             decoration: InputDecoration(labelText: 'Team naam'),
             onSaved: (String value) {
@@ -122,15 +120,14 @@ class _TeamEditPageState extends State<TeamEditPage> {
     }
     _formKey.currentState.save();
     Team updatedTeam = Team(
-      id: widget.team == null ? randomAlphaNumeric(20) : widget.team.id,
-      name: _formData['name'],
-      color: _formData['color'],
-      gameId: widget.gameId,
-      members: widget.team == null ? [] : widget.team.members,
-      order: widget.team == null ? widget.order : widget.team.order,
-      progress: 0,
-      rating: 0
-    );
+        id: widget.team == null ? randomAlphaNumeric(20) : widget.team.id,
+        name: _formData['name'],
+        color: _formData['color'],
+        gameId: widget.gameId,
+        members: widget.team == null ? [] : widget.team.members,
+        order: widget.team == null ? widget.order : widget.team.order,
+        progress: 0,
+        rating: 0);
     await model.updateGameStatus(widget.gameId, 'teamsCreated', true);
     model.updateTeam(updatedTeam).then((_) {
       Navigator.pop(context);

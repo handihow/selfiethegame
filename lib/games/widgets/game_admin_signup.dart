@@ -17,7 +17,7 @@ class GameAdminSignUp extends StatelessWidget {
           color: Colors.white,
           child: Text("Deel code"),
           onPressed: () {
-            share("Speel mee met SelfieTheGame! Spelcode is: " + code);
+            Share.share("Speel mee met SelfieTheGame! Spelcode is: " + code);
           },
         )
       ],

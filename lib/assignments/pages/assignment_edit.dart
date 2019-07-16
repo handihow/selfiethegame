@@ -23,11 +23,13 @@ class AssignmentEditPage extends StatefulWidget {
 class _AssignmentEditPageState extends State<AssignmentEditPage> {
   bool _isButtonDisabled = false;
 
-  final Map<String, dynamic> _formData = {'assignment': null, 'maxPoints': 0};
+  final Map<String, dynamic> _formData = {'assignment': null, 'maxPoints': 0, 'description': null, 'location': null};
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _assignmentFocusNode = FocusNode();
   final _maxPointsFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _locationFocusNode = FocusNode();
 
   @override
   initState() {
@@ -51,9 +53,7 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
             initialValue:
                 widget.assignment == null ? null : widget.assignment.assignment,
             validator: (String value) {
-              if (value.isEmpty) {
-                return 'Opdracht is vereist.';
-              }
+              return value.isEmpty ? 'Opdracht is vereist.' : null;
             },
             decoration: InputDecoration(labelText: 'Opdracht'),
             onSaved: (String value) {
@@ -125,6 +125,44 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
     });
   }
 
+  Widget _buildDescriptionTextField() {
+    return EnsureVisibleWhenFocused(
+      focusNode: _descriptionFocusNode,
+      child: ListTile(
+        leading: Icon(Icons.comment),
+        title: TextFormField(
+            focusNode: _descriptionFocusNode,
+            keyboardType: TextInputType.multiline,
+            maxLines: 2,
+            initialValue:
+                widget.assignment == null || widget.assignment.description == null ? null : widget.assignment.description,
+            decoration: InputDecoration(labelText: 'Omschrijving'),
+            onSaved: (String value) {
+              _formData['description'] = value;
+            }),
+      ),
+    );
+  }
+
+  Widget _buildLocationTextField() {
+    return EnsureVisibleWhenFocused(
+      focusNode: _locationFocusNode,
+      child: ListTile(
+        leading: Icon(Icons.location_on),
+        title: TextFormField(
+            focusNode: _locationFocusNode,
+            keyboardType: TextInputType.text,
+            initialValue:
+                widget.assignment == null || widget.assignment.location == null ? null : widget.assignment.location,
+            decoration: InputDecoration(labelText: 'Locatie'),
+            onSaved: (String value) {
+              _formData['location'] = value;
+            }),
+      ),
+    );
+  }
+
+
   Widget _buildSubmitButton(BuildContext context, AppModel model) {
     return Center(
       child: RaisedButton(
@@ -161,6 +199,8 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
       updated: DateTime.now(),
       assignment: _formData['assignment'],
       order: widget.assignment == null ? widget.order : widget.assignment.order,
+      location: _formData['location'],
+      description: _formData['description']
     );
     await model.updateGameStatus(widget.gameId, 'assigned', true);
     model.updateAssignment(updatedAssignment).then((_) {
@@ -196,6 +236,8 @@ class _AssignmentEditPageState extends State<AssignmentEditPage> {
                 ),
                 _buildAssignmentTextField(),
                 _buildRadioOptionsField(),
+                _buildDescriptionTextField(),
+                _buildLocationTextField(),
                 SizedBox(height: 20.0),
                 _buildSubmitButton(context, model)
               ],

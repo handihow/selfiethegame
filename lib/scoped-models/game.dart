@@ -123,12 +123,11 @@ mixin GameModel on Model {
         .snapshots();
   }
 
-
   Future<void> updateGameStatus(
       String gameId, String statusProperty, bool statusValue) {
-    print('updating status...');
     DocumentReference gameRef = _db.collection('games').document(gameId);
     return Firestore.instance.runTransaction((Transaction tx) async {
+      print('I am not working');
       DocumentSnapshot gameSnapshot = await tx.get(gameRef);
       if (gameSnapshot.exists) {
         await tx.update(gameRef, {
@@ -154,24 +153,27 @@ mixin GameModel on Model {
       },
     );
   }
-  
+
   Future<void> deleteGame(Game game) async {
     final WriteBatch batch = _db.batch();
     //first find all assignments and delete them
     final QuerySnapshot assignmentSnaps = await _db
         .collection('assignments')
         .where('gameId', isEqualTo: game.id)
-        .snapshots().first;
-    assignmentSnaps.documents.forEach((assignmentSnap){
-      final assignmentRef = _db.collection('assignments').document(assignmentSnap.documentID);
+        .snapshots()
+        .first;
+    assignmentSnaps.documents.forEach((assignmentSnap) {
+      final assignmentRef =
+          _db.collection('assignments').document(assignmentSnap.documentID);
       batch.delete(assignmentRef);
     });
     //then find all teams and delete them
     final QuerySnapshot teamSnaps = await _db
         .collection('teams')
         .where('gameId', isEqualTo: game.id)
-        .snapshots().first;
-    teamSnaps.documents.forEach((teamSnap){
+        .snapshots()
+        .first;
+    teamSnaps.documents.forEach((teamSnap) {
       final teamRef = _db.collection('teams').document(teamSnap.documentID);
       batch.delete(teamRef);
     });
@@ -184,5 +186,4 @@ mixin GameModel on Model {
     //commit the batch;
     return batch.commit();
   }
-
 }

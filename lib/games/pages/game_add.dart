@@ -50,9 +50,9 @@ class _GameAddState extends State<GameAddPage> {
             keyboardType: TextInputType.text,
             initialValue: _formData['name'],
             validator: (String value) {
-              if (value.isEmpty || value.length < 5) {
-                return 'Naam spel is vereist en moet minimaal 5 letters hebben.';
-              }
+              return value.isEmpty || value.length < 5
+                  ? 'Naam spel is vereist en moet minimaal 5 letters hebben.'
+                  : null;
             },
             decoration: InputDecoration(labelText: 'Naam spel'),
             onSaved: (String value) {
@@ -67,10 +67,7 @@ class _GameAddState extends State<GameAddPage> {
       focusNode: _dateFocusNode,
       child: ListTile(
         leading: Icon(Icons.today),
-        title: DateTimePickerFormField(
-          focusNode: _dateFocusNode,
-          keyboardType: TextInputType.datetime,
-          inputType: InputType.both,
+        title: DateTimeField(
           format: DateFormat("dd-MM-yyyy 'om' H:mm"),
           // initialValue: DateTime.now(),
           validator: (DateTime dt) {
@@ -81,10 +78,15 @@ class _GameAddState extends State<GameAddPage> {
             if (dt.isBefore(now)) {
               return 'Datum en tijd van het spel moet in de toekomst liggen.';
             }
+            return null;
           },
-          decoration: InputDecoration(
-              labelText: 'Datum & begintijd spel',
-              hasFloatingPlaceholder: false),
+          onShowPicker: (context, currentValue) {
+            return showDatePicker(
+                context: context,
+                firstDate: DateTime.now(),
+                initialDate: currentValue ?? DateTime.now(),
+                lastDate: DateTime(2030));
+          },
           onSaved: (DateTime dt) {
             _formData['date'] = dt;
           },
@@ -104,7 +106,7 @@ class _GameAddState extends State<GameAddPage> {
             decoration:
                 InputDecoration(labelText: 'Hoeveel minuten duurt het spel?'),
             onSaved: (String value) {
-              if(value.isNotEmpty){
+              if (value.isNotEmpty) {
                 _formData['duration'] = int.parse(value);
               } else {
                 _formData['duration'] = null;
@@ -194,8 +196,13 @@ class _GameAddState extends State<GameAddPage> {
       return;
     }
     _formKey.currentState.save();
-    String gameId = await model.addGame(_formData['name'], _formData['date'],
-        _formData['isPlaying'], _formData['image'], model.authenticatedUser, _formData['duration']);
+    String gameId = await model.addGame(
+        _formData['name'],
+        _formData['date'],
+        _formData['isPlaying'],
+        _formData['image'],
+        model.authenticatedUser,
+        _formData['duration']);
     if (gameId != null) {
       await model.addChat(gameId, model.authenticatedUser.uid);
     }

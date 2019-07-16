@@ -48,9 +48,7 @@ class _AuthPageState extends State<AuthPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        if (value.isEmpty || value.length < 8) {
-          return 'Wachtwoord ongeldig. Minimaal 8 tekens.';
-        }
+        return value.isEmpty || value.length < 8 ? 'Wachtwoord ongeldig. Minimaal 8 tekens.' : null;
       },
       decoration: InputDecoration(
           labelText: 'Wachtwoord', filled: true, fillColor: Colors.white),

@@ -24,6 +24,7 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
       itemCount: returnedAssignments.length,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
+          isThreeLine: true,
           leading: IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
@@ -39,8 +40,13 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
             },
           ),
           title: Text(returnedAssignments[index].assignment),
-          subtitle: Text('Maximum score: ' +
-              returnedAssignments[index].maxPoints.index.toString()),
+          subtitle: Text(
+            returnedAssignments[index].maxPoints.index.toString() +
+                ' punt(en) ' +
+                returnedAssignments[index].description +
+                ' ' +
+                returnedAssignments[index].location,
+          ),
           trailing: IconButton(
             icon: Icon(Icons.clear),
             onPressed: () {
@@ -135,7 +141,9 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return AssignmentEditPage(widget.gameId,);
+                    return AssignmentEditPage(
+                      widget.gameId,
+                    );
                   },
                 ),
               );

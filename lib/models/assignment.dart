@@ -14,6 +14,8 @@ class Assignment {
   final int level;
   final String gameId;
   final Rating maxPoints;
+  final String description;
+  final String location;
   @JsonKey(
       fromJson: _timestampToDateSerializer,
       toJson: _dateTimeDoNothingSerializer)
@@ -32,6 +34,8 @@ class Assignment {
       this.level,
       @required this.gameId,
       @required this.maxPoints,
+      this.description,
+      this.location,
       @required this.created,
       @required this.updated});
 

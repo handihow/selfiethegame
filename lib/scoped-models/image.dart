@@ -39,7 +39,25 @@ mixin ImageModel on Model {
     return imageReferences;
   }
 
-  //fetch image references for a team
+  Future<List<ImageRef>> fetchTeamListImageReferences(String teamId) async {
+    List<ImageRef> imageReferences = [];
+    await _db
+        .collection('images')
+        .where('teamId', isEqualTo: teamId)
+        .orderBy('created', descending: true)
+        .getDocuments()
+        .then((snapshot) {
+      snapshot.documents.forEach((DocumentSnapshot document) {
+        final ImageRef _returnedImage = ImageRef.fromJson(document.data);
+        imageReferences.add(_returnedImage);
+      });
+    }).catchError((err) {
+      print("Error: " + err);
+    });
+    return imageReferences;
+  }
+
+  //fetch image references for a team as stream
   Stream<QuerySnapshot> fetchTeamImageReferences(String teamId) {
     return _db
         .collection('images')

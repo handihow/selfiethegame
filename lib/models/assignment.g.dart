@@ -16,6 +16,8 @@ Assignment _$AssignmentFromJson(Map json) {
       level: json['level'] as int,
       gameId: json['gameId'] as String,
       maxPoints: _$enumDecodeNullable(_$RatingEnumMap, json['maxPoints']),
+      description: json['description'] as String,
+      location: json['location'] as String,
       created: json['created'] == null
           ? null
           : Assignment._timestampToDateSerializer(json['created']),
@@ -34,6 +36,8 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
       'level': instance.level,
       'gameId': instance.gameId,
       'maxPoints': _$RatingEnumMap[instance.maxPoints],
+      'description': instance.description,
+      'location': instance.location,
       'created': instance.created == null
           ? null
           : Assignment._dateTimeDoNothingSerializer(instance.created),

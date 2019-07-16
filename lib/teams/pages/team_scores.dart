@@ -7,6 +7,8 @@ import '../../models/game.dart';
 import '../../models/team.dart';
 import '../../models/hexcolor.dart';
 
+import './team_image_list_view.dart';
+
 class TeamScoresPage extends StatelessWidget {
   final Game game;
   final Team myTeam;
@@ -18,43 +20,51 @@ class TeamScoresPage extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       itemCount: returnedTeams.length,
       itemBuilder: (BuildContext context, int index) {
-        return Card(
-          child: Column(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(
-                  Icons.group,
-                  color: HexColor(returnedTeams[index].color),
+        return GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return TeamImageListView(game,returnedTeams[index]);
+            }),
+          ),
+          child: Card(
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(
+                    Icons.group,
+                    color: HexColor(returnedTeams[index].color),
+                  ),
+                  title: Text('Team ' + returnedTeams[index].name),
+                  trailing: returnedTeams[index]
+                          .members
+                          .contains(model.authenticatedUser.uid)
+                      ? Icon(
+                          Icons.check,
+                        )
+                      : null,
                 ),
-                title: Text('Team ' + returnedTeams[index].name),
-                trailing: returnedTeams[index]
-                        .members
-                        .contains(model.authenticatedUser.uid)
-                    ? Icon(
-                        Icons.check,
-                      )
-                    : null,
-              ),
-              ListTile(
-                leading: Icon(Icons.face),
-                title: Text('Spelers'),
-                subtitle: returnedTeams[index].memberDisplayNames != null
-                    ? Text(returnedTeams[index].memberDisplayNames.join(", "))
-                    : null,
-              ),
-              ListTile(
-                leading: Icon(Icons.camera),
-                title: Text('Opdrachten'),
-                subtitle: Text(
-                    returnedTeams[index].progress.toString() + ' opdrachten'),
-              ),
-              ListTile(
-                leading: Icon(Icons.assessment),
-                title: Text('Totale score'),
-                subtitle:
-                    Text(returnedTeams[index].rating.toString() + ' punten'),
-              ),
-            ],
+                ListTile(
+                  leading: Icon(Icons.face),
+                  title: Text('Spelers'),
+                  subtitle: returnedTeams[index].memberDisplayNames != null
+                      ? Text(returnedTeams[index].memberDisplayNames.join(", "))
+                      : null,
+                ),
+                ListTile(
+                  leading: Icon(Icons.camera),
+                  title: Text('Opdrachten'),
+                  subtitle: Text(
+                      returnedTeams[index].progress.toString() + ' opdrachten'),
+                ),
+                ListTile(
+                  leading: Icon(Icons.assessment),
+                  title: Text('Totale score'),
+                  subtitle:
+                      Text(returnedTeams[index].rating.toString() + ' punten'),
+                ),
+              ],
+            ),
           ),
         );
       },

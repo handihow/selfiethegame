@@ -37,8 +37,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
   File _image;
 
   Future getImage(BuildContext context) async {
-
-    if(mounted){
+    if (mounted) {
       setState(() {
         _isImageButtonDisabled = true;
       });
@@ -53,7 +52,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
         _image = image;
       });
       uploadImage(context, image);
-    } else if(mounted) {
+    } else if (mounted) {
       setState(() {
         _isImageButtonDisabled = false;
       });
@@ -129,13 +128,40 @@ class _AssignmentPageState extends State<AssignmentPage> {
   }
 
   Widget _buildAssignmentPage(BuildContext context) {
-    final String text = widget.isPlaying
-        ? 'Maak een selfie met ' + widget.assignment.assignment
-        : 'Spel is niet actief. Je kunt nu geen selfies uploaden.';
-    Widget pageContent = Center(
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 14.0),
+    Widget pageContent = Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.assignment),
+            title: Text(widget.assignment.assignment),
+            subtitle:
+                Text('Maak een selfie met ' + widget.assignment.assignment),
+          ),
+          ListTile(
+            leading: Icon(Icons.assessment),
+            title: Text('maximaal ' +
+                widget.assignment.maxPoints.index.toString() +
+                ' punt(en)'),
+            subtitle: Text('Je kunt maximaal ' +
+                widget.assignment.maxPoints.index.toString() +
+                ' punt(en) halen met deze opdracht.'),
+          ),
+          widget.assignment.description == null
+              ? SizedBox(height: 0)
+              : ListTile(
+                  leading: Icon(Icons.comment),
+                  title: Text('opmerking'),
+                  subtitle: Text(widget.assignment.description),
+                ),
+          widget.assignment.location == null
+              ? SizedBox(height: 0.0)
+              : ListTile(
+                  leading: Icon(Icons.location_on),
+                  title: Text('locatie'),
+                  subtitle: Text(widget.assignment.location),
+                ),
+        ],
       ),
     );
     if (_isUploading) {
@@ -143,6 +169,11 @@ class _AssignmentPageState extends State<AssignmentPage> {
     }
     if (_doneUploading) {
       pageContent = _showImage(context);
+    }
+    if (!widget.isPlaying) {
+      return Center(
+        child: Text('Spel is niet actief. Je kunt nu geen selfies uploaden.'),
+      );
     }
     return pageContent;
   }
@@ -165,7 +196,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
           appBar: AppBar(
             title: _isUploading
                 ? Text('Selfie upload..')
-                : Text('Selfie met ' + widget.assignment.assignment),
+                : Text('Selfie met ... '),
           ),
           body: _buildAssignmentPage(context),
           floatingActionButton: !widget.isPlaying || _isUploading

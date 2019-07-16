@@ -36,6 +36,7 @@ class _GameRegisterState extends State<GameRegisterPage> {
               if (value.isEmpty || value.length < 6 || value.length > 6) {
                 return 'Code heeft 6 karakters.';
               }
+              return null;
             },
             decoration: InputDecoration(labelText: 'Code spel'),
             onSaved: (String value) {

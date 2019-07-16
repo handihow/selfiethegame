@@ -27,9 +27,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        if (value.isEmpty) {
-          return 'Vul je naam in';
-        }
+        return value.isEmpty ? 'Vul je naam in' : null;
       },
       decoration: InputDecoration(
           labelText: 'Volledige naam', filled: true, fillColor: Colors.white),
@@ -63,9 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
       keyboardType: TextInputType.text,
       controller: _passwordTextController,
       validator: (String value) {
-        if (value.isEmpty || value.length < 8) {
-          return 'Wachtwoord ongeldig. Minimaal 8 tekens.';
-        }
+        return value.isEmpty || value.length < 8 ? 'Wachtwoord ongeldig. Minimaal 8 tekens.' : null;
       },
       decoration: InputDecoration(
           labelText: 'Wachtwoord', filled: true, fillColor: Colors.white),
@@ -80,9 +76,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        if (_passwordTextController.text != value) {
-          return 'Wachtwoord is niet hetzelfde';
-        }
+        return _passwordTextController.text != value ? 'Wachtwoord is niet hetzelfde' : null;
       },
       decoration: InputDecoration(
           labelText: 'Herhaal wachtwoord',
