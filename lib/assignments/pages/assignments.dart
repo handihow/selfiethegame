@@ -23,6 +23,14 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
       padding: const EdgeInsets.all(10.0),
       itemCount: returnedAssignments.length,
       itemBuilder: (BuildContext context, int index) {
+        String subtitle = returnedAssignments[index].maxPoints.index.toString() +
+                ' punt(en) ';
+        if(returnedAssignments[index].description != null){
+          subtitle += returnedAssignments[index].description + ' ';
+        }
+        if(returnedAssignments[index].location != null){
+          subtitle += returnedAssignments[index].location;
+        }
         return ListTile(
           isThreeLine: true,
           leading: IconButton(
@@ -40,13 +48,7 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
             },
           ),
           title: Text(returnedAssignments[index].assignment),
-          subtitle: Text(
-            returnedAssignments[index].maxPoints.index.toString() +
-                ' punt(en) ' +
-                returnedAssignments[index].description +
-                ' ' +
-                returnedAssignments[index].location,
-          ),
+          subtitle: Text(subtitle),
           trailing: IconButton(
             icon: Icon(Icons.clear),
             onPressed: () {
