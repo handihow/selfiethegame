@@ -57,8 +57,8 @@ mixin UserModel on Model {
       String email, String password, String displayName) async {
     loading.add(true);
     try {
-      final FirebaseUser user = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      final FirebaseUser user = (await _auth.createUserWithEmailAndPassword(
+          email: email, password: password)).user;
       await updateUserData(user, AuthMethod.email, displayName);
       loading.add(false);
       print("signed in: " + user.email);
@@ -73,8 +73,8 @@ mixin UserModel on Model {
       String email, String password) async {
     loading.add(true);
     try {
-      final FirebaseUser user = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+          email: email, password: password)).user;
       await updateUserData(user, AuthMethod.email, null);
       loading.add(false);
       print("signed in: " + user.email);
@@ -94,7 +94,7 @@ mixin UserModel on Model {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      final FirebaseUser user = await _auth.signInWithCredential(credential);
+      final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
       await updateUserData(user, AuthMethod.google, null);
       loading.add(false);
       print("signed in " + user.displayName);
@@ -108,7 +108,7 @@ mixin UserModel on Model {
   Future<FirebaseUser> facebookSignIn() async {
     loading.add(true);
     FacebookLoginResult result = await _facebookLogin
-        .logInWithReadPermissions(['email', 'public_profile']);
+        .logIn(['email', 'public_profile']);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final token = result.accessToken.token;
@@ -119,7 +119,7 @@ mixin UserModel on Model {
         AuthCredential credential =
             FacebookAuthProvider.getCredential(accessToken: token);
         final FirebaseUser user =
-            await FirebaseAuth.instance.signInWithCredential(credential);
+            (await FirebaseAuth.instance.signInWithCredential(credential)).user;
         await updateUserData(user, AuthMethod.facebook, null);
         loading.add(false);
         print("signed in " + user.displayName);
