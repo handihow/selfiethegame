@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget {
       child: RaisedButton(
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
-        child: Text('LOG UIT'),
+        child: Text('LOG OUT'),
         onPressed: () {
           model.signOut();
           Navigator.pushReplacementNamed(context, '/');
@@ -43,25 +43,25 @@ class ProfilePage extends StatelessWidget {
               ? _avatarBuilder(model)
               : SizedBox(height: 0),
           Divider(),
-          Text('Email adres'),
+          Text('Email address'),
           Text(
             model.authenticatedUser.email,
             style: TextStyle(fontSize: 16.0),
           ),
           Divider(),
-          Text('Naam'),
+          Text('Name'),
           Text(
             model.authenticatedUser.displayName,
             style: TextStyle(fontSize: 16.0),
           ),
           Divider(),
-          Text('Unieke ID'),
+          Text('Unique ID'),
           Text(
             model.authenticatedUser.uid,
             style: TextStyle(fontSize: 16.0),
           ),
           Divider(),
-          Text('Authenticatie methode'),
+          Text('Authentication method'),
           Text(
             model.authenticatedUser.authMethod.toString().split('.').last,
             style: TextStyle(fontSize: 16.0),
@@ -95,7 +95,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       drawer: MainSideDrawer(),
       appBar: AppBar(
-        title: Text('Profiel'),
+        title: Text('Profile'),
       ),
       body: ScopedModelDescendant<AppModel>(
         builder: (BuildContext context, Widget child, AppModel model) {

@@ -5,7 +5,7 @@ class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Even geduld aub..'),
+        title: Text('One moment please..'),
       ),
       body: Center(
         child: CircularProgressIndicator(),

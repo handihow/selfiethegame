@@ -27,7 +27,7 @@ class GamesPage extends StatelessWidget {
           );
         } else if (!snapshot.hasData || snapshot.data.documents.length == 0) {
           return Center(
-            child: Text('Nog geen spellen, voeg een spel toe'),
+            child: Text('No games yet, join a game'),
           );
         } else {
           return new ListView(
@@ -50,7 +50,7 @@ class GamesPage extends StatelessWidget {
       gamesPage = Scaffold(
         drawer: MainSideDrawer(),
         appBar: AppBar(
-          title: Text('Spellen'),
+          title: Text('Games'),
         ),
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
@@ -69,7 +69,7 @@ class GamesPage extends StatelessWidget {
       gamesPage = Scaffold(
         drawer: MainSideDrawer(),
         appBar: AppBar(
-          title: Text('Spellen'),
+          title: Text('Games'),
         ),
         body: Center(
           child: CircularProgressIndicator(),

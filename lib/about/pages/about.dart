@@ -8,9 +8,9 @@ class AboutPage extends StatelessWidget {
       await launch(url);
     } else {
       final snackBar = SnackBar(
-        content: Text('Kon deze url niet openen: $url'),
+        content: Text('Could not open this url: $url'),
         action: SnackBarAction(
-          label: 'Opnieuw',
+          label: 'Again',
           onPressed: () {
             _launchURL(context, url);
           },
@@ -35,7 +35,7 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('SelfieTheGame'),
-            subtitle: Text('Versie nummer 1.09'),
+            subtitle: Text('Version number 1.10'),
           ),
           ListTile(
             leading: Icon(
@@ -43,7 +43,7 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('Maker'),
-            subtitle: Text('Gemaakt door HandiHow'),
+            subtitle: Text('Made by HandiHow'),
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
@@ -60,15 +60,15 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('Feedback'),
-            subtitle: Text('Stuur feedback naar office@handihow.com'),
+            subtitle: Text('Send your feedback to office@handihow.com'),
           ),
           ListTile(
             leading: Icon(
               Icons.school,
               color: Theme.of(context).primaryColor,
             ),
-            title: Text('Hoe werkt het?'),
-            subtitle: Text('Open webpagina met uitleg'),
+            title: Text('How does it work?'),
+            subtitle: Text('Opens web page with explanations'),
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
@@ -85,7 +85,7 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('Privacy'),
-            subtitle: Text('Open het privacybeleid'),
+            subtitle: Text('Opens the privacy policy'),
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
@@ -101,8 +101,8 @@ class AboutPage extends StatelessWidget {
               Icons.person,
               color: Theme.of(context).primaryColor,
             ),
-            title: Text('Gebruiksvoorwaarden'),
-            subtitle: Text('Open de gebruiksvoorwaarden'),
+            title: Text('Terms of Use'),
+            subtitle: Text('Opens the Terms of Use'),
             trailing: IconButton(
               icon: Icon(
                 Icons.info,
@@ -118,8 +118,8 @@ class AboutPage extends StatelessWidget {
               Icons.question_answer,
               color: Theme.of(context).primaryColor,
             ),
-            title: Text('Veelgestelde vragen'),
-            subtitle: Text('Open de veelgestelde vragen'),
+            title: Text('Frequently Asked Questions'),
+            subtitle: Text('Opens the FAQ section on the website'),
             trailing: IconButton(
               icon: Icon(
                 Icons.info,

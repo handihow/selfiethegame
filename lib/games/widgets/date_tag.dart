@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 class DateTag extends StatelessWidget {
   final DateTime date;
-  final format = new DateFormat("dd-MM-yyyy 'om' H:mm");
+  final format = new DateFormat("MM-dd-yyyy 'at' H:mm");
 
   DateTag(this.date);
 

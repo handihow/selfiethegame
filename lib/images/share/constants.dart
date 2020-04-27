@@ -1,16 +1,16 @@
 class Constants {
-  static const String Share = 'Delen';
+  static const String Share = 'Share';
   static const String Like = 'Like';
-  static const String Comment = 'Commentaar';
-  // static const String Mask = 'Maskeer';
-  static const String Delete = 'Verwijder';
-  static const String Report = 'Rapporteer';
+  static const String Comment = 'Comment';
+  static const String Mask = 'Edit';
+  static const String Delete = 'Delete';
+  static const String Report = 'Report';
 
   static const List<String> choices = <String>[
     Share,
     Like,
     Comment,
-    // Mask,
+    Mask,
     Delete,
     Report,
   ];

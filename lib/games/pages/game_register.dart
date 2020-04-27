@@ -34,11 +34,11 @@ class _GameRegisterState extends State<GameRegisterPage> {
             initialValue: _formData['code'],
             validator: (String value) {
               if (value.isEmpty || value.length < 6 || value.length > 6) {
-                return 'Code heeft 6 karakters.';
+                return 'Game code has 6 characters.';
               }
               return null;
             },
-            decoration: InputDecoration(labelText: 'Code spel'),
+            decoration: InputDecoration(labelText: 'Game code'),
             onSaved: (String value) {
               _formData['code'] = value;
             }),
@@ -49,7 +49,7 @@ class _GameRegisterState extends State<GameRegisterPage> {
   Widget _buildSubmitButton(BuildContext context, AppModel model) {
     return Center(
       child: RaisedButton(
-        child: Text(_isButtonDisabled ? 'Wachten...' : 'Meedoen'),
+        child: Text(_isButtonDisabled ? 'Please wait...' : 'Join game'),
         onPressed: _isButtonDisabled
             ? null
             : () {
@@ -133,7 +133,7 @@ class _GameRegisterState extends State<GameRegisterPage> {
       builder: (BuildContext context, Widget child, AppModel model) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Meedoen aan spel'),
+            title: Text('Join a game'),
           ),
           body: _isVisibleQrCodeScanner
               ? _buildQRCodeScannerContent(context, model)
@@ -145,7 +145,7 @@ class _GameRegisterState extends State<GameRegisterPage> {
                 _isVisibleQrCodeScanner = !_isVisibleQrCodeScanner;
               });
             },
-            label: _isVisibleQrCodeScanner ? Text('Invoeren') : Text('Scannen'),
+            label: _isVisibleQrCodeScanner ? Text('Enter') : Text('Scan'),
             icon: _isVisibleQrCodeScanner
                 ? Icon(Icons.edit)
                 : Icon(Icons.camera_alt),

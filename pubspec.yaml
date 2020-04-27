@@ -46,6 +46,7 @@ dependencies:
   flutter_cache_manager: ^1.2.2
   url_launcher: ^5.4.5
   share: ^0.6.4
+  firebase_ml_vision: ^0.9.3+8
 
 
 dev_dependencies:
@@ -91,6 +92,7 @@ flutter:
     - assets/points_five_disabled.png
     - assets/thumb_up.png
     - assets/chat.png
+    - assets/dog.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

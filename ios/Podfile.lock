@@ -204,6 +204,9 @@ PODS:
   - Firebase/MLVisionBarcodeModel (6.23.0):
     - Firebase/CoreOnly
     - FirebaseMLVisionBarcodeModel (~> 0.19.0)
+  - Firebase/MLVisionFaceModel (6.23.0):
+    - Firebase/CoreOnly
+    - FirebaseMLVisionFaceModel (~> 0.19.0)
   - Firebase/Storage (6.23.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 3.6.1)
@@ -221,6 +224,10 @@ PODS:
     - Firebase/Core
     - Flutter
   - firebase_core_web (0.1.0):
+    - Flutter
+  - firebase_ml_vision (0.1.1):
+    - Firebase/Core
+    - Firebase/MLVision
     - Flutter
   - firebase_storage (0.0.1):
     - Firebase/Storage
@@ -295,6 +302,8 @@ PODS:
     - GTMSessionFetcher/Core (~> 1.1)
     - Protobuf (~> 3.5)
   - FirebaseMLVisionBarcodeModel (0.19.0):
+    - FirebaseMLVision (~> 0.19)
+  - FirebaseMLVisionFaceModel (0.19.0):
     - FirebaseMLVision (~> 0.19)
   - FirebaseStorage (3.6.1):
     - FirebaseAuthInterop (~> 1.1)
@@ -426,11 +435,13 @@ PODS:
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_firestore_web (from `.symlinks/plugins/cloud_firestore_web/ios`)
+  - Firebase/MLVisionFaceModel
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_auth_web (from `.symlinks/plugins/firebase_auth_web/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_core_web (from `.symlinks/plugins/firebase_core_web/ios`)
+  - firebase_ml_vision (from `.symlinks/plugins/firebase_ml_vision/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_facebook_login (from `.symlinks/plugins/flutter_facebook_login/ios`)
@@ -469,6 +480,7 @@ SPEC REPOS:
     - FirebaseMLCommon
     - FirebaseMLVision
     - FirebaseMLVisionBarcodeModel
+    - FirebaseMLVisionFaceModel
     - FirebaseStorage
     - FMDB
     - GoogleAPIClientForREST
@@ -502,6 +514,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_core_web:
     :path: ".symlinks/plugins/firebase_core_web/ios"
+  firebase_ml_vision:
+    :path: ".symlinks/plugins/firebase_ml_vision/ios"
   firebase_storage:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
@@ -551,6 +565,7 @@ SPEC CHECKSUMS:
   firebase_auth_web: 0955c07bcc06e84af76b9d4e32e6f31518f2d7de
   firebase_core: 0d8be0e0d14c4902953aeb5ac5d7316d1fe4b978
   firebase_core_web: d501d8b946b60c8af265428ce483b0fff5ad52d1
+  firebase_ml_vision: b8c36c795402338acfdcc869ba2d463c486003d6
   firebase_storage: 5e931af5cdef32331676c659bdd1ebcaba9dc78a
   FirebaseAnalytics: 558f7a03d19de451093032c806f39d5f9dff096e
   FirebaseAuth: e50319ecc114acf93c2b9581e15d6604ddd7eeb2
@@ -564,6 +579,7 @@ SPEC CHECKSUMS:
   FirebaseMLCommon: 074a67e05122b1c9f6401a4e33b2cea3b4efd224
   FirebaseMLVision: 7a456009787690e3b53436092ae9b635563de8f3
   FirebaseMLVisionBarcodeModel: 96ef18a75ecdf867244ef2e75c8c1f01517667dc
+  FirebaseMLVisionFaceModel: d6ba42000f263df52187aee936262bc2002b3389
   FirebaseStorage: f4f39ae834a7145963b913f54e2f24a9db1d8fac
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_facebook_login: cfb5659f686b1c575ef205c6b6fd20db9679d3c4
@@ -598,6 +614,6 @@ SPEC CHECKSUMS:
   url_launcher_macos: fd7894421cd39320dce5f292fc99ea9270b2a313
   url_launcher_web: e5527357f037c87560776e36436bf2b0288b965c
 
-PODFILE CHECKSUM: e45c292f618eeca3034958d33b444b6e1249b55f
+PODFILE CHECKSUM: 032a91bbd1cd09beb9bcaa5b350414dc0ea5822e
 
 COCOAPODS: 1.9.1

@@ -74,19 +74,19 @@ class GameCardState extends State<GameCard> {
               context, '/games/' + widget.game.id + '/view'),
         ),
       );
-    } else if (widget.game.administrator == widget.model.authenticatedUser.uid) {
-      buttons.add(
-        RaisedButton(
-          child: Text('ADMIN'),
-          color: Theme.of(context).accentColor,
-          onPressed: () => Navigator.pushNamed(
-              context, '/games/' + widget.game.id + '/admin'),
-        ),
-      );
+    // } else if (widget.game.administrator == widget.model.authenticatedUser.uid) {
+    //   buttons.add(
+    //     RaisedButton(
+    //       child: Text('ADMIN'),
+    //       color: Theme.of(context).accentColor,
+    //       onPressed: () => Navigator.pushNamed(
+    //           context, '/games/' + widget.game.id + '/admin'),
+    //     ),
+    //   );
     } else {
       buttons.add(
         RaisedButton(
-          child: Text('NOG NIET BEGONNEN'),
+          child: Text('NOT YET STARTED'),
           color: Theme.of(context).accentColor,
           onPressed: null,
         ),
@@ -95,7 +95,7 @@ class GameCardState extends State<GameCard> {
     if(widget.game.administrator == widget.model.authenticatedUser.uid) {
       buttons.add(
         RaisedButton(
-          child: Text('VERWIJDEREN'),
+          child: Text('REMOVE'),
           color: Colors.white,
           textColor: Theme.of(context).errorColor,
           onPressed: () => _showWarningDialogForGameRemoval(context),
@@ -104,7 +104,7 @@ class GameCardState extends State<GameCard> {
     } else {
       buttons.add(
         RaisedButton(
-          child: Text('VERLATEN'),
+          child: Text('LEAVE'),
           color: Colors.white,
           textColor: Theme.of(context).errorColor,
           onPressed: () => _showWarningDialogForLeavingGame(context),
@@ -119,19 +119,19 @@ class GameCardState extends State<GameCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Spel verwijderen"),
-          content: Text("Je wilt dit spel verwijderen. Selfies van het spel worden niet verwijderd. Wil je doorgaan?"),
+          title: Text("Remove game"),
+          content: Text("You want to delete this game. Selfies from the game are not deleted. Do you want to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('VERWIJDEREN'),
+              child: Text('REMOVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -153,19 +153,19 @@ class GameCardState extends State<GameCard> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Spel verlaten"),
-          content: Text("Je wilt dit spel verlaten. Selfies van het spel worden niet verwijderd. Wil je doorgaan?"),
+          title: Text("Leave game"),
+          content: Text("You want to leave this game. Selfies from the game are not deleted. Do you want to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('VERLATEN'),
+              child: Text('LEAVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -190,7 +190,7 @@ class GameCardState extends State<GameCard> {
         children: <Widget>[
           ListTile(
             title: Text(widget.game.name),
-            subtitle: _isAdmin ? Text('Beheerder') : Text('Speler'),
+            subtitle: _isAdmin ? Text('Admin') : Text('Player'),
           ),
           Image.network(_url),
           // TitleDefault(game.name),

@@ -32,7 +32,7 @@ class _AuthPageState extends State<AuthPage> {
         RegExp regex = RegExp(
             r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
         if (value.isEmpty || !regex.hasMatch(value)) {
-          return 'Voer een geldig email adres in';
+          return 'Enter a valid email address';
         }
         return null;
       },
@@ -48,10 +48,10 @@ class _AuthPageState extends State<AuthPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        return value.isEmpty || value.length < 8 ? 'Wachtwoord ongeldig. Minimaal 8 tekens.' : null;
+        return value.isEmpty || value.length < 8 ? 'Password needs to contain minimum 8 characters.' : null;
       },
       decoration: InputDecoration(
-          labelText: 'Wachtwoord', filled: true, fillColor: Colors.white),
+          labelText: 'Password', filled: true, fillColor: Colors.white),
       obscureText: true,
       onSaved: (String value) {
         _formData['password'] = value.trim();
@@ -70,9 +70,9 @@ class _AuthPageState extends State<AuthPage> {
         _formData['email'], _formData['password']);
     if (user == null) {
       final snackBar = SnackBar(
-        content: Text('Login niet succesvol'),
+        content: Text('Login unsuccessful'),
         action: SnackBarAction(
-          label: 'Opnieuw',
+          label: 'Again',
           onPressed: () {
             _formKey.currentState.reset();
           },
@@ -97,7 +97,7 @@ class _AuthPageState extends State<AuthPage> {
               children: <Widget>[
                 Icon(FontAwesomeIcons.signInAlt),
                 SizedBox(width: 10.0),
-                Text('INLOGGEN MET EMAIL'),
+                Text('LOG IN WITH EMAIL/PASSWORD'),
               ],
             ),
             onPressed: () => _onSubmit(context, signInWithEmailAndPassword),
@@ -115,7 +115,7 @@ class _AuthPageState extends State<AuthPage> {
         children: <Widget>[
           Icon(FontAwesomeIcons.userPlus),
           SizedBox(width: 10.0),
-          Text('REGISTREREN'),
+          Text('REGISTER'),
         ],
       ),
       onPressed: () {

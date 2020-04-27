@@ -1,9 +1,9 @@
 class Constants {
-  static const String Play = 'Starten';
-  static const String Pauze = 'Pauzeren';
-  static const String Stop = 'Stoppen';
+  static const String Play = 'Start';
+  static const String Pauze = 'Pause';
+  static const String Stop = 'Stop';
   static const String Timer = 'Timer';
-  static const String Notify = 'Meldingen';
+  static const String Notify = 'Notifications';
 
   static const List<String> choices = <String>[
     Play,

@@ -69,7 +69,7 @@ class _GameViewPageState extends State<GameViewPage>
           children: [
             _team.id == 'NOTEAM'
                 ? Center(
-                    child: Text('Je speelt niet mee'),
+                    child: Text('You are not playing!'),
                   )
                 : GameViewAssignments(game, _team),
             ImageListView(game),
@@ -133,10 +133,10 @@ class _GameViewPageState extends State<GameViewPage>
               : game.duration - difference.inMinutes;
         }
         return AlertDialog(
-          title: Text("Resterende tijd"),
+          title: Text("Remaining time"),
           content: Text(remaining != null
-              ? remaining.toString() + " minuten"
-              : 'Geen looptijd ingesteld'),
+              ? remaining.toString() + " minutes"
+              : 'No runtime set'),
         );
       },
     );
@@ -147,9 +147,9 @@ class _GameViewPageState extends State<GameViewPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Meldingen"),
+          title: Text("Notifications"),
           content: Text(
-              'Meldingen naar alle spelers komen pas in volgende releases van SelfieTheGame app beschikbaar'),
+              'Notifications to all players will only be available in subsequent releases of the SelfieTheGame app'),
         );
       },
     );
@@ -191,20 +191,20 @@ class _GameViewPageState extends State<GameViewPage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Spel stoppen"),
+          title: Text("Stop game"),
           content: Text(
-              "Je wilt het spel stoppen. Daarna kun je niet meer spelen. Wil je doorgaan?"),
+              "You want to stop the game. After that you can no longer play. Do you want to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('STOPPEN'),
+              child: Text('STOP'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -226,7 +226,7 @@ class _GameViewPageState extends State<GameViewPage>
   Widget _buildProgressIndicatorWidget() {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Spel wordt geladen...'),
+        title: Text('Game is loading...'),
       ),
       body: Center(
         child: CircularProgressIndicator(),

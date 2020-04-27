@@ -13,7 +13,7 @@ import '../share/constants.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
-// import './image_editor.dart';
+import './image_editor.dart';
 
 class ImageViewer extends StatefulWidget {
   final ImageRef image;
@@ -214,12 +214,12 @@ class _ImageViewerState extends State<ImageViewer> {
             }
           } else if (choice == Constants.Comment) {
             _showCommentDialog(context, model);
-          // } else if (choice == Constants.Mask) {
-          //   if (widget.canEdit) {
-          //     _editImage(widget.image);
-          //   } else {
-          //     _informDialog(context, 'maskeren');
-          //   }
+          } else if (choice == Constants.Mask) {
+            if (widget.canEdit) {
+              _editImage(widget.image);
+            } else {
+              _informDialog(context, 'maskeren');
+            }
           } else {
             File f = await DefaultCacheManager()
                 .getSingleFile(widget.image.downloadUrl);
@@ -238,16 +238,16 @@ class _ImageViewerState extends State<ImageViewer> {
     ];
   }
 
-  // _editImage(ImageRef image) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (BuildContext context) {
-  //       return ImageEditor(
-  //         image,
-  //       );
-  //     }),
-  //   );
-  // }
+  _editImage(ImageRef image) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (BuildContext context) {
+        return ImageEditor(
+          image,
+        );
+      }),
+    );
+  }
 
   Widget _showMainActionButtons(AppModel model) {
     if (!widget.hasGame) {

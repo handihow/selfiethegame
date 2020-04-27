@@ -27,10 +27,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        return value.isEmpty ? 'Vul je naam in' : null;
+        return value.isEmpty ? 'Fill in your name' : null;
       },
       decoration: InputDecoration(
-          labelText: 'Volledige naam', filled: true, fillColor: Colors.white),
+          labelText: 'Full name', filled: true, fillColor: Colors.white),
       onSaved: (String value) {
         _formData['displayName'] = value;
       },
@@ -44,7 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
         RegExp regex = RegExp(
             r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?");
         if (value.isEmpty || !regex.hasMatch(value)) {
-          return 'Voer een geldig email adres in';
+          return 'Fill in a valid email address';
         }
         return null;
       },
@@ -61,10 +61,10 @@ class _RegisterPageState extends State<RegisterPage> {
       keyboardType: TextInputType.text,
       controller: _passwordTextController,
       validator: (String value) {
-        return value.isEmpty || value.length < 8 ? 'Wachtwoord ongeldig. Minimaal 8 tekens.' : null;
+        return value.isEmpty || value.length < 8 ? 'Password needs to contain minimum 8 characters.' : null;
       },
       decoration: InputDecoration(
-          labelText: 'Wachtwoord', filled: true, fillColor: Colors.white),
+          labelText: 'Password', filled: true, fillColor: Colors.white),
       obscureText: true,
       onSaved: (String value) {
         _formData['password'] = value.trim();
@@ -76,10 +76,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return TextFormField(
       keyboardType: TextInputType.text,
       validator: (String value) {
-        return _passwordTextController.text != value ? 'Wachtwoord is niet hetzelfde' : null;
+        return _passwordTextController.text != value ? 'Passwords do not match' : null;
       },
       decoration: InputDecoration(
-          labelText: 'Herhaal wachtwoord',
+          labelText: 'Repeat password',
           filled: true,
           fillColor: Colors.white),
       obscureText: true,
@@ -95,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     } else if (!_formData['acceptTerms']) {
       final snackBar = SnackBar(
-        content: Text('Accepteer de voorwaarden'),
+        content: Text('Accept the terms'),
         action: SnackBarAction(
           label: 'OK',
           onPressed: () {},
@@ -109,9 +109,9 @@ class _RegisterPageState extends State<RegisterPage> {
           _formData['email'], _formData['password'], _formData['displayName']);
       if (user == null) {
         final snackBar = SnackBar(
-          content: Text('Registratie niet succesvol'),
+          content: Text('Registration not successful'),
           action: SnackBarAction(
-            label: 'Opnieuw',
+            label: 'Again',
             onPressed: () {
               _formKey.currentState.reset();
             },
@@ -132,7 +132,7 @@ class _RegisterPageState extends State<RegisterPage> {
           _formData['acceptTerms'] = value;
         });
       },
-      title: Text('Accepteer voorwaarden'),
+      title: Text('Accept terms'),
     );
   }
 
@@ -159,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
               children: <Widget>[
                 Icon(FontAwesomeIcons.signInAlt),
                 SizedBox(width: 10.0),
-                Text('REGISTREREN'),
+                Text('REGISTER'),
               ],
             ),
             onPressed: () => _onSubmit(context, registerWithEmailAndPassword),
@@ -203,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registreren'),
+        title: Text('Register'),
       ),
       body: _buildRegistrationPage(),
     );

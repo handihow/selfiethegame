@@ -51,10 +51,10 @@ class _GameAddState extends State<GameAddPage> {
             initialValue: _formData['name'],
             validator: (String value) {
               return value.isEmpty || value.length < 5
-                  ? 'Naam spel is vereist en moet minimaal 5 letters hebben.'
+                  ? 'Game name is required and must have at least 5 letters.'
                   : null;
             },
-            decoration: InputDecoration(labelText: 'Naam spel'),
+            decoration: InputDecoration(labelText: 'Name of game'),
             onSaved: (String value) {
               _formData['name'] = value;
             }),
@@ -68,15 +68,15 @@ class _GameAddState extends State<GameAddPage> {
       child: ListTile(
         leading: Icon(Icons.today),
         title: DateTimeField(
-          format: DateFormat("dd-MM-yyyy 'om' H:mm"),
+          format: DateFormat("MM-dd-yyyy 'at' H:mm"),
           // initialValue: DateTime.now(),
           validator: (DateTime dt) {
             if (dt == null) {
-              return 'Datum en tijd spel is verplicht.';
+              return 'Date and time of game are mandatory.';
             }
             final now = DateTime.now();
             if (dt.isBefore(now)) {
-              return 'Datum en tijd van het spel moet in de toekomst liggen.';
+              return 'The date and time of the game must be in the future.';
             }
             return null;
           },
@@ -104,7 +104,7 @@ class _GameAddState extends State<GameAddPage> {
             focusNode: _durationFocusNode,
             keyboardType: TextInputType.numberWithOptions(decimal: false),
             decoration:
-                InputDecoration(labelText: 'Hoeveel minuten duurt het spel?'),
+                InputDecoration(labelText: 'How many minutes does the game last?'),
             onSaved: (String value) {
               if (value.isNotEmpty) {
                 _formData['duration'] = int.parse(value);
@@ -122,7 +122,7 @@ class _GameAddState extends State<GameAddPage> {
       child: ListTile(
         leading: Icon(Icons.face),
         title: CheckboxListTile(
-          title: Text('Ik speel mee'),
+          title: Text('I play along'),
           value: _formData['isPlaying'],
           onChanged: (bool value) {
             setState(() {
@@ -139,7 +139,7 @@ class _GameAddState extends State<GameAddPage> {
       builder: (BuildContext context, Widget child, AppModel model) {
         return Center(
           child: RaisedButton(
-            child: Text(_isButtonDisabled ? 'Bewaren...' : 'Bewaar'),
+            child: Text(_isButtonDisabled ? 'Saving...' : 'Save'),
             onPressed: _isButtonDisabled
                 ? null
                 : () {
@@ -215,7 +215,7 @@ class _GameAddState extends State<GameAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Nieuw spel'),
+        title: Text('New game'),
       ),
       body: _buildPageContent(context),
     );
