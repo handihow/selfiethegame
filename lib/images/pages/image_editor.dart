@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:math';
+import 'package:scoped_model/scoped_model.dart';
+import '../../scoped-models/main.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,11 +24,14 @@ class ImageEditor extends StatefulWidget {
 
 class _ImageEditorState extends State<ImageEditor> {
   File _imageFile;
+  String _imageState;
   List<Face> _faces;
   bool _doneLoading = false;
+  bool _hasRotated = false;
   double _angle = 0;
   ui.Image _mask;
   bool _hasMasks = false;
+  List<Color> _colors;
 
   @override
   initState() {
@@ -57,6 +63,7 @@ class _ImageEditorState extends State<ImageEditor> {
           _imageFile = imageFile;
           _doneLoading = true;
           _angle = angle;
+          _imageState = widget.image.imageState;
         },
       );
     }
@@ -75,14 +82,36 @@ class _ImageEditorState extends State<ImageEditor> {
         () {
           _faces = faces;
           _mask = selectedMask;
+          _colors = _faces
+              .map((f) =>
+                  Colors.accents[Random().nextInt(Colors.accents.length)])
+              .toList();
+          _hasMasks = true;
         },
       );
     }
   }
 
   void _rotateImage() {
+    String imageState = '';
+    switch (_imageState) {
+      case '90':
+        imageState = '180';
+        break;
+      case '180':
+        imageState = '270';
+        break;
+      case '270':
+        imageState = null;
+        break;
+      default:
+        imageState = '90';
+        break;
+    }
     setState(() {
       _angle = _angle + math.pi / 2;
+      _imageState = imageState;
+      _hasRotated = true;
     });
   }
 
@@ -134,21 +163,30 @@ class _ImageEditorState extends State<ImageEditor> {
     return Transform.rotate(
       angle: _angle,
       child: Container(
-          alignment: Alignment(0, 0),
-          constraints: BoxConstraints.expand(),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(widget.image.downloadUrl),
-            ),
+        alignment: Alignment(0, 0),
+        constraints: BoxConstraints.expand(),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(widget.image.downloadUrl),
           ),
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: CustomPaint(
-              size: Size(500, 500),
-              painter: FacePainter(_faces, _mask),
-            ),
-          )),
+        ),
+        child: _hasMasks
+            ? FittedBox(
+                fit: BoxFit.contain,
+                child: CustomPaint(
+                  size: Size(500, 500),
+                  painter: FacePainter(_faces, _mask, _colors),
+                ),
+              )
+            : SizedBox(),
+      ),
     );
+  }
+
+  _removeMasks(BuildContext context) {
+    setState(() {
+      _hasMasks = false;
+    });
   }
 
   Widget _displayImage(BuildContext context) {
@@ -169,9 +207,13 @@ class _ImageEditorState extends State<ImageEditor> {
                 onPressed: () => _rotateImage(),
               ),
               RaisedButton(
-                color: Theme.of(context).accentColor,
-                child: Text('DETECT FACES'),
-                onPressed: () => _openMaskSelector(context),
+                color: _hasMasks
+                    ? Theme.of(context).errorColor
+                    : Theme.of(context).accentColor,
+                child: Text(_hasMasks ? 'REMOVE MASKS' : 'MASK FACES'),
+                onPressed: _hasMasks
+                    ? () => _removeMasks(context)
+                    : () => _openMaskSelector(context),
               ),
             ],
           ),
@@ -180,17 +222,36 @@ class _ImageEditorState extends State<ImageEditor> {
     );
   }
 
+  Future<bool> _saveChangesToImage(BuildContext context, AppModel model) async {
+    if(_hasRotated){
+      print(_imageState);
+      await model.updateImageRotation(widget.image.id, _imageState);
+      return Navigator.of(context).pop(_angle);
+    } else {
+      return Navigator.of(context).pop(null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit'),
-      ),
-      body: _doneLoading
-          ? _displayImage(context)
-          : Center(
-              child: CircularProgressIndicator(),
+    return ScopedModelDescendant<AppModel>(
+      builder: (BuildContext context, Widget child, AppModel model) {
+        return WillPopScope(
+          onWillPop: () async {
+            return _saveChangesToImage(context, model);
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Edit'),
             ),
+            body: _doneLoading
+                ? _displayImage(context)
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
+          ),
+        );
+      },
     );
   }
 }

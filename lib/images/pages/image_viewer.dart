@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'dart:io';
+import 'dart:math' as math;
 
 import '../widgets/image_rating_buttons.dart';
 import '../widgets/image_like_comment_buttons.dart';
@@ -28,6 +29,34 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   final _commentController = TextEditingController();
+  double _angle = 0; 
+
+  @override
+  initState() {
+    super.initState();
+    double angle;
+    switch (widget.image.imageState) {
+      case '90':
+        angle = math.pi / 2;
+        break;
+      case '180':
+        angle = math.pi;
+        break;
+      case '270':
+        angle = math.pi * 3 / 2;
+        break;
+      default:
+        angle = 0;
+        break;
+    }
+    if (mounted) {
+      setState(
+        () {
+          _angle = angle;
+        },
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -41,10 +70,10 @@ class _ImageViewerState extends State<ImageViewer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Selfie " + functionality),
-          content: Text("Je kunt selfies alleen " +
+          title: Text(functionality + "selfie"),
+          content: Text("You can only " +
               functionality +
-              " vanuit de opdrachten of de pagina met jouw selfies"),
+              " from the assignments page or the page with your own selfies"),
         );
       },
     );
@@ -58,25 +87,25 @@ class _ImageViewerState extends State<ImageViewer> {
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('BEWAAR'),
+              child: Text('SAVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
             ),
           ],
-          title: Text('Geef commentaar'),
+          title: Text('Comment'),
           content: TextFormField(
             controller: _commentController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
-              labelText: 'Jouw commentaar',
+              labelText: 'Your comment',
             ),
           ),
         );
@@ -94,19 +123,20 @@ class _ImageViewerState extends State<ImageViewer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Selfie verwijderen"),
-          content: Text("Je wilt deze selfie verwijderen. Wil je doorgaan?"),
+          title: Text("Remove selfie"),
+          content:
+              Text("You want to remove this selfie. Do you wish to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('VERWIJDEREN'),
+              child: Text('REMOVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -136,8 +166,8 @@ class _ImageViewerState extends State<ImageViewer> {
         if (!snapshot.hasData || snapshot.data.documents.length == 0) {
           return ListTile(
             leading: Icon(Icons.announcement),
-            title: Text('Geen reactie'),
-            subtitle: Text('Nog geen reacties op deze selfie'),
+            title: Text('No reaction'),
+            subtitle: Text('No reactions on this selfie yet'),
           );
         }
         List<Reaction> returnedReactions = [];
@@ -155,7 +185,7 @@ class _ImageViewerState extends State<ImageViewer> {
           physics: ClampingScrollPhysics(),
           itemCount: snapshot.data.documents.length,
           itemBuilder: (context, index) {
-            String subtitle = 'Leuk';
+            String subtitle = 'Like';
             IconData listIcon = Icons.thumb_up;
             bool hasWarningColor = false;
             if (returnedReactions[index].reactionType == ReactionType.comment) {
@@ -164,11 +194,11 @@ class _ImageViewerState extends State<ImageViewer> {
             } else if (returnedReactions[index].reactionType ==
                 ReactionType.rating) {
               subtitle = returnedReactions[index].rating.index.toString() +
-                  ' punt(en)';
+                  ' point(s)';
               listIcon = Icons.assessment;
             } else if (returnedReactions[index].reactionType ==
                 ReactionType.inappropriate) {
-              subtitle = 'Ongepast';
+              subtitle = 'Inappropriate';
               listIcon = Icons.report;
               hasWarningColor = true;
             }
@@ -197,7 +227,7 @@ class _ImageViewerState extends State<ImageViewer> {
             if (widget.canEdit) {
               _showWarningDialog(context, model);
             } else {
-              _informDialog(context, 'verwijderen');
+              _informDialog(context, 'Remove');
             }
           } else if (choice == Constants.Like) {
             if (widget.image.likes != null &&
@@ -218,7 +248,7 @@ class _ImageViewerState extends State<ImageViewer> {
             if (widget.canEdit) {
               _editImage(widget.image);
             } else {
-              _informDialog(context, 'maskeren');
+              _informDialog(context, 'Edit');
             }
           } else {
             File f = await DefaultCacheManager()
@@ -239,14 +269,20 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 
   _editImage(ImageRef image) {
-    Navigator.push(
+    Navigator.push<double>(
       context,
       MaterialPageRoute(builder: (BuildContext context) {
         return ImageEditor(
           image,
         );
       }),
-    );
+    ).then((double value) {
+      if(value != null){
+        setState(() {
+          _angle = value;
+        });
+      }
+    });
   }
 
   Widget _showMainActionButtons(AppModel model) {
@@ -270,14 +306,17 @@ class _ImageViewerState extends State<ImageViewer> {
     return ListView(
       children: <Widget>[
         Center(
-          child: Image.network(
-            widget.image.downloadUrl,
-            fit: BoxFit.cover,
-            width: targetDimension,
+          child: Transform.rotate(
+            angle: _angle,
+            child: Image.network(
+              widget.image.downloadUrl != null ? widget.image.downloadUrl : 'https://via.placeholder.com/500x500.png?text=Image not available...',
+              fit: BoxFit.cover,
+              width: targetDimension,
+            ),
           ),
         ),
         Center(
-          child: Text('Selfie met ' + widget.image.assignment),
+          child: Text('Selfie with ' + widget.image.assignment),
         ),
         _showMainActionButtons(model),
         _showImageInformation(model),

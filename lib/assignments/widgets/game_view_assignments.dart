@@ -31,7 +31,8 @@ class _GameViewAssignmentsState extends State<GameViewAssignments> {
         final ImageRef assignmentImage = returnedImages.firstWhere((a) {
           bool hasImage = false;
           if (a.teamId == widget.team.id &&
-              a.assignmentId == returnedAssignments[index].id) {
+              a.assignmentId == returnedAssignments[index].id &&
+              returnedImages[index].downloadUrl != null) {
             hasImage = true;
           }
           return hasImage;

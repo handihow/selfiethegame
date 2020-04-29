@@ -4,10 +4,11 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 class FacePainter extends CustomPainter {
   final List<Face> faces;
+  final List<Color> colors;
   final List<Rect> rects = [];
   final ui.Image mask;
 
-  FacePainter(this.faces, this.mask) {
+  FacePainter(this.faces, this.mask, this.colors) {
     if (this.faces != null) {
       for (var i = 0; i < faces.length; i++) {
         rects.add(faces[i].boundingBox);
@@ -18,15 +19,18 @@ class FacePainter extends CustomPainter {
   @override
   void paint(ui.Canvas canvas, ui.Size size) {
     if (this.faces != null) {
-      final Paint paint = Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 15.0
-        ..color = Colors.yellow;
+      // final Paint paint = Paint()
+      //   ..style = PaintingStyle.stroke
+      //   ..strokeWidth = 15.0
+      //   ..color = Colors.yellow;
+      final Rect maskRect = Rect.fromLTRB(0, 0, mask.width.toDouble(), mask.height.toDouble());
 
       for (var i = 0; i < faces.length; i++) {
-        canvas.drawRect(rects[i], paint);
+        final Paint maskPaint = Paint()
+        ..colorFilter = ColorFilter.mode(colors[i], BlendMode.modulate);
+        // canvas.drawRect(rects[i], paint);
         canvas.drawImageRect(
-            mask, Rect.fromLTRB(0, 0, 500, 500), rects[i], Paint());
+            mask, maskRect, rects[i], maskPaint);
       }
     }
   }

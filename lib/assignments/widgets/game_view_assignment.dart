@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'dart:math' as math;
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
@@ -27,17 +28,34 @@ class GameViewAssignment extends StatefulWidget {
 
 class _GameViewAssignmentState extends State<GameViewAssignment> {
   String _url = 'https://via.placeholder.com/70x70.png?text=processing...';
+  double _angle = 0;
 
   @override
   void initState() {
     super.initState();
-    if (widget.image != null) {
+    if (widget.image != null && widget.image.pathTN != null) {
       StorageReference ref =
           FirebaseStorage.instance.ref().child(widget.image.pathTN);
       ref.getDownloadURL().then((value) {
+        double angle;
+        switch (widget.image.imageState) {
+          case '90':
+            angle = math.pi / 2;
+            break;
+          case '180':
+            angle = math.pi;
+            break;
+          case '270':
+            angle = math.pi * 3 / 2;
+            break;
+          default:
+            angle = 0;
+            break;
+        }
         if (mounted) {
           setState(() {
             _url = value;
+            _angle = angle;
           });
         }
       }).catchError((error) => print(error.message));
@@ -46,11 +64,14 @@ class _GameViewAssignmentState extends State<GameViewAssignment> {
 
   Widget _createHeroImage() {
     return Hero(
-      child: Image(
-        image: NetworkImage(_url),
-        height: 70.0,
-        width: 70.0,
-        fit: BoxFit.fitWidth,
+      child: Transform.rotate(
+        angle: _angle,
+        child: Image(
+          image: NetworkImage(_url),
+          height: 70.0,
+          width: 70.0,
+          fit: BoxFit.fitWidth,
+        ),
       ),
       tag: widget.image.id,
     );

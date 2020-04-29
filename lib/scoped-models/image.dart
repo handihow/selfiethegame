@@ -83,6 +83,15 @@ mixin ImageModel on Model {
         .setData(image.toJson(), merge: true);
   }
 
+  Future<void> updateImageRotation(String imageId, String imageState) {
+    return _db.collection('images').document(imageId).updateData(
+      {
+        'imageState': imageState,
+        'updated': DateTime.now(),
+      },
+    );
+  }
+
   //delete single image
   Future<void> deleteImage(ImageRef image) async {
     print('deleting ' + image.path);
