@@ -10,7 +10,5 @@ targets:
           disallow_unrecognized_keys: false
           explicit_to_json: true
           field_rename: none
-          generate_to_json_function: true
           include_if_null: true
           nullable: true
-          use_wrappers: false

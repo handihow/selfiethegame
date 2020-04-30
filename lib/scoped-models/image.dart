@@ -94,11 +94,20 @@ mixin ImageModel on Model {
 
   //delete single image
   Future<void> deleteImage(ImageRef image) async {
-    print('deleting ' + image.path);
+    if(image.id == null){
+      print('could not delete image with no id number');
+      return false;
+    }
     await _db.collection('images').document(image.id).delete();
-    await _storage.ref().child(image.path).delete();
-    await _storage.ref().child(image.pathOriginal).delete();
-    await _storage.ref().child(image.pathTN).delete();
+    if(image.path != null){
+      await _storage.ref().child(image.path).delete();
+    }
+    if(image.pathOriginal != null){
+      await _storage.ref().child(image.pathOriginal).delete();
+    }
+    if(image.pathTN != null){
+      await _storage.ref().child(image.pathTN).delete();
+    }
     //delete any reactions that have been given to the image
     return _db
         .collection('reactions')

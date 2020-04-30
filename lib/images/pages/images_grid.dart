@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:selfiespel_mobile/images/widgets/rotated_image.dart';
 
 import '../../scoped-models/main.dart';
 import '../../models/image.dart';
-import '../widgets/image_thumbnail.dart';
 import '../pages/image_viewer.dart';
 import '../../shared-widgets/ui_elements/side_drawer.dart';
 
@@ -114,7 +114,7 @@ class ImagesGridView extends StatelessWidget {
                       }),
                     );
                   },
-                  child: ImageThumbnail(returnedImages[index], false, 500, 500),
+                  child: RotatedImage(returnedImages[index], 500, false),
                 );
               }),
             );

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import './rating.dart';
-
+import './mask.dart';
 part 'image.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ImageRef {
   final String id;
   final String pathOriginal;
@@ -37,6 +37,11 @@ class ImageRef {
   final List<String> abuses; // user ids of people who reported the image
   final Rating
       userAwardedPoints; // the awarded number of points of the user (calculated)
+  final bool hasLocation;
+  final double latitude;
+  final double longitude;
+  final bool hasMasks;
+  final List<Mask> masks;
 
   ImageRef({
     @required this.id,
@@ -61,6 +66,11 @@ class ImageRef {
     this.ratings,
     this.abuses,
     this.userAwardedPoints,
+    this.hasLocation,
+    this.latitude,
+    this.longitude,
+    this.hasMasks,
+    this.masks,
   });
 
   factory ImageRef.fromJson(Map<String, dynamic> json) =>

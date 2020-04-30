@@ -28,6 +28,7 @@ class _ImageEditorState extends State<ImageEditor> {
   List<Face> _faces;
   bool _doneLoading = false;
   bool _hasRotated = false;
+  bool _hasNoImage = false;
   double _angle = 0;
   ui.Image _mask;
   bool _hasMasks = false;
@@ -40,32 +41,39 @@ class _ImageEditorState extends State<ImageEditor> {
   }
 
   void _loadImage() async {
-    final imageFile =
+    if (widget.image.downloadUrl == null) {
+      setState(() {
+        _doneLoading = true;
+        _hasNoImage = true;
+      });
+    } else {
+      final imageFile =
         await DefaultCacheManager().getSingleFile(widget.image.downloadUrl);
-    double angle;
-    switch (widget.image.imageState) {
-      case '90':
-        angle = math.pi / 2;
-        break;
-      case '180':
-        angle = math.pi;
-        break;
-      case '270':
-        angle = math.pi * 3 / 2;
-        break;
-      default:
-        angle = 0;
-        break;
-    }
-    if (mounted) {
-      setState(
-        () {
-          _imageFile = imageFile;
-          _doneLoading = true;
-          _angle = angle;
-          _imageState = widget.image.imageState;
-        },
-      );
+      double angle;
+      switch (widget.image.imageState) {
+        case '90':
+          angle = math.pi / 2;
+          break;
+        case '180':
+          angle = math.pi;
+          break;
+        case '270':
+          angle = math.pi * 3 / 2;
+          break;
+        default:
+          angle = 0;
+          break;
+      }
+      if (mounted) {
+        setState(
+          () {
+            _imageFile = imageFile;
+            _doneLoading = true;
+            _angle = angle;
+            _imageState = widget.image.imageState;
+          },
+        );
+      }
     }
   }
 
@@ -167,7 +175,11 @@ class _ImageEditorState extends State<ImageEditor> {
         constraints: BoxConstraints.expand(),
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(widget.image.downloadUrl),
+            image: NetworkImage(
+              widget.image.downloadUrl != null
+                  ? widget.image.downloadUrl
+                  : 'https://via.placeholder.com/500x500.png?text=Image not available...',
+            ),
           ),
         ),
         child: _hasMasks
@@ -223,12 +235,11 @@ class _ImageEditorState extends State<ImageEditor> {
   }
 
   Future<bool> _saveChangesToImage(BuildContext context, AppModel model) async {
-    if(_hasRotated){
-      print(_imageState);
+    if (_hasRotated) {
       await model.updateImageRotation(widget.image.id, _imageState);
-      return Navigator.of(context).pop(_angle);
+      return Navigator.of(context).pop(true);
     } else {
-      return Navigator.of(context).pop(null);
+      return Navigator.of(context).pop(false);
     }
   }
 
@@ -244,10 +255,12 @@ class _ImageEditorState extends State<ImageEditor> {
             appBar: AppBar(
               title: Text('Edit'),
             ),
-            body: _doneLoading
+            body: _doneLoading && !_hasNoImage
                 ? _displayImage(context)
                 : Center(
-                    child: CircularProgressIndicator(),
+                    child: _hasNoImage
+                        ? Text('Could not download image')
+                        : CircularProgressIndicator(),
                   ),
           ),
         );

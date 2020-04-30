@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:selfiespel_mobile/images/widgets/rotated_image.dart';
 import 'dart:io';
-import 'dart:math' as math;
 
 import '../widgets/image_rating_buttons.dart';
 import '../widgets/image_like_comment_buttons.dart';
@@ -29,34 +29,7 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   final _commentController = TextEditingController();
-  double _angle = 0; 
-
-  @override
-  initState() {
-    super.initState();
-    double angle;
-    switch (widget.image.imageState) {
-      case '90':
-        angle = math.pi / 2;
-        break;
-      case '180':
-        angle = math.pi;
-        break;
-      case '270':
-        angle = math.pi * 3 / 2;
-        break;
-      default:
-        angle = 0;
-        break;
-    }
-    if (mounted) {
-      setState(
-        () {
-          _angle = angle;
-        },
-      );
-    }
-  }
+  bool _needsRedraw;
 
   @override
   void dispose() {
@@ -70,7 +43,7 @@ class _ImageViewerState extends State<ImageViewer> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(functionality + "selfie"),
+          title: Text(functionality + " selfie"),
           content: Text("You can only " +
               functionality +
               " from the assignments page or the page with your own selfies"),
@@ -269,19 +242,17 @@ class _ImageViewerState extends State<ImageViewer> {
   }
 
   _editImage(ImageRef image) {
-    Navigator.push<double>(
+    Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (BuildContext context) {
         return ImageEditor(
           image,
         );
       }),
-    ).then((double value) {
-      if(value != null){
+    ).then((bool value) {
         setState(() {
-          _angle = value;
+          _needsRedraw = value;
         });
-      }
     });
   }
 
@@ -306,14 +277,7 @@ class _ImageViewerState extends State<ImageViewer> {
     return ListView(
       children: <Widget>[
         Center(
-          child: Transform.rotate(
-            angle: _angle,
-            child: Image.network(
-              widget.image.downloadUrl != null ? widget.image.downloadUrl : 'https://via.placeholder.com/500x500.png?text=Image not available...',
-              fit: BoxFit.cover,
-              width: targetDimension,
-            ),
-          ),
+          child: RotatedImage(widget.image, targetDimension, false),
         ),
         Center(
           child: Text('Selfie with ' + widget.image.assignment),
