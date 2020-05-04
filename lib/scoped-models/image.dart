@@ -1,6 +1,7 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:selfiespel_mobile/models/mask.dart';
 
 import '../models/image.dart';
 import '../models/reaction-type.dart';
@@ -83,10 +84,18 @@ mixin ImageModel on Model {
         .setData(image.toJson(), merge: true);
   }
 
-  Future<void> updateImageRotation(String imageId, String imageState) {
+  Future<void> updateEditedImage(String imageId, String imageState, bool hasMasks, List<Mask> masks) {
+    List<Map<String, dynamic>> jsonMasks = [];
+    if (hasMasks) {
+      masks.forEach((mask) {
+        jsonMasks.add(mask.toJson());
+      });
+    }
     return _db.collection('images').document(imageId).updateData(
       {
         'imageState': imageState,
+        'hasMasks': hasMasks,
+        'masks': jsonMasks,
         'updated': DateTime.now(),
       },
     );
@@ -94,18 +103,18 @@ mixin ImageModel on Model {
 
   //delete single image
   Future<void> deleteImage(ImageRef image) async {
-    if(image.id == null){
+    if (image.id == null) {
       print('could not delete image with no id number');
       return false;
     }
     await _db.collection('images').document(image.id).delete();
-    if(image.path != null){
+    if (image.path != null) {
       await _storage.ref().child(image.path).delete();
     }
-    if(image.pathOriginal != null){
+    if (image.pathOriginal != null) {
       await _storage.ref().child(image.pathOriginal).delete();
     }
-    if(image.pathTN != null){
+    if (image.pathTN != null) {
       await _storage.ref().child(image.pathTN).delete();
     }
     //delete any reactions that have been given to the image
@@ -131,7 +140,7 @@ mixin ImageModel on Model {
         .collection('images')
         .where('userId', isEqualTo: user.uid)
         .getDocuments()
-           .then((snapshot) {
+        .then((snapshot) {
       if (snapshot.documents != null && snapshot.documents.length > 0) {
         snapshot.documents.forEach((DocumentSnapshot document) async {
           final ImageRef imageRef = ImageRef.fromJson(document.data);

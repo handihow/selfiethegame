@@ -92,7 +92,27 @@ flutter:
     - assets/points_five_disabled.png
     - assets/thumb_up.png
     - assets/chat.png
-    - assets/dog.png
+    - assets/dog/0.png
+    - assets/dog/1.png
+    - assets/dog/2.png
+    - assets/dog/3.png
+    - assets/dog/4.png
+    - assets/hairy/0.png
+    - assets/hairy/1.png
+    - assets/hairy/2.png
+    - assets/hairy/3.png
+    - assets/hairy/4.png    
+    - assets/sun/0.png
+    - assets/sun/1.png
+    - assets/sun/2.png
+    - assets/sun/3.png
+    - assets/sun/4.png
+    - assets/zoo/0.png
+    - assets/zoo/1.png
+    - assets/zoo/2.png
+    - assets/zoo/3.png
+    - assets/zoo/4.png
+    
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:math';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:selfiespel_mobile/models/mask.dart';
 import '../../scoped-models/main.dart';
 
 import 'package:flutter/material.dart';
@@ -25,14 +25,13 @@ class ImageEditor extends StatefulWidget {
 class _ImageEditorState extends State<ImageEditor> {
   File _imageFile;
   String _imageState;
-  List<Face> _faces;
   bool _doneLoading = false;
   bool _hasRotated = false;
   bool _hasNoImage = false;
   double _angle = 0;
-  ui.Image _mask;
   bool _hasMasks = false;
-  List<Color> _colors;
+  List<Mask> _masks;
+  List<ui.Image> _images;
 
   @override
   initState() {
@@ -48,7 +47,7 @@ class _ImageEditorState extends State<ImageEditor> {
       });
     } else {
       final imageFile =
-        await DefaultCacheManager().getSingleFile(widget.image.downloadUrl);
+          await DefaultCacheManager().getSingleFile(widget.image.downloadUrl);
       double angle;
       switch (widget.image.imageState) {
         case '90':
@@ -64,6 +63,10 @@ class _ImageEditorState extends State<ImageEditor> {
           angle = 0;
           break;
       }
+      List<ui.Image> images;
+      if(widget.image.hasMasks){
+        images = await _loadImages(widget.image.masks);
+      }
       if (mounted) {
         setState(
           () {
@@ -71,33 +74,65 @@ class _ImageEditorState extends State<ImageEditor> {
             _doneLoading = true;
             _angle = angle;
             _imageState = widget.image.imageState;
+            _images = images != null ? images : null;
+            _masks = widget.image.masks != null ? widget.image.masks : null;
+            _hasMasks = widget.image.hasMasks != null ? widget.image.hasMasks : false;
           },
         );
       }
     }
   }
 
-  void _detectFaces(ui.Image selectedMask) async {
+  void _detectFaces(String selectedAsset) async {
     final image = FirebaseVisionImage.fromFile(_imageFile);
     final faceDetector = FirebaseVision.instance.faceDetector(
       FaceDetectorOptions(
         mode: FaceDetectorMode.accurate,
       ),
     );
+    List<Mask> masks = []; 
     final faces = await faceDetector.processImage(image);
+    if (faces != null) {
+      for (var i = 0; i < faces.length; i++) {
+        final String asset =
+          'assets/' + selectedAsset + '/' + i.toString() + '.png';
+        final Mask mask = new Mask(
+          asset: asset,
+          left: faces[i].boundingBox.left,
+          top: faces[i].boundingBox.top,
+          right: faces[i].boundingBox.right,
+          bottom: faces[i].boundingBox.bottom,
+        );
+        masks.add(mask);
+      }
+    }
+    List<ui.Image> images = await _loadImages(masks);
     if (mounted) {
       setState(
         () {
-          _faces = faces;
-          _mask = selectedMask;
-          _colors = _faces
-              .map((f) =>
-                  Colors.accents[Random().nextInt(Colors.accents.length)])
-              .toList();
+          _masks = masks;
           _hasMasks = true;
+          _images = images;
         },
       );
     }
+  }
+
+  Future<List<ui.Image>> _loadImages(List<Mask> masks) async {
+    List<ui.Image> images = [];
+    for (var i = 0; i < masks.length; i++) {
+      final ui.Image image = await loadUiImage(masks[i].asset);
+      images.add(image);
+    }
+    return images;
+  }
+
+  Future<ui.Image> loadUiImage(String assetPath) async {
+    final data = await rootBundle.load(assetPath);
+    final list = Uint8List.view(data.buffer);
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromList(list, completer.complete);
+    return completer.future;
   }
 
   void _rotateImage() {
@@ -124,6 +159,7 @@ class _ImageEditorState extends State<ImageEditor> {
   }
 
   void _openMaskSelector(BuildContext context) {
+    List<String> listItems = ['dog', 'hairy', 'sun', 'zoo'];
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -131,40 +167,30 @@ class _ImageEditorState extends State<ImageEditor> {
           title: Text('Select mask'),
           content: Container(
             width: double.maxFinite,
-            child: ListView(
-              children: <Widget>[
-                ListTile(
+            child: ListView.builder(
+              itemCount: listItems.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                final String asset = 'assets/' + listItems[index] + '/1.png';
+                return new ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage('assets/dog.png'),
+                    backgroundImage: AssetImage(asset),
                   ),
-                  title: Text('Dog'),
+                  title: Text(listItems[index][0].toUpperCase() +
+                      listItems[index].substring(1)),
                   trailing: IconButton(
                     icon: Icon(Icons.chevron_right),
                     onPressed: () =>
-                        Navigator.of(context).pop('assets/dog.png'),
+                        Navigator.of(context).pop(listItems[index]),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         );
       },
     ).then(
-      (result) => _selectMask(result),
+      (result) => _detectFaces(result),
     );
-  }
-
-  Future<ui.Image> loadUiImage(String assetPath) async {
-    final data = await rootBundle.load(assetPath);
-    final list = Uint8List.view(data.buffer);
-    final completer = Completer<ui.Image>();
-    ui.decodeImageFromList(list, completer.complete);
-    return completer.future;
-  }
-
-  void _selectMask(String selectedAsset) async {
-    final image = await loadUiImage(selectedAsset);
-    _detectFaces(image);
   }
 
   Widget _imageContainer() {
@@ -187,7 +213,7 @@ class _ImageEditorState extends State<ImageEditor> {
                 fit: BoxFit.contain,
                 child: CustomPaint(
                   size: Size(500, 500),
-                  painter: FacePainter(_faces, _mask, _colors),
+                  painter: FacePainter(_masks, _images),
                 ),
               )
             : SizedBox(),
@@ -233,23 +259,15 @@ class _ImageEditorState extends State<ImageEditor> {
       ],
     );
   }
-
-  Future<bool> _saveChangesToImage(BuildContext context, AppModel model) async {
-    if (_hasRotated) {
-      await model.updateImageRotation(widget.image.id, _imageState);
-      return Navigator.of(context).pop(true);
-    } else {
-      return Navigator.of(context).pop(false);
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<AppModel>(
       builder: (BuildContext context, Widget child, AppModel model) {
         return WillPopScope(
           onWillPop: () async {
-            return _saveChangesToImage(context, model);
+            await model.updateEditedImage(widget.image.id, _imageState, _hasMasks, _masks);
+            return Navigator.of(context).pop(false);
           },
           child: Scaffold(
             appBar: AppBar(

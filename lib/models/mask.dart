@@ -5,7 +5,7 @@ part 'mask.g.dart';
 @JsonSerializable()
 
 class Mask {
-  final String downloadUrl;
+  final String asset;
   final double left;
   final double top;
   final double right;
@@ -13,7 +13,7 @@ class Mask {
   final String color;
 
   Mask({
-    @required this.downloadUrl,
+    @required this.asset,
     @required this.left,
     @required this.top,
     @required this.right,

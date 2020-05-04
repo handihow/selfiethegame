@@ -29,7 +29,6 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   final _commentController = TextEditingController();
-  bool _needsRedraw;
 
   @override
   void dispose() {
@@ -249,11 +248,7 @@ class _ImageViewerState extends State<ImageViewer> {
           image,
         );
       }),
-    ).then((bool value) {
-        setState(() {
-          _needsRedraw = value;
-        });
-    });
+    );
   }
 
   Widget _showMainActionButtons(AppModel model) {

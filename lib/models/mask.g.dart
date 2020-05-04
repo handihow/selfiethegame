@@ -8,7 +8,7 @@ part of 'mask.dart';
 
 Mask _$MaskFromJson(Map json) {
   return Mask(
-    downloadUrl: json['downloadUrl'] as String,
+    asset: json['asset'] as String,
     left: (json['left'] as num)?.toDouble(),
     top: (json['top'] as num)?.toDouble(),
     right: (json['right'] as num)?.toDouble(),
@@ -18,7 +18,7 @@ Mask _$MaskFromJson(Map json) {
 }
 
 Map<String, dynamic> _$MaskToJson(Mask instance) => <String, dynamic>{
-      'downloadUrl': instance.downloadUrl,
+      'asset': instance.asset,
       'left': instance.left,
       'top': instance.top,
       'right': instance.right,
