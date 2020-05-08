@@ -46,22 +46,22 @@ class TeamScoresPage extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Icon(Icons.face),
-                  title: Text('Spelers'),
+                  title: Text('Players'),
                   subtitle: returnedTeams[index].memberDisplayNames != null
                       ? Text(returnedTeams[index].memberDisplayNames.join(", "))
                       : null,
                 ),
                 ListTile(
                   leading: Icon(Icons.camera),
-                  title: Text('Opdrachten'),
+                  title: Text('Assignments'),
                   subtitle: Text(
-                      returnedTeams[index].progress.toString() + ' opdrachten'),
+                      returnedTeams[index].progress.toString() + ' assignments'),
                 ),
                 ListTile(
                   leading: Icon(Icons.assessment),
-                  title: Text('Totale score'),
+                  title: Text('Total score'),
                   subtitle:
-                      Text(returnedTeams[index].rating.toString() + ' punten'),
+                      Text(returnedTeams[index].rating.toString() + ' point(s)'),
                 ),
               ],
             ),

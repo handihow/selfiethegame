@@ -24,7 +24,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget _buildPageContent(BuildContext context, AppModel model) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat met iedereen in het spel"),
+        title: Text("Chat with everyone in the game"),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -91,7 +91,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           child: TextField(
             controller: _messageController,
             focusNode: _focusNode,
-            decoration: InputDecoration(hintText: 'Jouw bericht'),
+            decoration: InputDecoration(hintText: 'Your message'),
             onSubmitted: (String content) {
               if(_messageController.text.isNotEmpty){
                 _sendChatMessage(content, model);

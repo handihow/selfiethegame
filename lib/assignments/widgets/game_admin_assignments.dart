@@ -93,7 +93,7 @@ class _GameAdminAssignmentsState extends State<GameAdminAssignments> {
               width: 50.0,
               alignment: Alignment.center,
               child: Text('${_numberOfAssignments.toInt()}',
-                  style: Theme.of(context).textTheme.display1),
+                  style: Theme.of(context).textTheme.headline4),
             ),
           ],
         ),

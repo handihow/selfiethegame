@@ -28,11 +28,11 @@ class _GameViewAssignmentsState extends State<GameViewAssignments> {
       padding: const EdgeInsets.all(10.0),
       itemCount: returnedAssignments.length,
       itemBuilder: (BuildContext context, int index) {
-        final ImageRef assignmentImage = returnedImages.firstWhere((a) {
+        final ImageRef assignmentImage = returnedImages.firstWhere((ai) {
           bool hasImage = false;
-          if (a.teamId == widget.team.id &&
-              a.assignmentId == returnedAssignments[index].id &&
-              returnedImages[index].downloadUrl != null) {
+          if (ai.teamId == widget.team.id &&
+              ai.assignmentId == returnedAssignments[index].id &&
+              ai.downloadUrl != null) {
             hasImage = true;
           }
           return hasImage;

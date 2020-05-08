@@ -12,20 +12,20 @@ class ContactsPage extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Contacten verwijderen"),
+          title: Text("Remove contacts"),
           content: Text(
-              "Je wilt al jouw contacten verwijderen. Je kunt dit niet herstellen. Wil je doorgaan?"),
+              "You want to remove all your contacts. You cannot restore this. Do you want to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('VERWIJDEREN'),
+              child: Text('REMOVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -56,7 +56,7 @@ class ContactsPage extends StatelessWidget {
               },
             ),
           ],
-          title: Text('Contacten'),
+          title: Text('Contacts'),
         ),
         body: _displayContactListTiles(context, model),
       );
@@ -65,7 +65,7 @@ class ContactsPage extends StatelessWidget {
       contactsPage = Scaffold(
         drawer: MainSideDrawer(),
         appBar: AppBar(
-          title: Text('Contacten'),
+          title: Text('Contacts'),
         ),
         body: Center(
           child: CircularProgressIndicator(),
@@ -87,7 +87,7 @@ class ContactsPage extends StatelessWidget {
           } else if (!snapshot.hasData ||
               snapshot.data['contacts'].length == 0) {
             return Center(
-              child: Text('Nog geen contacten'),
+              child: Text('No contacts yet'),
             );
           } else {
             List<Contact> returnedContacts = [];

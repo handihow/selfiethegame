@@ -47,13 +47,14 @@ dependencies:
   url_launcher: ^5.4.5
   share: ^0.6.4
   firebase_ml_vision: ^0.9.3+8
-
+  google_maps_flutter: ^0.5.27
+  geolocator: ^5.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^1.8.1
-  image: 2.1.4 # <- Put this here
+  image: 2.1.12 # <- Put this here
   flutter_launcher_icons: "^0.7.4"
 
 flutter_icons:
@@ -92,6 +93,11 @@ flutter:
     - assets/points_five_disabled.png
     - assets/thumb_up.png
     - assets/chat.png
+    - assets/cat/0.png
+    - assets/cat/1.png
+    - assets/cat/2.png
+    - assets/cat/3.png
+    - assets/cat/4.png
     - assets/dog/0.png
     - assets/dog/1.png
     - assets/dog/2.png

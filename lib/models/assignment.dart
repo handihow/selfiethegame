@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import './rating.dart';
+import './poiimage.dart';
 
 part 'assignment.g.dart';
 
@@ -24,6 +25,20 @@ class Assignment {
       fromJson: _timestampToDateSerializer,
       toJson: _dateTimeDoNothingSerializer)
   final DateTime updated;
+  //google places location
+  final bool hasGooglePlacesLocation;
+  final double latitude;
+  final double longitude;
+  final String formatted_address;
+  final String name;
+  final List<PoiImage> photos;
+  final String place_id;
+  final double rating;
+  final String reference;
+  final String url;
+  final int user_ratings_total;
+  final String vicinity;
+  final String website;
 
   Assignment(
       {@required this.id,
@@ -37,7 +52,21 @@ class Assignment {
       this.description,
       this.location,
       @required this.created,
-      @required this.updated});
+      @required this.updated,
+      this.hasGooglePlacesLocation,
+      this.latitude,
+      this.longitude,
+      this.formatted_address,
+      this.name,
+      this.photos,
+      this.place_id,
+      this.rating,
+      this.reference,
+      this.url,
+      this.user_ratings_total,
+      this.vicinity,
+      this.website
+  });
 
   factory Assignment.fromJson(Map<String, dynamic> json) =>
       _$AssignmentFromJson(json);

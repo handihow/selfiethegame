@@ -12,6 +12,8 @@ import '../../models/user.dart';
 
 import 'dart:async';
 import 'dart:io';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AssignmentPage extends StatefulWidget {
   final Assignment assignment;
@@ -34,7 +36,15 @@ class _AssignmentPageState extends State<AssignmentPage> {
   bool _isImageButtonDisabled = false;
   bool _isUploading = false;
   bool _doneUploading = false;
+  bool _doneLoading = false;
   File _image;
+  Position _currentPosition;
+
+  @override
+  initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
 
   Future getImage(BuildContext context) async {
     if (mounted) {
@@ -59,10 +69,39 @@ class _AssignmentPageState extends State<AssignmentPage> {
     }
   }
 
+  _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    print('getting current location');
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+          print('received the current location');
+          print(position.latitude);
+          print(position.longitude);
+      setState(() {
+        _currentPosition = position;
+        _doneLoading = true;
+      });
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  Future<void> _goToCurrentPosition(GoogleMapController controller) async {
+    final CameraPosition _myPosition = CameraPosition(
+      target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+      zoom: 19.151926040649414);
+    controller.animateCamera(CameraUpdate.newCameraPosition(_myPosition));
+  }
+
   void uploadImage(BuildContext context, File image) {
     final StorageReference firebaseStorageRef = FirebaseStorage.instance
         .ref()
-        .child('/images/' + randomAlphaNumeric(20) + '.jpg');
+        .child('/media/' +
+            widget.user.uid +
+            '/' +
+            randomAlphaNumeric(20) +
+            '.jpg');
     final StorageUploadTask task = firebaseStorageRef.putFile(
       image,
       StorageMetadata(
@@ -110,7 +149,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
       Image.file(_image),
       Center(
         child: Text(
-          "Je bent klaar met uploaden!",
+          "You're done uploading!",
           style: TextStyle(fontSize: 14.0, color: Colors.white),
         ),
       ),
@@ -122,45 +161,60 @@ class _AssignmentPageState extends State<AssignmentPage> {
         onPressed: () {
           Navigator.pop(context);
         },
-        tooltip: 'Klaar',
+        tooltip: 'Done',
         icon: Icon(Icons.done),
-        label: Text('Klaar'));
+        label: Text('Done'));
   }
 
   Widget _buildAssignmentPage(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    final double containerSize = width > height ? height : width;
     Widget pageContent = Padding(
       padding: EdgeInsets.all(10.0),
-      child: Column(
+      child: ListView(
         children: <Widget>[
           ListTile(
             leading: Icon(Icons.assignment),
             title: Text(widget.assignment.assignment),
             subtitle:
-                Text('Maak een selfie met ' + widget.assignment.assignment),
+                Text('Take a selfie with ' + widget.assignment.assignment),
           ),
           ListTile(
             leading: Icon(Icons.assessment),
-            title: Text('maximaal ' +
+            title: Text('Maximum ' +
                 widget.assignment.maxPoints.index.toString() +
-                ' punt(en)'),
-            subtitle: Text('Je kunt maximaal ' +
+                ' point(s)'),
+            subtitle: Text('You can get maximum ' +
                 widget.assignment.maxPoints.index.toString() +
-                ' punt(en) halen met deze opdracht.'),
+                ' point(s) for this assignment.'),
           ),
           widget.assignment.description == null
               ? SizedBox(height: 0)
               : ListTile(
                   leading: Icon(Icons.comment),
-                  title: Text('opmerking'),
+                  title: Text('Description'),
                   subtitle: Text(widget.assignment.description),
                 ),
           widget.assignment.location == null
               ? SizedBox(height: 0.0)
               : ListTile(
                   leading: Icon(Icons.location_on),
-                  title: Text('locatie'),
+                  title: Text('Location'),
                   subtitle: Text(widget.assignment.location),
                 ),
+          SizedBox(
+            width: containerSize,
+            height: containerSize,
+            child: GoogleMap(
+              mapType: MapType.normal,
+              initialCameraPosition: CameraPosition(
+                target: const LatLng(0, 0),
+                zoom: 2,
+              ),
+              onMapCreated: _goToCurrentPosition,
+            ),
+          ),
         ],
       ),
     );
@@ -172,7 +226,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
     }
     if (!widget.isPlaying) {
       return Center(
-        child: Text('Spel is niet actief. Je kunt nu geen selfies uploaden.'),
+        child: Text('Game is not active. You cannot upload selfies.'),
       );
     }
     return pageContent;
@@ -181,9 +235,9 @@ class _AssignmentPageState extends State<AssignmentPage> {
   FloatingActionButton _takeImageFloatingActionButton(BuildContext context) {
     return FloatingActionButton.extended(
       onPressed: _isImageButtonDisabled ? null : () => getImage(context),
-      tooltip: 'Maak selfie',
+      tooltip: 'Take selfie',
       icon: Icon(Icons.add_a_photo),
-      label: Text('Maak selfie'),
+      label: Text('Take selfie'),
     );
   }
 
@@ -196,9 +250,9 @@ class _AssignmentPageState extends State<AssignmentPage> {
           appBar: AppBar(
             title: _isUploading
                 ? Text('Selfie upload..')
-                : Text('Selfie met ... '),
+                : Text('Selfie with ... '),
           ),
-          body: _buildAssignmentPage(context),
+          body: _doneLoading ? _buildAssignmentPage(context) : Center(child: CircularProgressIndicator(),),
           floatingActionButton: !widget.isPlaying || _isUploading
               ? null
               : _doneUploading

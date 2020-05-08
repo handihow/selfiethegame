@@ -39,7 +39,7 @@ class _TeamImageListViewState extends State<TeamImageListView> {
               return ImageCard(image, widget.game, model);
             }).toList(),
           )
-        : Center(child: Text('Nog geen selfies'));
+        : Center(child: Text('No selfies yet'));
   }
 
   void _loadImages(AppModel model) async {

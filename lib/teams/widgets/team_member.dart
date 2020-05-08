@@ -26,7 +26,7 @@ class TeamMemberListTile extends StatelessWidget {
             ),
             childWhenDragging: ListTile(
               leading: Icon(Icons.face),
-              title: Text(displayName + ' wordt verplaatst...'),
+              title: Text(displayName + ' is getting moved...'),
             ),
             data: currentTeamIndex.toString() + '_' + userId);
       },

@@ -20,6 +20,25 @@ Assignment _$AssignmentFromJson(Map json) {
     location: json['location'] as String,
     created: Assignment._timestampToDateSerializer(json['created']),
     updated: Assignment._timestampToDateSerializer(json['updated']),
+    hasGooglePlacesLocation: json['hasGooglePlacesLocation'] as bool,
+    latitude: (json['latitude'] as num)?.toDouble(),
+    longitude: (json['longitude'] as num)?.toDouble(),
+    formatted_address: json['formatted_address'] as String,
+    name: json['name'] as String,
+    photos: (json['photos'] as List)
+        ?.map((e) => e == null
+            ? null
+            : PoiImage.fromJson((e as Map)?.map(
+                (k, e) => MapEntry(k as String, e),
+              )))
+        ?.toList(),
+    place_id: json['place_id'] as String,
+    rating: (json['rating'] as num)?.toDouble(),
+    reference: json['reference'] as String,
+    url: json['url'] as String,
+    user_ratings_total: json['user_ratings_total'] as int,
+    vicinity: json['vicinity'] as String,
+    website: json['website'] as String,
   );
 }
 
@@ -37,6 +56,19 @@ Map<String, dynamic> _$AssignmentToJson(Assignment instance) =>
       'location': instance.location,
       'created': Assignment._dateTimeDoNothingSerializer(instance.created),
       'updated': Assignment._dateTimeDoNothingSerializer(instance.updated),
+      'hasGooglePlacesLocation': instance.hasGooglePlacesLocation,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+      'formatted_address': instance.formatted_address,
+      'name': instance.name,
+      'photos': instance.photos?.map((e) => e?.toJson())?.toList(),
+      'place_id': instance.place_id,
+      'rating': instance.rating,
+      'reference': instance.reference,
+      'url': instance.url,
+      'user_ratings_total': instance.user_ratings_total,
+      'vicinity': instance.vicinity,
+      'website': instance.website,
     };
 
 T _$enumDecode<T>(

@@ -56,9 +56,9 @@ class _TeamEditPageState extends State<TeamEditPage> {
             keyboardType: TextInputType.text,
             initialValue: widget.team == null ? null : widget.team.name,
             validator: (String value) {
-              return value.isEmpty ? 'Team naam is verplicht' : null;
+              return value.isEmpty ? 'Team name is mandatory' : null;
             },
-            decoration: InputDecoration(labelText: 'Team naam'),
+            decoration: InputDecoration(labelText: 'Team name'),
             onSaved: (String value) {
               _formData['name'] = value;
             }),
@@ -98,7 +98,7 @@ class _TeamEditPageState extends State<TeamEditPage> {
   Widget _buildSubmitButton(BuildContext context, AppModel model) {
     return Center(
       child: RaisedButton(
-        child: Text(_isButtonDisabled ? 'Bewaren...' : 'Bewaar'),
+        child: Text(_isButtonDisabled ? 'Saving...' : 'Save'),
         onPressed: _isButtonDisabled
             ? null
             : () {
@@ -170,7 +170,7 @@ class _TeamEditPageState extends State<TeamEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget.team == null ? Text('Nieuw team') : Text('Team bewerken'),
+        title: widget.team == null ? Text('New team') : Text('Edit team'),
       ),
       body: ScopedModelDescendant<AppModel>(
         builder: (BuildContext context, Widget child, AppModel model) {

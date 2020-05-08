@@ -26,7 +26,6 @@ class _ImageEditorState extends State<ImageEditor> {
   File _imageFile;
   String _imageState;
   bool _doneLoading = false;
-  bool _hasRotated = false;
   bool _hasNoImage = false;
   double _angle = 0;
   bool _hasMasks = false;
@@ -64,7 +63,7 @@ class _ImageEditorState extends State<ImageEditor> {
           break;
       }
       List<ui.Image> images;
-      if(widget.image.hasMasks){
+      if(widget.image.hasMasks != null && widget.image.hasMasks){
         images = await _loadImages(widget.image.masks);
       }
       if (mounted) {
@@ -154,7 +153,6 @@ class _ImageEditorState extends State<ImageEditor> {
     setState(() {
       _angle = _angle + math.pi / 2;
       _imageState = imageState;
-      _hasRotated = true;
     });
   }
 
@@ -267,7 +265,8 @@ class _ImageEditorState extends State<ImageEditor> {
         return WillPopScope(
           onWillPop: () async {
             await model.updateEditedImage(widget.image.id, _imageState, _hasMasks, _masks);
-            return Navigator.of(context).pop(false);
+            Navigator.of(context).pop();
+            return false;
           },
           child: Scaffold(
             appBar: AppBar(
