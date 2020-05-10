@@ -32,66 +32,81 @@ class AssignmentPage extends StatefulWidget {
 
 class _AssignmentPageState extends State<AssignmentPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
+  Completer<GoogleMapController> _controller = Completer();
   bool _isImageButtonDisabled = false;
   bool _isUploading = false;
   bool _doneUploading = false;
-  bool _doneLoading = false;
   File _image;
   Position _currentPosition;
+  final Set<Marker> _markers = Set();
 
   @override
   initState() {
     super.initState();
-    _getCurrentLocation();
+    if (widget.assignment.hasGooglePlacesLocation) {
+      final Marker assignmentMarker = Marker(
+        markerId: MarkerId('assignment'),
+        position:
+            LatLng(widget.assignment.latitude, widget.assignment.longitude),
+        infoWindow: InfoWindow(
+            title: widget.assignment.name,
+            snippet: 'Take a selfie with ' + widget.assignment.assignment),
+      );
+      setState(() {
+        _markers.add(assignmentMarker);
+      });
+    }
   }
 
-  Future getImage(BuildContext context) async {
+  void _getImage(BuildContext context) async {
+    await _getCurrentLocation();
+
     if (mounted) {
       setState(() {
         _isImageButtonDisabled = true;
       });
     }
 
-    final File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, maxWidth: 500.0, maxHeight: 500.0);
+    try {
+      final File image = await ImagePicker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 500.0,
+        maxHeight: 500.0,
+      );
 
-    if (mounted && image != null) {
-      setState(() {
-        _isUploading = true;
-        _image = image;
-      });
-      uploadImage(context, image);
-    } else if (mounted) {
-      setState(() {
-        _isImageButtonDisabled = false;
-      });
+      if (mounted && image != null) {
+        setState(() {
+          _isUploading = true;
+          _image = image;
+        });
+        uploadImage(context, image);
+      } else if (mounted) {
+        setState(() {
+          _isImageButtonDisabled = false;
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
-  _getCurrentLocation() {
+  Future _getCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
     print('getting current location');
-    geolocator
+    return geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) {
-          print('received the current location');
-          print(position.latitude);
-          print(position.longitude);
+      print(position.latitude);
       setState(() {
         _currentPosition = position;
-        _doneLoading = true;
       });
     }).catchError((e) {
       print(e);
     });
   }
 
-  Future<void> _goToCurrentPosition(GoogleMapController controller) async {
-    final CameraPosition _myPosition = CameraPosition(
-      target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
-      zoom: 19.151926040649414);
-    controller.animateCamera(CameraUpdate.newCameraPosition(_myPosition));
+  Future<void> _onMapCreated(GoogleMapController controller) async {
+    _controller.complete(controller);
   }
 
   void uploadImage(BuildContext context, File image) {
@@ -112,7 +127,10 @@ class _AssignmentPageState extends State<AssignmentPage> {
           'gameId': widget.assignment.gameId,
           'teamName': widget.team.name,
           'assignment': widget.assignment.assignment,
-          'maxPoints': widget.assignment.maxPoints.index.toString()
+          'maxPoints': widget.assignment.maxPoints.index.toString(),
+          'hasLocation': _currentPosition != null ? 'true' : 'false',
+          'latitude': _currentPosition != null ? _currentPosition.latitude.toString() : null,
+          'longitude': _currentPosition != null? _currentPosition.longitude.toString() : null
         },
         contentType: 'image/jpeg',
       ),
@@ -203,18 +221,43 @@ class _AssignmentPageState extends State<AssignmentPage> {
                   title: Text('Location'),
                   subtitle: Text(widget.assignment.location),
                 ),
-          SizedBox(
-            width: containerSize,
-            height: containerSize,
-            child: GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                target: const LatLng(0, 0),
-                zoom: 2,
-              ),
-              onMapCreated: _goToCurrentPosition,
-            ),
-          ),
+          widget.assignment.hasGooglePlacesLocation
+              ? ListTile(
+                  leading: Icon(Icons.location_on),
+                  title: Text(widget.assignment.name),
+                  subtitle:
+                      Text('Assignment location is ' + widget.assignment.name),
+                )
+              : SizedBox(height: 0.0),
+          widget.assignment.hasGooglePlacesLocation
+              ? SizedBox(
+                  width: containerSize,
+                  height: containerSize,
+                  child: GoogleMap(
+                    myLocationEnabled: true,
+                    zoomGesturesEnabled: true,
+                    scrollGesturesEnabled: true,
+                    mapType: MapType.normal,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(widget.assignment.latitude,
+                          widget.assignment.longitude),
+                      zoom: 15,
+                    ),
+                    onMapCreated: _onMapCreated,
+                    markers: _markers,
+                  ),
+                )
+              : SizedBox(height: 0.0),
+          widget.assignment.hasGooglePlacesLocation
+              ? ListTile(
+                  leading: Icon(Icons.info),
+                  title: Text('More information'),
+                  subtitle: Text(widget.assignment.website != null
+                      ? widget.assignment.website
+                      : 'No external website available'),
+                )
+              : SizedBox(height: 0.0),
+          SizedBox(height: 150.0),
         ],
       ),
     );
@@ -234,7 +277,8 @@ class _AssignmentPageState extends State<AssignmentPage> {
 
   FloatingActionButton _takeImageFloatingActionButton(BuildContext context) {
     return FloatingActionButton.extended(
-      onPressed: _isImageButtonDisabled ? null : () => getImage(context),
+      onPressed: _isImageButtonDisabled ? null : () => _getImage(context),
+      // onPressed: () => print('pressed'),
       tooltip: 'Take selfie',
       icon: Icon(Icons.add_a_photo),
       label: Text('Take selfie'),
@@ -252,12 +296,14 @@ class _AssignmentPageState extends State<AssignmentPage> {
                 ? Text('Selfie upload..')
                 : Text('Selfie with ... '),
           ),
-          body: _doneLoading ? _buildAssignmentPage(context) : Center(child: CircularProgressIndicator(),),
+          body: _buildAssignmentPage(context),
           floatingActionButton: !widget.isPlaying || _isUploading
               ? null
               : _doneUploading
                   ? _doneActionButton(context)
                   : _takeImageFloatingActionButton(context),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
         );
       },
     );
