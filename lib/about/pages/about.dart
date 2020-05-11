@@ -35,7 +35,7 @@ class AboutPage extends StatelessWidget {
               color: Theme.of(context).primaryColor,
             ),
             title: Text('SelfieTheGame'),
-            subtitle: Text('Version number 1.10'),
+            subtitle: Text('Version number 1.11'),
           ),
           ListTile(
             leading: Icon(

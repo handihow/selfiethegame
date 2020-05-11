@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -13,7 +15,7 @@ import '../../models/reaction-type.dart';
 import '../share/constants.dart';
 import 'package:share_extend/share_extend.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import './image_editor.dart';
 
 class ImageViewer extends StatefulWidget {
@@ -29,6 +31,7 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   final _commentController = TextEditingController();
+  Completer<GoogleMapController> _controller = Completer();
 
   @override
   void dispose() {
@@ -261,13 +264,40 @@ class _ImageViewerState extends State<ImageViewer> {
     }
   }
 
+  Future<void> _onMapCreated(GoogleMapController controller) async {
+    _controller.complete(controller);
+  }
+
+  Widget _showImageLocation(double targetDimension) {
+    if (widget.image.hasLocation != null && widget.image.hasLocation) {
+      return SizedBox(
+        width: targetDimension,
+        height: targetDimension,
+        child: GoogleMap(
+          myLocationEnabled: true,
+          zoomGesturesEnabled: true,
+          scrollGesturesEnabled: true,
+          mapType: MapType.normal,
+          initialCameraPosition: CameraPosition(
+            target: LatLng(widget.image.latitude, widget.image.longitude),
+            zoom: 15,
+          ),
+          onMapCreated: _onMapCreated,
+          // markers: _markers,
+        ),
+      );
+    } else {
+      return SizedBox(height: 0.0);
+    }
+  }
+
   Widget _buildImageViewerBody(AppModel model) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double deviceHeight = MediaQuery.of(context).size.height;
-    double targetDimension = deviceWidth > 500.0 ? 500.0 : deviceWidth * 0.7;
+    double targetDimension = deviceWidth > 500.0 ? 500.0 : deviceWidth;
     final Orientation orientation = MediaQuery.of(context).orientation;
     if (orientation == Orientation.landscape) {
-      targetDimension = deviceHeight > 500.0 ? 500.0 : deviceHeight * 0.5;
+      targetDimension = deviceHeight > 500.0 ? 500.0 : deviceHeight;
     }
     return ListView(
       children: <Widget>[
@@ -279,6 +309,18 @@ class _ImageViewerState extends State<ImageViewer> {
         ),
         _showMainActionButtons(model),
         _showImageInformation(model),
+        widget.image.hasLocation != null && widget.image.hasLocation
+            ? ListTile(
+                leading: Icon(Icons.location_on),
+                title: Text('Location'),
+                subtitle: Text('Latitude: ' + 
+                  widget.image.latitude.toString() + 
+                  '; Longitude: ' + 
+                  widget.image.longitude.toString(),
+                ))
+            : SizedBox(height: 0.0),
+        _showImageLocation(targetDimension),
+        SizedBox(height: 50.0),
       ],
     );
   }

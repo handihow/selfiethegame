@@ -12,14 +12,14 @@ class MainSideDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.list),
-            title: Text('Spellen'),
+            title: Text('Games'),
             onTap: () {
               Navigator.pushReplacementNamed(context, '/games');
             },
           ),
           ListTile(
             leading: Icon(Icons.face),
-            title: Text('Profiel'),
+            title: Text('Profile'),
             onTap: () {
               Navigator.pushReplacementNamed(context, '/profile');
             },
@@ -33,7 +33,7 @@ class MainSideDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.contacts),
-            title: Text('Contacten'),
+            title: Text('Contacts'),
             onTap: () {
               Navigator.pushReplacementNamed(context, '/contacts');
             },

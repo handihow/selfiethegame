@@ -23,7 +23,8 @@ class _ImageLikeCommentButtonsState extends State<ImageLikeCommentButtons> {
   @override
   void initState() {
     super.initState();
-    if (widget.imageRef.likes != null && widget.imageRef.likes.contains(widget.user.uid)) {
+    if (widget.imageRef.likes != null &&
+        widget.imageRef.likes.contains(widget.user.uid)) {
       if (mounted) {
         setState(() {
           _userHasLiked = true;
@@ -57,15 +58,9 @@ class _ImageLikeCommentButtonsState extends State<ImageLikeCommentButtons> {
       builder: (BuildContext context, Widget child, AppModel model) {
         return Padding(
           padding: EdgeInsets.all(2.0),
-          child: Material(
-            borderRadius: BorderRadius.circular(10.0),
-            color: _userHasLiked ? Theme.of(context).accentColor : null,
-            child: MaterialButton(
-              height: 30,
-              minWidth: 30,
-              child: Image.asset('assets/thumb_up.png'),
-              onPressed: () => _updateLike(model, widget.imageRef),
-            ),
+          child: IconButton(
+            icon: Icon(Icons.thumb_up),
+            onPressed: () => _updateLike(model, widget.imageRef),
           ),
         );
       },

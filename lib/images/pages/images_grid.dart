@@ -16,19 +16,19 @@ class ImagesGridView extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Selfies verwijderen"),
-          content: Text("Je wilt al jouw selfies verwijderen. Je kunt dit niet herstellen. Wil je doorgaan?"),
+          title: Text("Remove selfies"),
+          content: Text("You want to remove all your selfies. You cannot undo this. Do you want to continue?"),
           actions: <Widget>[
             FlatButton(
               textColor: Theme.of(context).primaryColor,
-              child: Text('ANNULEREN'),
+              child: Text('CANCEL'),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
             ),
             FlatButton(
               textColor: Theme.of(context).errorColor,
-              child: Text('VERWIJDEREN'),
+              child: Text('REMOVE'),
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
@@ -59,7 +59,7 @@ class ImagesGridView extends StatelessWidget {
               },
             ),
           ],
-          title: Text('Jouw Selfies'),
+          title: Text('Your Selfies'),
         ),
         body: _displayGridOfImages(context, model),
       );
@@ -68,7 +68,7 @@ class ImagesGridView extends StatelessWidget {
       imagesPage = Scaffold(
         drawer: MainSideDrawer(),
         appBar: AppBar(
-          title: Text('Jouw Selfies'),
+          title: Text('Your Selfies'),
         ),
         body: Center(
           child: CircularProgressIndicator(),
@@ -88,7 +88,7 @@ class ImagesGridView extends StatelessWidget {
             );
           } else if (!snapshot.hasData || snapshot.data.documents.length == 0) {
             return Center(
-              child: Text('Nog geen selfies'),
+              child: Text('No selfies yet'),
             );
           } else {
             List<ImageRef> returnedImages = [];
